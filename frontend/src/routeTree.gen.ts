@@ -13,6 +13,7 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SignUpRoute = SignUpRouteImport.update({
@@ -25,6 +26,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
+  id: '/forgotpassword',
+  path: '/forgotpassword',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -33,30 +39,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/sign-up': typeof SignUpRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/sign-up': typeof SignUpRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/sign-up': typeof SignUpRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/sign-up'
+  fullPaths: '/' | '/forgotpassword' | '/login' | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/sign-up'
-  id: '__root__' | '/' | '/login' | '/sign-up'
+  to: '/' | '/forgotpassword' | '/login' | '/sign-up'
+  id: '__root__' | '/' | '/forgotpassword' | '/login' | '/sign-up'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ForgotpasswordRoute: typeof ForgotpasswordRoute
   LoginRoute: typeof LoginRoute
   SignUpRoute: typeof SignUpRoute
 }
@@ -68,6 +78,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgotpassword': {
+      id: '/forgotpassword'
+      path: '/forgotpassword'
+      fullPath: '/forgotpassword'
+      preLoaderRoute: typeof ForgotpasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -96,6 +113,15 @@ declare module './routes/index' {
     FileRoutesByPath['/']['fullPath']
   >
 }
+declare module './routes/forgotpassword' {
+  const createFileRoute: CreateFileRoute<
+    '/forgotpassword',
+    FileRoutesByPath['/forgotpassword']['parentRoute'],
+    FileRoutesByPath['/forgotpassword']['id'],
+    FileRoutesByPath['/forgotpassword']['path'],
+    FileRoutesByPath['/forgotpassword']['fullPath']
+  >
+}
 declare module './routes/login' {
   const createFileRoute: CreateFileRoute<
     '/login',
@@ -117,6 +143,7 @@ declare module './routes/sign-up' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ForgotpasswordRoute: ForgotpasswordRoute,
   LoginRoute: LoginRoute,
   SignUpRoute: SignUpRoute,
 }

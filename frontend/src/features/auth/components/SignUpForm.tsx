@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import PasswordInput from '@/components/ui/passwordInput';
 import { Button } from '@/components/ui/button';
 import { Link } from '@tanstack/react-router';
+import { useSignUpMutation } from '../hooks/useSignUpMutation';
 
 export const signUpFormSchema = zod.object({
     username: zod.string(),
@@ -23,11 +24,12 @@ const SignUpForm = () => {
         resolver: zodResolver(signUpFormSchema),
         defaultValues: { username: '', email: '', password: '', confirmPassword: '' }
     })
+    const { mutate, isPending } = useSignUpMutation<signUpSchema>(form.setError);
 
     const onSubmit = async (data: signUpSchema) => {
-
+        mutate(data)
     }
-
+    
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -85,7 +87,7 @@ const SignUpForm = () => {
                 />
 
                 <Button className='block w-full' variant="default" type="submit">
-                    SignUp
+                    {isPending ? "Loading...." : "SignUp"}
                 </Button>
 
                 <Button className='block w-full' variant="outline" type="button">
