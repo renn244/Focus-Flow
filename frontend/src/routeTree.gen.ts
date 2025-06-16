@@ -12,13 +12,20 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as MultiFactorRouteImport } from './routes/multi-factor'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MultiFactorRoute = MultiFactorRouteImport.update({
+  id: '/multi-factor',
+  path: '/multi-factor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -36,39 +43,71 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
+  '/multi-factor': typeof MultiFactorRoute
   '/sign-up': typeof SignUpRoute
+  '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
+  '/multi-factor': typeof MultiFactorRoute
   '/sign-up': typeof SignUpRoute
+  '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
+  '/multi-factor': typeof MultiFactorRoute
   '/sign-up': typeof SignUpRoute
+  '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/forgotpassword' | '/login' | '/sign-up'
+  fullPaths:
+    | '/'
+    | '/forgotpassword'
+    | '/login'
+    | '/multi-factor'
+    | '/sign-up'
+    | '/projects'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/forgotpassword' | '/login' | '/sign-up'
-  id: '__root__' | '/' | '/forgotpassword' | '/login' | '/sign-up'
+  to:
+    | '/'
+    | '/forgotpassword'
+    | '/login'
+    | '/multi-factor'
+    | '/sign-up'
+    | '/projects'
+  id:
+    | '__root__'
+    | '/'
+    | '/forgotpassword'
+    | '/login'
+    | '/multi-factor'
+    | '/sign-up'
+    | '/projects/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   LoginRoute: typeof LoginRoute
+  MultiFactorRoute: typeof MultiFactorRoute
   SignUpRoute: typeof SignUpRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -94,11 +133,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/multi-factor': {
+      id: '/multi-factor'
+      path: '/multi-factor'
+      fullPath: '/multi-factor'
+      preLoaderRoute: typeof MultiFactorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-up': {
       id: '/sign-up'
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -131,6 +184,15 @@ declare module './routes/login' {
     FileRoutesByPath['/login']['fullPath']
   >
 }
+declare module './routes/multi-factor' {
+  const createFileRoute: CreateFileRoute<
+    '/multi-factor',
+    FileRoutesByPath['/multi-factor']['parentRoute'],
+    FileRoutesByPath['/multi-factor']['id'],
+    FileRoutesByPath['/multi-factor']['path'],
+    FileRoutesByPath['/multi-factor']['fullPath']
+  >
+}
 declare module './routes/sign-up' {
   const createFileRoute: CreateFileRoute<
     '/sign-up',
@@ -140,12 +202,23 @@ declare module './routes/sign-up' {
     FileRoutesByPath['/sign-up']['fullPath']
   >
 }
+declare module './routes/projects/index' {
+  const createFileRoute: CreateFileRoute<
+    '/projects/',
+    FileRoutesByPath['/projects/']['parentRoute'],
+    FileRoutesByPath['/projects/']['id'],
+    FileRoutesByPath['/projects/']['path'],
+    FileRoutesByPath['/projects/']['fullPath']
+  >
+}
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   LoginRoute: LoginRoute,
+  MultiFactorRoute: MultiFactorRoute,
   SignUpRoute: SignUpRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
