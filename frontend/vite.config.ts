@@ -12,8 +12,8 @@ export default defineConfig({
       autoCodeSplitting: true,
       verboseFileRoutes: false,
     }),
-    react(),
     tailwindcss(),
+    react(),
   ],
   resolve: {
     alias: {
