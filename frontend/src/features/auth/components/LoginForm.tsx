@@ -49,7 +49,7 @@ const LoginForm = () => {
           <FormItem>
             <div className='flex justify-between items-center'>
               <FormLabel>Password</FormLabel>
-              <Link className='text-sm underline underline-offset-2' to='/'>Forgot your password?</Link>
+              <Link className='text-sm underline underline-offset-2' to='/forgotpassword'>Forgot your password?</Link>
             </div>
             <FormControl>
               <PasswordInput {...field} />

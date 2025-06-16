@@ -6,7 +6,7 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 type loginSuccessResponse = { access_token: string; refresh_token: string; };
 type loginResponse = AxiosResponse<loginSuccessResponse, ExceptionResponse>;
 
-const login = async(credentials: any): Promise<loginResponse['data']> => {
+const login = async (credentials: any): Promise<loginResponse['data']> => {
     const response = await axiosInstance.post('/auth/login', credentials);
     return response.data;
 }
