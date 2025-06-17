@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import PasswordInput from '@/components/ui/passwordInput';
 import { Link } from "@tanstack/react-router";
 import { useState } from 'react';
+import LoadingSpinner from '@/components/ui/loadingSpinner';
 
 export const loginFormSchema = zod.object({
   username: zod.string(),
@@ -60,7 +61,7 @@ const LoginForm = () => {
         />
 
         <Button className="block w-full" variant="default" type="submit">
-          Login
+          <LoadingSpinner />
         </Button>
 
         <Button className="block w-full" variant="outline" type="button">
