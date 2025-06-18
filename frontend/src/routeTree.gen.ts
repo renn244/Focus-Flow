@@ -17,6 +17,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
+import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
 
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
@@ -48,6 +49,11 @@ const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   path: '/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
+  id: '/projects/$projectId',
+  path: '/projects/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -55,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
   '/sign-up': typeof SignUpRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -63,6 +70,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
   '/sign-up': typeof SignUpRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
 }
 export interface FileRoutesById {
@@ -72,6 +80,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
   '/sign-up': typeof SignUpRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects/': typeof ProjectsIndexRoute
 }
 export interface FileRouteTypes {
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/multi-factor'
     | '/sign-up'
+    | '/projects/$projectId'
     | '/projects'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -90,6 +100,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/multi-factor'
     | '/sign-up'
+    | '/projects/$projectId'
     | '/projects'
   id:
     | '__root__'
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/multi-factor'
     | '/sign-up'
+    | '/projects/$projectId'
     | '/projects/'
   fileRoutesById: FileRoutesById
 }
@@ -107,6 +119,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MultiFactorRoute: typeof MultiFactorRoute
   SignUpRoute: typeof SignUpRoute
+  ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$projectId': {
+      id: '/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof ProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects/': {
@@ -202,6 +222,15 @@ declare module './routes/sign-up' {
     FileRoutesByPath['/sign-up']['fullPath']
   >
 }
+declare module './routes/projects/$projectId' {
+  const createFileRoute: CreateFileRoute<
+    '/projects/$projectId',
+    FileRoutesByPath['/projects/$projectId']['parentRoute'],
+    FileRoutesByPath['/projects/$projectId']['id'],
+    FileRoutesByPath['/projects/$projectId']['path'],
+    FileRoutesByPath['/projects/$projectId']['fullPath']
+  >
+}
 declare module './routes/projects/index' {
   const createFileRoute: CreateFileRoute<
     '/projects/',
@@ -218,6 +247,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MultiFactorRoute: MultiFactorRoute,
   SignUpRoute: SignUpRoute,
+  ProjectsProjectIdRoute: ProjectsProjectIdRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport

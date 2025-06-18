@@ -8,7 +8,7 @@ export const Route = createRootRoute({
     <>
       <Toaster />
       <Outlet />
-      <ReactQueryDevtools buttonPosition='top-right' />
+      <ReactQueryDevtools buttonPosition='bottom-right' />
       <TanStackRouterDevtools position='bottom-right' />
     </>
   ),
