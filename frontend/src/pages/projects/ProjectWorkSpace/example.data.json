@@ -1,0 +1,87 @@
+{
+    "data": [
+        { 
+            "id": "todo", "title": "To Do", "color": "bg-slate-100",
+            "tasks": [
+                {
+                    "id": "SCRUM-5",
+                    "title": "Design the new UI components",
+                    "description": "Create modern, accessible UI components for the dashboard",
+                    "priority": "high",
+                    "assignee": {
+                        "name": "Sarah Chen",
+                        "avatar": "/placeholder.svg?height=32&width=32",
+                        "initials": "SC"
+                    },
+                    "dueDate": "2024-01-15",
+                    "tags": ["Design", "UI/UX"],
+                    "comments": 3,
+                    "attachments": 2,
+                    "status": "todo"
+                },
+                {
+                    "id": "SCRUM-6",
+                    "title": "Implement authentication system",
+                    "description": "Set up secure user authentication with JWT tokens",
+                    "priority": "high",
+                    "assignee": {
+                        "name": "Alex Rodriguez",
+                        "avatar": "/placeholder.svg?height=32&width=32",
+                        "initials": "AR"
+                    },
+                    "dueDate": "2024-01-18",
+                    "tags": ["Backend", "Security"],
+                    "comments": 1,
+                    "attachments": 0,
+                    "status": "todo"
+                }
+            ]
+        },
+        { 
+            "id": "in-progress", "title": "In Progress", "color": "bg-blue-50",
+            "tasks": []
+        },
+        { 
+            "id": "review", "title": "Review", "color": "bg-yellow-50",
+            "tasks": [
+                {
+                    "id": "SCRUM-7",
+                    "title": "Database optimization",
+                    "description": "Optimize database queries for better performance",
+                    "priority": "medium",
+                    "assignee": {
+                        "name": "Mike Johnson",
+                        "avatar": "/placeholder.svg?height=32&width=32",
+                        "initials": "MJ"
+                    },
+                    "dueDate": "2024-01-20",
+                    "tags": ["Database", "Performance"],
+                    "comments": 0,
+                    "attachments": 1,
+                    "status": "review"
+                }
+            ]
+        },
+        { 
+            "id": "done", "title": "Done", "color": "bg-green-50",
+            "tasks": [
+                {
+                    "id": "SCRUM-8",
+                    "title": "Mobile responsive design",
+                    "description": "Ensure all components work perfectly on mobile devices",
+                    "priority": "medium",
+                    "assignee": {
+                        "name": "Emma Wilson",
+                        "avatar": "/placeholder.svg?height=32&width=32",
+                        "initials": "EW"
+                    },
+                    "dueDate": "2024-01-12",
+                    "tags": ["Frontend", "Mobile"],
+                    "comments": 5,
+                    "attachments": 3,
+                    "status": "done"
+                }
+            ]
+        }
+    ]
+}

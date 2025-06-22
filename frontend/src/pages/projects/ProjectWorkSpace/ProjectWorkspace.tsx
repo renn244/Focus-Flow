@@ -1,59 +1,73 @@
 import { Button } from "@/components/ui/button";
-import { Calendar, Columns3, Ellipsis, Expand, Share, UserPlus } from "lucide-react";
-import { Link } from "@tanstack/react-router";
-import KanbanBoard from "./Board/KanbanBoard";
+import { Bell, Calendar, Filter, Search, Settings, User, Users } from "lucide-react";
+import KanbanBoard from "../../../features/projectWorkSpace/components/Board/KanbanBoard";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
+import data from './example.data.json';
 
 type ProjectWorkspaceProps = {
     projectId: string;
 }
 
 const ProjectWorkspace = () => {
+    const mockData = JSON.parse(JSON.stringify(data));
+    const [searchQuery, setSearchQuery] = useState("");
+
     return (
-        <div className="p-6 h-screen w-full">
-            <div className="flex flex-col gap-1">
-                <div aria-label="header" className="px-2 h-8">
-                    <div className="flex justify-between items-center h-8">
-                        <div className="flex items-center gap-3">
-                            <h2 className="text-xl font-semibold">
-                                Project Title
-                            </h2>
-                            <Ellipsis className="h-6 w-6 text-muted-foreground" />
-                        </div>
-                        <div className="flex items-center justify-between gap-2">
-                            <Button variant="outline" size="icon" className="rounded-[2.5px] size-[32px]">
-                                <Expand className="h-5 w-5" />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+            {/* Header */}
+            <div className="bg-white border-b border-slate-200 px-6 py-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-2xl font-bold text-slate-900">Project Dashboard</h1>
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" className="text-slate-600">
+                                <Calendar className="w-4 h-4 mr-2" />
+                                Board
                             </Button>
-                            <Button variant="outline" size="icon" className="rounded-[2.5px] size-[32px]">
-                                <Share className="h-5 w-5" />
+                            <Button variant="ghost" size="sm" className="text-slate-600">
+                                <Users className="w-4 h-4 mr-2" />
+                                Team
                             </Button>
-                            <Button variant="outline" size="icon" className="rounded-[2.5px] size-[32px]">
-                                <UserPlus className="h-5 w-5" />
+                            <Button variant="ghost" size="sm" className="text-slate-600">
+                                Calendar
                             </Button>
                         </div>
                     </div>
-                </div>
-                <div aria-label="content">
-                    <nav className="border-b">
-                        <main className="flex items-center justify-start gap-3">
-                            <Link to="/" className="flex gap-1 items-center text-muted-foreground py-1 px-1.5 border-b-3 border-primary text-primary pb-0">
-                                <Columns3 className="h-5 w-5" />
-                                <span className="font-medium">Board</span>
-                            </Link>
-                            <Link to="/" className="flex gap-1 items-center text-muted-foreground">
-                                <Calendar className="h-5 w-5" />
-                                <span className="font-medium">Calendar</span>
-                            </Link>
-                            <Link to="/" className="flex gap-1 items-center text-muted-foreground">
-                                <span className="font-medium">Others</span>
-                            </Link>
-                        </main>
-                    </nav>
 
-                    <main>
-                        {/* Content of the main */}
-                        <KanbanBoard />
-                    </main>
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                            <Input
+                            placeholder="Search tasks..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-10 w-64"
+                            />
+                        </div>
+                        <Button variant="ghost" size="sm">
+                            <Filter className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                            <Bell className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                            <Settings className="w-4 h-4" />
+                        </Button>
+                        <Avatar className="w-8 h-8">
+                            <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                            <AvatarFallback>
+                                <User className="w-4 h-4" />
+                            </AvatarFallback>
+                        </Avatar>
+                    </div>
                 </div>
+            </div>
+
+            {/* Board */}
+            <div className="p-6">
+                <KanbanBoard columns={mockData.data}  />
             </div>
         </div>
     )
