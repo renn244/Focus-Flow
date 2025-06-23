@@ -8,14 +8,13 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsString()
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
     displayName: string;
 
     @IsNotEmpty()
     @IsString()
     password: string;
-
-    @IsNotEmpty()
-    @IsString()
-    @IsMatch<CreateUserDto>('password')
-    confirmPassword: string;
 }
