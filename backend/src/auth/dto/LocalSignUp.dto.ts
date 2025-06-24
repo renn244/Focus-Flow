@@ -7,7 +7,7 @@ export class LocalSignUpDto {
     username: string;
 
     @IsNotEmpty()
-    @IsEmail()
+    @IsEmail({}, { message: 'Invalid email format' })
     email: string;
 
     @IsNotEmpty()
