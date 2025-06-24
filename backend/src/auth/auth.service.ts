@@ -8,6 +8,7 @@ import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { CACHE_KEYS } from 'src/lib/constants/CACHE_KEYS';
+import { Profile } from 'passport-github2';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,10 @@ export class AuthService {
 
         if(!user) {
             throw new BadRequestException('username does not exist');
+        }
+
+        if(!user.password || user.isOauthUser) {
+            throw new BadRequestException('user is using a Oauth Provider');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -43,7 +48,9 @@ export class AuthService {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await this.userService.create({ username, email, password: hashedPassword, displayName: username })
+        const newUser = await this.userService.create({ 
+            username, email, password: hashedPassword, displayName: username, isOauthUser: false
+        })
 
         if (!newUser) {
             throw new BadRequestException('Failed to create user');
@@ -57,6 +64,31 @@ export class AuthService {
                 email: newUser.email,
                 displayName: newUser.displayName
             }
+        }
+    }
+
+    async validateGithubUser(profile: Profile) {
+        try {
+            const { id } = profile;
+
+            let user = await this.userService.findByOauthId(id);
+            if(!user) {
+                const { username, emails, displayName, profileUrl } = profile;
+                const email = emails?.[0]?.value || '';
+
+                // should catch any error and return a message instead to be put on the url search params
+                user = await this.userService.create({
+                    username: username || displayName, email, displayName: displayName,
+                    avatarUrl: profileUrl, OauthId: id, isOauthUser: true
+                })
+
+                if (!user) {
+                    throw new BadRequestException('Failed to create user with GitHub profile');
+                }
+            }
+
+            return this.login(user);
+        } catch(error: any) {
         }
     }
 

@@ -3,7 +3,6 @@ import { HydratedDocument } from "mongoose";
 
 @Schema()
 export class User {
-
     @Prop({ required: true, unique: true })
     username: string;
 
@@ -16,8 +15,14 @@ export class User {
     @Prop()
     avatarUrl?: string;
 
-    @Prop({ required: true })
-    password: string;
+    @Prop()
+    password?: string;
+
+    @Prop({ default: false })
+    isOauthUser: boolean;
+
+    @Prop()
+    OauthId?: string
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

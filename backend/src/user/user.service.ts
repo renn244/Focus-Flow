@@ -1,9 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from 'src/schema/User.schema';
-import { Model, QuerySelector, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class UserService {
@@ -11,7 +9,7 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: User) {
     const newUser = new this.userModel(createUserDto);
     await newUser.save()
 
@@ -28,6 +26,12 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async findByOauthId(OauthId: string) {
+    const user = await this.userModel.findOne({ OauthId: OauthId });
+
+    return user || null;
   }
 
   async findByUsername(username: string) {

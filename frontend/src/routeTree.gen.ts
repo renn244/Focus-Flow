@@ -12,6 +12,7 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as RedirectTokenRouteImport } from './routes/redirect-token'
 import { Route as MultiFactorRouteImport } from './routes/multi-factor'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
@@ -22,6 +23,11 @@ import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projec
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedirectTokenRoute = RedirectTokenRouteImport.update({
+  id: '/redirect-token',
+  path: '/redirect-token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MultiFactorRoute = MultiFactorRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
+  '/redirect-token': typeof RedirectTokenRoute
   '/sign-up': typeof SignUpRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
+  '/redirect-token': typeof RedirectTokenRoute
   '/sign-up': typeof SignUpRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
+  '/redirect-token': typeof RedirectTokenRoute
   '/sign-up': typeof SignUpRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects/': typeof ProjectsIndexRoute
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/forgotpassword'
     | '/login'
     | '/multi-factor'
+    | '/redirect-token'
     | '/sign-up'
     | '/projects/$projectId'
     | '/projects'
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/forgotpassword'
     | '/login'
     | '/multi-factor'
+    | '/redirect-token'
     | '/sign-up'
     | '/projects/$projectId'
     | '/projects'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/forgotpassword'
     | '/login'
     | '/multi-factor'
+    | '/redirect-token'
     | '/sign-up'
     | '/projects/$projectId'
     | '/projects/'
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   LoginRoute: typeof LoginRoute
   MultiFactorRoute: typeof MultiFactorRoute
+  RedirectTokenRoute: typeof RedirectTokenRoute
   SignUpRoute: typeof SignUpRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       path: '/multi-factor'
       fullPath: '/multi-factor'
       preLoaderRoute: typeof MultiFactorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redirect-token': {
+      id: '/redirect-token'
+      path: '/redirect-token'
+      fullPath: '/redirect-token'
+      preLoaderRoute: typeof RedirectTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up': {
@@ -213,6 +233,15 @@ declare module './routes/multi-factor' {
     FileRoutesByPath['/multi-factor']['fullPath']
   >
 }
+declare module './routes/redirect-token' {
+  const createFileRoute: CreateFileRoute<
+    '/redirect-token',
+    FileRoutesByPath['/redirect-token']['parentRoute'],
+    FileRoutesByPath['/redirect-token']['id'],
+    FileRoutesByPath['/redirect-token']['path'],
+    FileRoutesByPath['/redirect-token']['fullPath']
+  >
+}
 declare module './routes/sign-up' {
   const createFileRoute: CreateFileRoute<
     '/sign-up',
@@ -246,6 +275,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotpasswordRoute: ForgotpasswordRoute,
   LoginRoute: LoginRoute,
   MultiFactorRoute: MultiFactorRoute,
+  RedirectTokenRoute: RedirectTokenRoute,
   SignUpRoute: SignUpRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
