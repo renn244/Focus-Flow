@@ -12,19 +12,21 @@ const handleMongooseError = (exception: MongooseError | any) => {
 
 const handleMongooseInstanceError = (exception: MongooseError) => {
     if(exception instanceof MongooseError.CastError) {       
-        return { [exception.path]: `Invalid value, expected a valid ${exception.kind} for path "${exception.path}"` }
+        return { 
+            [exception.path]: { message: `Invalid value, expected a valid ${exception.kind} for path "${exception.path}"` } 
+        }
     }
 
     if(exception instanceof MongooseError.ValidationError) {
         return Object.entries(exception.errors).reduce((acc, [key, error]) => {
             if(error instanceof MongooseError.CastError) {
-                acc[key] = `Invalid value for "${key}", expected ${error.kind}`
+                acc[key] = { message: `Invalid value for "${key}", expected ${error.kind}` }
             } else {
-                acc[key] = error.properties.message || `Invalid value for "${key}"`
+                acc[key] = { message: error.properties.message || `Invalid value for "${key}"` }
             }
  
             return acc
-        }, {} as Record<string, string>)
+        }, {} as Record<string, { message: string }>)
     }
 
     if(exception instanceof MongooseError.DocumentNotFoundError) {
@@ -41,7 +43,7 @@ const handleMongoServerError = (exception: any) => {
         const key = exception.keyPattern ? Object.keys(exception.keyPattern)[0] : "key";
         const value = Object.keys(exception.keyValue)[0];
 
-        return { [key]: `${value} already exists` }
+        return { [key]: { message: `${value} already exists` } }
     } else if(exception?.code === 121) {
         // The inserted or updated document violates schema-level validation rules (e.g., schema validation in MongoDB or strict field types).
         // Usually this is caught earlier by Mongoose itself (via ValidationError), 

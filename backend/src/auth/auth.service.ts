@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
@@ -9,6 +9,7 @@ import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { UserDocument } from 'src/schema/User.schema';
 import { UserService } from 'src/user/user.service';
 import { LocalSignUpDto } from './dto/LocalSignUp.dto';
+import { ValidationException } from 'src/lib/Exception/ValidationException';
 
 @Injectable()
 export class AuthService {
@@ -22,17 +23,17 @@ export class AuthService {
         const user = await this.userService.findByUsername(username);
 
         if(!user) {
-            throw new BadRequestException('username does not exist');
+            throw new ValidationException({ username: { message: 'username does not exist' } });
         }
 
         if(!user.password || user.isOauthUser) {
-            throw new BadRequestException('user is using a Oauth Provider');
+            throw new ValidationException({ general: { message: 'user is using a Oauth Provider' } });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if(!isPasswordValid) {
-            throw new BadRequestException('password is incorrect');
+            throw new ValidationException({ password: { message: 'password is incorrect' } });
         }
 
         return user;
@@ -40,12 +41,6 @@ export class AuthService {
 
     async localSignUp(body: LocalSignUpDto) {
         const { username, email, password, confirmPassword } = body;
-
-        // const existingUser = await this.userService.findByUsernameOrEmail(username, email);
-
-        // if (existingUser) {
-        //     throw new BadRequestException('Username or email already exists');
-        // }
         
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await this.userService.create({ 
@@ -53,7 +48,7 @@ export class AuthService {
         })
 
         if (!newUser) {
-            throw new BadRequestException('Failed to create user');
+            throw new ServiceUnavailableException('Failed to create user');
         }
 
         return {
@@ -83,7 +78,7 @@ export class AuthService {
                 })
 
                 if (!user) {
-                    throw new BadRequestException('Failed to create user with GitHub profile');
+                    throw new ServiceUnavailableException('Failed to create user with GitHub profile');
                 }
             }
 
