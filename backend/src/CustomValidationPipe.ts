@@ -12,7 +12,7 @@ export class CustomValidationPipe implements PipeTransform {
         if(!value) {
             throw new BadRequestException('Validation failed: No data provided');
         }
-
+ 
         // if it's not a class, return the value    
         if(!metadata.metatype || !this.toValidateClass(metadata.metatype)) {
             return value;

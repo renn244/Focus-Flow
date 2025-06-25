@@ -1,12 +1,19 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
+import { REGEX } from "src/lib/constants/REGEX";
 
 @Schema()
 export class User {
     @Prop({ required: true, unique: true })
     username: string;
 
-    @Prop({ required: true, unique: true })
+    @Prop({ 
+        required: true, unique: true,
+        validate: {
+            validator: (email: string) => REGEX.email.test(email),
+            message: 'Invalid email format'
+        }
+    })
     email: string;
 
     @Prop({ required: true })

@@ -1,14 +1,14 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
-import { LocalSignUpDto } from './dto/LocalSignUp.dto';
-import { JwtService } from '@nestjs/jwt';
-import { UserDocument } from 'src/schema/User.schema';
-import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { Cache } from 'cache-manager';
-import { CACHE_KEYS } from 'src/lib/constants/CACHE_KEYS';
 import { Profile } from 'passport-github2';
+import { CACHE_KEYS } from 'src/lib/constants/CACHE_KEYS';
+import { UserJwt } from 'src/lib/Decorators/UserJwt';
+import { UserDocument } from 'src/schema/User.schema';
+import { UserService } from 'src/user/user.service';
+import { LocalSignUpDto } from './dto/LocalSignUp.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,12 +41,12 @@ export class AuthService {
     async localSignUp(body: LocalSignUpDto) {
         const { username, email, password, confirmPassword } = body;
 
-        const existingUser = await this.userService.findByUsernameOrEmail(username, email);
+        // const existingUser = await this.userService.findByUsernameOrEmail(username, email);
 
-        if (existingUser) {
-            throw new BadRequestException('Username or email already exists');
-        }
-
+        // if (existingUser) {
+        //     throw new BadRequestException('Username or email already exists');
+        // }
+        
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await this.userService.create({ 
             username, email, password: hashedPassword, displayName: username, isOauthUser: false
