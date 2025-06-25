@@ -5,6 +5,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import AuthProvider from './context/authContext'
 
 const queryClient = new QueryClient();
 
@@ -24,7 +25,10 @@ const router = createRouter({
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
   interface Register {
-    router: typeof router
+    router: typeof router,
+    context: {
+      queryClient: QueryClient
+    }
   }
 }
 
@@ -35,7 +39,9 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} context={{ queryClient }} />
+        </AuthProvider>
       </QueryClientProvider>
     </StrictMode>,
   )

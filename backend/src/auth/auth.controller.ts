@@ -21,7 +21,7 @@ export class AuthController {
     async githubCallback(@Request() req: any, @Response() res: any) {
         const token = await this.authService.validateGithubUser(req.user as any);
 
-        return res.redirect(`http://localhost:5173/redirect-token?access_token=${token?.accessToken}`)
+        return res.redirect(`http://localhost:5173/redirect-token?access_token=${token?.access_token}`)
     }
 
     @UseGuards(LocalAuthGuard)

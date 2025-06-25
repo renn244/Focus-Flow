@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import zod from 'zod';
 import type { signUpSchema } from '../type';
@@ -9,17 +8,30 @@ import PasswordInput from '@/components/ui/passwordInput';
 import { Button } from '@/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { useSignUpMutation } from '../hooks/useSignUpMutation';
+import { toast } from 'sonner';
+import LoadingSpinner from '@/components/ui/loadingSpinner';
 
 export const signUpFormSchema = zod.object({
-    username: zod.string(),
-    email: zod.string().email(),
-    password: zod.string(),
+    username: zod.string()
+        .min(3, { message: 'Username must be at least 3 characters long' }),
+    email: zod.string()
+        .min(3, { message: 'Email must be at least 3 characters long' })
+        .email({ message: 'Must be a valid email address' }),
+    password: zod.string()
+        .min(8, { message: 'Password must be at least 8 characters long' }),
     confirmPassword: zod.string()
+        .min(8, { message: 'Confirm Password must be at least 8 characters long' })
+}).superRefine(({ password, confirmPassword }, ctx) => {
+    if(password !== confirmPassword) {
+        ctx.addIssue({
+            path: ['confirmPassword'],
+            code: zod.ZodIssueCode.custom,
+            message: 'Passwords do not match',
+        })
+    }
 })
 
 const SignUpForm = () => {
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
     const form = useForm<signUpSchema>({
         resolver: zodResolver(signUpFormSchema),
         defaultValues: { username: '', email: '', password: '', confirmPassword: '' }
@@ -27,7 +39,11 @@ const SignUpForm = () => {
     const { mutate, isPending } = useSignUpMutation<signUpSchema>(form.setError);
 
     const onSubmit = async (data: signUpSchema) => {
-        mutate(data)
+        try {
+            mutate(data)
+        } catch (error) {
+            toast.error("An error occurred during sign up");
+        }
     }
     
     return (
@@ -87,11 +103,12 @@ const SignUpForm = () => {
                 />
 
                 <Button className='block w-full' variant="default" type="submit">
-                    {isPending ? "Loading...." : "SignUp"}
+                    {isPending ? <LoadingSpinner /> : "SignUp"}
                 </Button>
 
-                <Button className='block w-full' variant="outline" type="button">
-                    SignUp with Google
+                <Button onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`} 
+                className='block w-full' variant="outline" type="button">
+                    SignUp with Github
                 </Button>
 
                 <div className="pt-4">

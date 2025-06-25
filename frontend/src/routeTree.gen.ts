@@ -11,6 +11,7 @@
 import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as RedirectTokenRouteImport } from './routes/redirect-token'
 import { Route as MultiFactorRouteImport } from './routes/multi-factor'
@@ -20,6 +21,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/multi-factor': typeof MultiFactorRoute
   '/redirect-token': typeof RedirectTokenRoute
   '/sign-up': typeof SignUpRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
 }
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/multi-factor': typeof MultiFactorRoute
   '/redirect-token': typeof RedirectTokenRoute
   '/sign-up': typeof SignUpRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
 }
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/multi-factor': typeof MultiFactorRoute
   '/redirect-token': typeof RedirectTokenRoute
   '/sign-up': typeof SignUpRoute
+  '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects/': typeof ProjectsIndexRoute
 }
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/multi-factor'
     | '/redirect-token'
     | '/sign-up'
+    | '/verify-email'
     | '/projects/$projectId'
     | '/projects'
   fileRoutesByTo: FileRoutesByTo
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/multi-factor'
     | '/redirect-token'
     | '/sign-up'
+    | '/verify-email'
     | '/projects/$projectId'
     | '/projects'
   id:
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/multi-factor'
     | '/redirect-token'
     | '/sign-up'
+    | '/verify-email'
     | '/projects/$projectId'
     | '/projects/'
   fileRoutesById: FileRoutesById
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   MultiFactorRoute: typeof MultiFactorRoute
   RedirectTokenRoute: typeof RedirectTokenRoute
   SignUpRoute: typeof SignUpRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof SignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects/$projectId': {
@@ -251,6 +271,15 @@ declare module './routes/sign-up' {
     FileRoutesByPath['/sign-up']['fullPath']
   >
 }
+declare module './routes/verify-email' {
+  const createFileRoute: CreateFileRoute<
+    '/verify-email',
+    FileRoutesByPath['/verify-email']['parentRoute'],
+    FileRoutesByPath['/verify-email']['id'],
+    FileRoutesByPath['/verify-email']['path'],
+    FileRoutesByPath['/verify-email']['fullPath']
+  >
+}
 declare module './routes/projects/$projectId' {
   const createFileRoute: CreateFileRoute<
     '/projects/$projectId',
@@ -277,6 +306,7 @@ const rootRouteChildren: RootRouteChildren = {
   MultiFactorRoute: MultiFactorRoute,
   RedirectTokenRoute: RedirectTokenRoute,
   SignUpRoute: SignUpRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
 }

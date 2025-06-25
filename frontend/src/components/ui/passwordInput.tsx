@@ -13,7 +13,7 @@ const PasswordInput = ({ containerClassName, className, ...props }: PasswordInpu
     return (
         <div className={cn("relative", className)}>
             <Input {...props} type={showPassword ? "text" : "password"} 
-            className={containerClassName || ""} />
+            className={cn(containerClassName, "pr-7")} />
             {
                 showPassword ? (
                     <Eye className={cn('absolute h-5 w-5 right-2 top-2 cursor-pointer text-muted-foreground')} 

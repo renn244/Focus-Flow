@@ -16,6 +16,9 @@ export class User {
     })
     email: string;
 
+    @Prop({ requried: false, default: false })
+    emailVerified?: boolean;
+
     @Prop({ required: true })
     displayName: string;
 
@@ -26,7 +29,7 @@ export class User {
     password?: string;
 
     @Prop({ default: false })
-    isOauthUser: boolean;
+    isOauthUser?: boolean;
 
     @Prop()
     OauthId?: string

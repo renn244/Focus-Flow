@@ -53,12 +53,8 @@ export class AuthService {
 
         return {
             message: 'User created successfully',
-            user: {
-                id: newUser._id,
-                username: newUser.username,
-                email: newUser.email,
-                displayName: newUser.displayName
-            }
+            email: newUser.email,
+            displayName: newUser.displayName
         }
     }
 
@@ -94,12 +90,12 @@ export class AuthService {
         };
 
         return {
-            accessToken: this.jwtService.sign(payload),
+            access_token: this.jwtService.sign(payload),
         }
     }
 
     async checkAuth(user: UserJwt) {
-        let cacheUser = await this.cacheManager.get<any>(CACHE_KEYS.userAuth(user.id));
+        let cacheUser = await this.cacheManager.get<ReturnType<UserService['findById']>>(CACHE_KEYS.userAuth(user.id));
 
         if(!cacheUser) {
             cacheUser = await this.userService.findById(user.id, { select: '-password' })

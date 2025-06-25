@@ -7,24 +7,29 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import PasswordInput from '@/components/ui/passwordInput';
 import { Link } from "@tanstack/react-router";
-import { useState } from 'react';
 import LoadingSpinner from '@/components/ui/loadingSpinner';
+import { useLoginMutation } from '../hooks/useLoginMutation';
+import { toast } from 'sonner';
 
 export const loginFormSchema = zod.object({
-  username: zod.string(),
-  password: zod.string()
+  username: zod.string().min(3, { message: 'Username is required' }),
+  password: zod.string().min(3, { message: 'Password is required' })
 })
 
 const LoginForm = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<loginSchema>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: { username: '', password: '' }
   })
+  const { mutate, isPending } = useLoginMutation<loginSchema>(form.setError);
 
   const onSubmit = async (data: loginSchema) => {
-  
+    try {
+      mutate(data);
+    } catch (error) {
+      toast.error("An error occurred during login");
+    }
   }
 
   return (
@@ -61,11 +66,12 @@ const LoginForm = () => {
         />
 
         <Button className="block w-full" variant="default" type="submit">
-          <LoadingSpinner />
+          {isPending ? <LoadingSpinner /> : "Login"}
         </Button>
 
-        <Button className="block w-full" variant="outline" type="button">
-          Login with Google
+        <Button onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/github/login`}
+        className="block w-full" variant="outline" type="button">
+          Login with Github
         </Button>
 
         <div className="pt-4">
