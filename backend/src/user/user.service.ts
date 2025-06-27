@@ -40,9 +40,25 @@ export class UserService {
     return user || null;
   }
 
+  async findByEmail(email: string) {
+    const user = await this.userModel.findOne({ email });
+
+    return user || null;
+  }
+
   async findByUsernameOrEmail(username: string, email: string) {
     const user = await this.userModel.findOne({ $or: [ { username }, { email } ] })
 
     return user || null;
+  }
+
+  async update(id: Types.ObjectId, updateUserDto: Partial<UserDocument>) {
+    const user = await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+
+    if(!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }

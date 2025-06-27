@@ -7,10 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { GithubStrategy } from './passport/github.strategy';
+import { VerifyEmailTokenModule } from 'src/verify-email-token/verify-email-token.module';
 
 @Module({
   imports: [
-    UserModule,
+    UserModule, VerifyEmailTokenModule,
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),

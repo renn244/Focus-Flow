@@ -5,6 +5,8 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { SentryModule } from '@sentry/nestjs/setup';
+import { EmailModule } from './email/email.module';
+import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { SentryModule } from '@sentry/nestjs/setup';
       })
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    EmailModule,
+    VerifyEmailTokenModule
   ],
   controllers: [],
   providers: [],

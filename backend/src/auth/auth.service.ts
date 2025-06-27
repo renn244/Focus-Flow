@@ -10,11 +10,15 @@ import { UserDocument } from 'src/schema/User.schema';
 import { UserService } from 'src/user/user.service';
 import { LocalSignUpDto } from './dto/LocalSignUp.dto';
 import { ValidationException } from 'src/lib/Exception/ValidationException';
+import { VerifyEmailTokenService } from 'src/verify-email-token/verify-email-token.service';
+import { Types } from 'mongoose';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
+        private readonly verifyEmailTokenService: VerifyEmailTokenService,
         private readonly jwtService: JwtService,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
@@ -40,7 +44,7 @@ export class AuthService {
     }
 
     async localSignUp(body: LocalSignUpDto) {
-        const { username, email, password, confirmPassword } = body;
+        const { username, email, password } = body;
         
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await this.userService.create({ 
@@ -50,6 +54,8 @@ export class AuthService {
         if (!newUser) {
             throw new ServiceUnavailableException('Failed to create user');
         }
+    
+        await this.verifyEmailTokenService.sendEmailVerification(newUser.email, newUser._id);
 
         return {
             message: 'User created successfully',
@@ -70,7 +76,7 @@ export class AuthService {
                 // should catch any error and return a message instead to be put on the url search params
                 user = await this.userService.create({
                     username: username || displayName, email, displayName: displayName,
-                    avatarUrl: profileUrl, OauthId: id, isOauthUser: true
+                    avatarUrl: profileUrl, OauthId: id, isOauthUser: true, emailVerified: true,
                 })
 
                 if (!user) {

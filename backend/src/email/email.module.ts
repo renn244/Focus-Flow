@@ -36,5 +36,6 @@ import * as path from 'path';
     })
   ],
   providers: [EmailService],
+  exports: [EmailService],
 })
 export class EmailModule {}
