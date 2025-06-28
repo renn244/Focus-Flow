@@ -2,10 +2,10 @@ import { BadRequestException, Injectable, NotFoundException, ServiceUnavailableE
 import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult, Model, Types } from 'mongoose';
 import { VerifyEmailToken, VerifyEmailTokenDocument } from 'src/schema/VerifyEmailToken';
-import { randomBytes } from 'crypto';
 import { UserService } from 'src/user/user.service';
 import { CreateVerifyTokenDto } from './dto/create-verify-token.dto';
 import { EmailService } from 'src/email/email.service';
+import generateToken from 'src/lib/utils/generateToken';
 
 @Injectable()
 export class VerifyEmailTokenService {
@@ -15,14 +15,10 @@ export class VerifyEmailTokenService {
         private readonly userService: UserService
     ) {}
 
-    generateToken() {
-        return randomBytes(32).toString('hex');
-    }
-
     async create({ email, userId, token, expiresAt }: CreateVerifyTokenDto) {
         if(!token) {
             // if no token is provided, generate a new one
-            token = this.generateToken();
+            token = generateToken();
         }
 
         const newToken = await this.verifyEmailTokenModel.create({ email, token, userId, expiresAt });

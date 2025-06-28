@@ -7,6 +7,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { EmailModule } from './email/email.module';
 import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.module';
+import { ForgetPasswordTokenModule } from './forget-password-token/forget-password-token.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.
     UserModule,
     AuthModule,
     EmailModule,
-    VerifyEmailTokenModule
+    VerifyEmailTokenModule,
+    ForgetPasswordTokenModule
   ],
   controllers: [],
   providers: [],

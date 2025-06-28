@@ -61,4 +61,9 @@ export class UserService {
 
     return user;
   }
+
+  async updatePasswordByEmail(email: string, newPassword: string) {
+    const user = await this.userModel.findOneAndUpdate({ email }, { password: newPassword }, { new: true });
+    return user
+  }
 }
