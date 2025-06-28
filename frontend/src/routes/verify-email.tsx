@@ -1,15 +1,14 @@
+import VerifyEmail from "@/pages/VerifyEmail";
+
 export const Route = createFileRoute({
     component: RouteComponent,
     validateSearch: (search: Record<string, unknown>) => ({
         email: (search.email || '') as string,
-        displayName: (search.displayName || '') as string,
     })
 })
 
 function RouteComponent() {
-    const { email, displayName }= Route.useSearch();
+    const { email }= Route.useSearch();
     
-    return <div>
-        {/* Make a card here that notify user to verify their email */}
-    </div>
+    return <VerifyEmail email={email} />
 }

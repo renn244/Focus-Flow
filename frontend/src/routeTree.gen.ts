@@ -17,6 +17,7 @@ import { Route as RedirectTokenRouteImport } from './routes/redirect-token'
 import { Route as MultiFactorRouteImport } from './routes/multi-factor'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
+import { Route as ConfirmationVerifyEmailRouteImport } from './routes/confirmation-verify-email'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
@@ -51,6 +52,11 @@ const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
   path: '/forgotpassword',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfirmationVerifyEmailRoute = ConfirmationVerifyEmailRouteImport.update({
+  id: '/confirmation-verify-email',
+  path: '/confirmation-verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -69,6 +75,7 @@ const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/confirmation-verify-email': typeof ConfirmationVerifyEmailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/confirmation-verify-email': typeof ConfirmationVerifyEmailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
@@ -92,6 +100,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/confirmation-verify-email': typeof ConfirmationVerifyEmailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/confirmation-verify-email'
     | '/forgotpassword'
     | '/login'
     | '/multi-factor'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/confirmation-verify-email'
     | '/forgotpassword'
     | '/login'
     | '/multi-factor'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/confirmation-verify-email'
     | '/forgotpassword'
     | '/login'
     | '/multi-factor'
@@ -139,6 +151,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConfirmationVerifyEmailRoute: typeof ConfirmationVerifyEmailRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   LoginRoute: typeof LoginRoute
   MultiFactorRoute: typeof MultiFactorRoute
@@ -156,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirmation-verify-email': {
+      id: '/confirmation-verify-email'
+      path: '/confirmation-verify-email'
+      fullPath: '/confirmation-verify-email'
+      preLoaderRoute: typeof ConfirmationVerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgotpassword': {
@@ -224,6 +244,15 @@ declare module './routes/index' {
     FileRoutesByPath['/']['id'],
     FileRoutesByPath['/']['path'],
     FileRoutesByPath['/']['fullPath']
+  >
+}
+declare module './routes/confirmation-verify-email' {
+  const createFileRoute: CreateFileRoute<
+    '/confirmation-verify-email',
+    FileRoutesByPath['/confirmation-verify-email']['parentRoute'],
+    FileRoutesByPath['/confirmation-verify-email']['id'],
+    FileRoutesByPath['/confirmation-verify-email']['path'],
+    FileRoutesByPath['/confirmation-verify-email']['fullPath']
   >
 }
 declare module './routes/forgotpassword' {
@@ -301,6 +330,7 @@ declare module './routes/projects/index' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConfirmationVerifyEmailRoute: ConfirmationVerifyEmailRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   LoginRoute: LoginRoute,
   MultiFactorRoute: MultiFactorRoute,
