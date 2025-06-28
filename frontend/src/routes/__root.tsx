@@ -3,6 +3,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Toaster } from '@/components/ui/sonner'
 import { QueryClient } from '@tanstack/react-query'
+import NotFound from '@/components/common/NotFound'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   component: () => (
@@ -12,5 +13,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       <ReactQueryDevtools buttonPosition='bottom-right' />
       <TanStackRouterDevtools position='bottom-right' />
     </>
-  )
+  ),
+  notFoundComponent: () => <NotFound />
 })
