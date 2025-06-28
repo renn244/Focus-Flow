@@ -61,7 +61,7 @@ export class VerifyEmailTokenService {
 
     async sendEmailVerification(email: string, userId: Types.ObjectId) {
         const token = await this.create({ email, userId });
-        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/verify-email?token=${token.token}&email=${token.email}`
+        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/confirmation-verify-email?token=${token.token}&email=${token.email}`
 
         if (!token) {
             throw new ServiceUnavailableException('Failed to create verification token');
@@ -85,7 +85,7 @@ export class VerifyEmailTokenService {
             throw new NotFoundException('No verification token found for this email');
         }
 
-        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/verify-email?token=${token.token}&email=${token.email}`        
+        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/confirmation-verify-email?token=${token.token}&email=${token.email}`        
         await this.emailService.sendEmail({
             to: token.email,  subject: 'Verify your email',
             template: 'email-confirmation', context: { email: token.email, confirmationUrl }
@@ -108,7 +108,7 @@ export class VerifyEmailTokenService {
         }
 
         const token = await this.create({ email: user.email, userId: user._id });
-        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/verify-email?token=${token.token}&email=${token.email}`;
+        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/confirmation-verify-email?token=${token.token}&email=${token.email}`;
 
         await this.emailService.sendEmail({
             to: token.email, subject: 'Verify your email',

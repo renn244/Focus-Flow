@@ -17,7 +17,6 @@ export class EmailService {
         context: ISendMailOptions['context'];
     }) {
         try {
-            console.log(params);
             const emailOptions: ISendMailOptions = {
                 to: params.to, subject: params.subject, 
                 template: params.template, 
