@@ -3,6 +3,7 @@ import { SentryExceptionCaptured } from "@sentry/nestjs";
 import { Error as MongooseError } from "mongoose";
 import * as Sentry from '@sentry/nestjs';
 import handleMongooseError from "./lib/MongooseExceptionHandler";
+import 'dotenv/config'; 
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -43,8 +44,11 @@ export class AllExceptionFilter implements ExceptionFilter {
             // handle the server unexpected bugs that should be fixed
             this.loggerr.error(exception);
             message = exception.message;
-            // Log to Sentry Manually if needed
-            Sentry.captureException(exception);
+            
+            if(process.env.SOFTWARE_ENV === "production") {
+                // Log to Sentry Manually if needed
+                Sentry.captureException(exception);
+            }
         }
 
         response.status(status).json({
