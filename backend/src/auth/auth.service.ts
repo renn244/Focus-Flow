@@ -86,6 +86,7 @@ export class AuthService {
 
             return this.login(user);
         } catch(error: any) {
+            return { message: error.message || 'An error occurred while validating GitHub user' };
         }
     }
 
