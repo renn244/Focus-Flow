@@ -18,6 +18,7 @@ import { Route as MultiFactorRouteImport } from './routes/multi-factor'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
 import { Route as ConfirmationVerifyEmailRouteImport } from './routes/confirmation-verify-email'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
@@ -57,6 +58,11 @@ const ConfirmationVerifyEmailRoute = ConfirmationVerifyEmailRouteImport.update({
   path: '/confirmation-verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChangePasswordRoute = ChangePasswordRouteImport.update({
+  id: '/change-password',
+  path: '/change-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -75,6 +81,7 @@ const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/change-password': typeof ChangePasswordRoute
   '/confirmation-verify-email': typeof ConfirmationVerifyEmailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/change-password': typeof ChangePasswordRoute
   '/confirmation-verify-email': typeof ConfirmationVerifyEmailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
@@ -100,6 +108,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/change-password': typeof ChangePasswordRoute
   '/confirmation-verify-email': typeof ConfirmationVerifyEmailRoute
   '/forgotpassword': typeof ForgotpasswordRoute
   '/login': typeof LoginRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/change-password'
     | '/confirmation-verify-email'
     | '/forgotpassword'
     | '/login'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/change-password'
     | '/confirmation-verify-email'
     | '/forgotpassword'
     | '/login'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/change-password'
     | '/confirmation-verify-email'
     | '/forgotpassword'
     | '/login'
@@ -151,6 +163,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChangePasswordRoute: typeof ChangePasswordRoute
   ConfirmationVerifyEmailRoute: typeof ConfirmationVerifyEmailRoute
   ForgotpasswordRoute: typeof ForgotpasswordRoute
   LoginRoute: typeof LoginRoute
@@ -169,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/change-password': {
+      id: '/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof ChangePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/confirmation-verify-email': {
@@ -244,6 +264,15 @@ declare module './routes/index' {
     FileRoutesByPath['/']['id'],
     FileRoutesByPath['/']['path'],
     FileRoutesByPath['/']['fullPath']
+  >
+}
+declare module './routes/change-password' {
+  const createFileRoute: CreateFileRoute<
+    '/change-password',
+    FileRoutesByPath['/change-password']['parentRoute'],
+    FileRoutesByPath['/change-password']['id'],
+    FileRoutesByPath['/change-password']['path'],
+    FileRoutesByPath['/change-password']['fullPath']
   >
 }
 declare module './routes/confirmation-verify-email' {
@@ -330,6 +359,7 @@ declare module './routes/projects/index' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChangePasswordRoute: ChangePasswordRoute,
   ConfirmationVerifyEmailRoute: ConfirmationVerifyEmailRoute,
   ForgotpasswordRoute: ForgotpasswordRoute,
   LoginRoute: LoginRoute,

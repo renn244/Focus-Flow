@@ -10,6 +10,7 @@ import { ResendResetLinkDto } from './dto/resend-reset-link.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/user.service';
+import { ValidationException } from 'src/lib/Exception/ValidationException';
 
 @Injectable()
 export class ForgetPasswordTokenService {
@@ -20,8 +21,28 @@ export class ForgetPasswordTokenService {
     ) {}
 
     async sendResetLink({ email }: SendResetLinkDto) {
+        const existingUser = await this.userService.findByEmail(email);
+
+        if(!existingUser) {
+            throw new ValidationException({
+                email: { message: 'No user found with this email' }
+            })
+        }
+
+        if(existingUser?.isOauthUser) {
+            throw new ValidationException({
+                email: { message: 'In order to reset your password, go to your associated account provider.' }
+            })
+        }
+
+        if(!existingUser.emailVerified) {
+            throw new ValidationException({
+                email: { message: 'Please verify your email before requesting a password reset' }
+            })
+        }
+
         const token = await this.createToken({ email });
-        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/reset-password?token=${token.token}&email=${email}`;
+        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/change-password?token=${token.token}&email=${email}`;
 
         await this.emailService.sendEmail({
             to: email, subject: 'Reset password',
@@ -44,7 +65,7 @@ export class ForgetPasswordTokenService {
             throw new NotFoundException('No reset password token found for this email');
         }
 
-        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/reset-password?token=${token.token}&email=${email}`;
+        const confirmationUrl = `${process.env.CLIENT_BASE_URL}/change-password?token=${token.token}&email=${email}`;
         await this.emailService.sendEmail({
             to: email, subject: 'Reset password',
             template: 'reset-password',
@@ -63,7 +84,7 @@ export class ForgetPasswordTokenService {
         const isTokenValid = await this.validateToken(email, token);
 
         if(!isTokenValid) {
-            throw new BadRequestException('Invalid or expired reset password token');
+            throw new BadRequestException('Invalid or Expired reset password token. Please request a new link.');
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);

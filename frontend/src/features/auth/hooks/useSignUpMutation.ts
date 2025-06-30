@@ -30,7 +30,7 @@ export const useSignUpMutation = <T extends FieldValues>(setError: UseFormSetErr
     return useMutation({
         mutationFn: signUp,
         onSuccess: async (data) => {
-            navigate({ to: '/verify-email', search: { email: data.email, displayName: data.displayName } });
+            navigate({ to: '/verify-email', search: { email: data.email } });
         },
         onError: (error: any | ValidationError) => {
             if(error instanceof ValidationError) {
