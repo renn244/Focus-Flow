@@ -16,7 +16,7 @@ export class UserService {
     return newUser;
   }
 
-  async findById(id: Types.ObjectId, options?: { 
+  async findById(id: string, options?: { 
     optional?: boolean, message?: string, select: string | Record<string, 0 | 1>
   }) {
     const user = await this.userModel.findById(id).select(options?.select || '');

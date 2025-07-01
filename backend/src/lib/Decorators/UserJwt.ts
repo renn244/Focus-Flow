@@ -9,7 +9,7 @@ export const User = createParamDecorator(
 )
 
 export type UserJwt = {
-    id: UserDocument['_id'];
+    id: string;
     username: UserDocument['username'];
     email: UserDocument['email'];
     displayName: UserDocument['displayName'];

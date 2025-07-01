@@ -8,6 +8,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { EmailModule } from './email/email.module';
 import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.module';
 import { ForgetPasswordTokenModule } from './forget-password-token/forget-password-token.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { ForgetPasswordTokenModule } from './forget-password-token/forget-passwo
     AuthModule,
     EmailModule,
     VerifyEmailTokenModule,
-    ForgetPasswordTokenModule
+    ForgetPasswordTokenModule,
+    ProjectsModule
   ],
   controllers: [],
   providers: [],
