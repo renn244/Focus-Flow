@@ -1,46 +1,70 @@
-import { Zap } from "lucide-react"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import TaskItem from "./TaskItem"
+import { useState } from "react"
+
+const recentTasks = [
+    {
+        id: "TASK-1",
+        title: "Design new user dashboard",
+        projectName: "E-commerce Platform",
+        status: "in-progress",
+        priority: "high",
+        dueDate: "2024-01-20",
+        assignee: { name: "Sarah Chen", avatar: "/placeholder.svg?height=32&width=32", initials: "SC" },
+    },
+    {
+        id: "TASK-2",
+        title: "Implement payment gateway",
+        projectName: "E-commerce Platform",
+        status: "todo",
+        priority: "high",
+        dueDate: "2024-01-22",
+        assignee: { name: "Alex Rodriguez", avatar: "/placeholder.svg?height=32&width=32", initials: "AR" },
+    },
+]
 
 const WorkSummaryPanel = () => {
-    return (
-        <div>
-            <div className="border-b-1">
-                <div className="px-2 flex gap-3 items-center justify-baseline cursor-pointer">
-                    <h2 className="py-1.5 text-sm font-medium text-muted-foreground">
-                        Worked on
-                    </h2>
-                    <h2 className="py-1.5 text-sm font-medium text-muted-foreground text-primary border-b-[3px] border-b-primary">
-                        Assigned to me
-                    </h2>
-                    <h2 className="py-1.5 text-sm font-medium text-muted-foreground">
-                        Sprint overview
-                    </h2>
-                </div>
-            </div>
-            <div className="pb-1.5 px-2">
-                <div className="flex flex-col mt-4">
-                    <h3 className="text-xs font-bold uppercase text-muted-foreground">TO DO</h3>
+    const [activeTab, setActiveTab] = useState("worked-on")
 
-                    {/* current card for all for now */}
-                    {/* do individual cards later, it's just small adjustments */}
-                    <div className="p-2 flex items-center hover:bg-muted rounded-sm cursor-pointer">
-                        <div className="flex items-center justify-center" aria-label="icon">
-                            <Zap className="h-6 w-6 text-blue-700" />
-                        </div>
-                        <div className="flex-1 flex flex-col mx-2" aria-label="content">
-                            <h4 className="text-sm">Project Name</h4>
-                            <p className="text-xs font-thin text-muted-foreground">
-                                <span>Task Name</span>
-                                <span className="mx-1">·</span>
-                                <span>Project Name</span>
-                            </p>
-                        </div>
-                        <div aria-label="extra-info">
-                            <span className="pr-4 text-xs text-muted-foreground">To do</span>
-                        </div>
-                    </div>
+    return (
+        <>
+            <div className="mb-6">
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <TabsList className="bg-white border border-gray-200">
+                        <TabsTrigger
+                        value="worked-on"
+                        className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
+                        >
+                            Worked on
+                        </TabsTrigger>
+                        <TabsTrigger
+                        value="assigned-to-me"
+                        className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
+                        >
+                            Assigned to me
+                        </TabsTrigger>
+                        <TabsTrigger
+                        value="sprint-overview"
+                        className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
+                        >
+                            Sprint overview
+                        </TabsTrigger>
+                    </TabsList>
+                </Tabs>
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-gray-700 uppercase tracking-wide">TO DO</h3>
+                </div>
+
+                <div className="space-y-3">
+                    {recentTasks.map((task) => (
+                        <TaskItem key={task.id} task={task} />
+                    ))}
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

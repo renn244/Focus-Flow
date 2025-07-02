@@ -3,8 +3,8 @@ import WorkSummaryPanel from "@/features/projects/components/WorkSummaryPanel"
 
 const ProjectsDashboard = () => {
     return (
-        <div className="p-6 px-10 h-screen">
-            <div className="flex flex-col gap-6">
+        <div className="min-h-screen bg-gray-50">
+            <div className="p-6">
                 <RecentProjects />
 
                 <WorkSummaryPanel />
