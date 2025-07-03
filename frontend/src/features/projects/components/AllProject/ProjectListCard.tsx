@@ -1,13 +1,12 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Archive, CheckCircle, Circle, Edit, Eye, Folder, MoreHorizontal, Star, Trash2 } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { CheckCircle, Circle, Folder, Star } from "lucide-react"
 import { priorityColors, statusColors } from "../../constants/ProjectBadge"
 import useSelectedProjectStore from "../../store/useSelectedProject.store"
-import { Progress } from "@/components/ui/progress"
+import ProjectCardOptions from "./ProjectCardOptions"
+import { format } from "date-fns"
 
 const ProjectListCard = ({ project } : { project: any }) => {
     const selectedProjects = useSelectedProjectStore((state) => state.selectedProjects);
@@ -16,7 +15,7 @@ const ProjectListCard = ({ project } : { project: any }) => {
     return (
         <Card className="hover:shadow-sm transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-0.5 rounded-sm">
             <CardContent className="p-2">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                     <Checkbox
                     checked={selectedProjects.includes(project._id)}
                     onCheckedChange={() => handleSelectProject(project._id)}
@@ -75,34 +74,9 @@ const ProjectListCard = ({ project } : { project: any }) => {
                             ))} */}
                         </div>
 
-                        <span className="text-xs text-gray-500 w-20 text-right">{project.lastActivity}</span>
+                        <span className="text-xs text-gray-500 w-20 text-right">{format(new Date(project.updatedAt), "MMM dd, yyyy")}</span>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <MoreHorizontal className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <Eye className="w-4 h-4 mr-2" />
-                                    View project
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Edit className="w-4 h-4 mr-2" />
-                                    Edit details
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Archive className="w-4 h-4 mr-2" />
-                                    Archive
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-600">
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <ProjectCardOptions projectId={project._id} />
                     </div>
                 </div>
             </CardContent>
