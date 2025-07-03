@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import useProjectDialogStore from "../../store/useProjectDialog";
 import ProjectForm from "../form/ProjectForm";
 import { useEditProjectMutation } from "../../hooks/useEditProjectMutation";
-import { useGetProjectById } from "../../store/useGetProjectById";
+import { useGetProjectById } from "../../hooks/useGetProjectById";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 
 const EditProjectDialog = () => {

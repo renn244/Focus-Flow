@@ -12,8 +12,8 @@ export class Project {
     @Prop({ default: "active" })
     status: "active" | "archived" | "completed";
 
-    @Prop({ enum: ["low", "medium", "high"], default: "medium" })
-    priority: string;
+    @Prop({ default: "medium" })
+    priority: "low" | "medium" | "high";
 
     @Prop({ min: 0, max: 100, default: 0 })
     progress: number;

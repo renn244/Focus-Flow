@@ -10,6 +10,13 @@ type ProjectDialogState = {
     // Additional state for edit project dialog
     editProjectId: string | undefined; // Optional, can be set when opening the edit dialog
     setEditProjectId: (id: string) => void; // Optional, can be set when opening the edit dialog
+
+    // View Project Dialog
+    isViewOpen: boolean;
+    setViewOpen: (value: boolean) => void;
+    // Additional state for view project dialog
+    viewProjectId: string | undefined; // Optional, can be set when opening the view
+    setViewProjectId: (id: string | undefined | null) => void; // Optional, can be set when opening the view dialog
 }
 
 const useProjectDialogStore = create<ProjectDialogState>((set) => ({
@@ -36,6 +43,27 @@ const useProjectDialogStore = create<ProjectDialogState>((set) => ({
         } else {
             set({ editProjectId: id });
             set({ isEditOpen: true }); // Automatically open the edit dialog when setting the ID
+        }
+    },
+
+    //View Project Dialog
+    isViewOpen: false,
+    setViewOpen: (value) => {
+        if(value === false) {
+            set({ isViewOpen: false });
+            set({ viewProjectId: undefined }); // Reset viewProjectId when closing the dialog
+        }
+    },
+
+    // Additional state for view project dialog
+    viewProjectId: undefined,
+    setViewProjectId: (id: string | undefined | null) => {
+        if(id === undefined || id === null) {
+            set({ viewProjectId: undefined });
+            set({ isViewOpen: false }); // Close the view dialog when ID is empty
+        } else {
+            set({ viewProjectId: id });
+            set({ isViewOpen: true }); // Automatically open the view dialog when setting the ID
         }
     }
 }));

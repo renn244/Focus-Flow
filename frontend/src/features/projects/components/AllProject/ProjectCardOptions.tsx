@@ -11,6 +11,7 @@ const ProjectCardOptions = ({
     projectId
 }: ProjectCardOptionsProps) => {
     const setEditProjectId = useProjectDialogStore((state) => state.setEditProjectId);
+    const setViewProjectId = useProjectDialogStore((state) => state.setViewProjectId);
 
     return (
         <DropdownMenu>
@@ -20,7 +21,7 @@ const ProjectCardOptions = ({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setViewProjectId(projectId)}>
                     <Eye className="w-4 h-4 mr-2" />
                     View project
                 </DropdownMenuItem>

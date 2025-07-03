@@ -5,6 +5,7 @@ import CreateProjectDialog from "@/features/projects/components/AllProject/Creat
 import EditProjectDialog from "@/features/projects/components/AllProject/EditProjectDialog"
 import ProjectGridCard from "@/features/projects/components/AllProject/ProjectGridCard"
 import ProjectListCard from "@/features/projects/components/AllProject/ProjectListCard"
+import ViewProjectDialog from "@/features/projects/components/AllProject/ViewProjectDialog"
 import { useAllProjects } from "@/features/projects/hooks/useAllProject"
 import useProjectDialogStore from "@/features/projects/store/useProjectDialog"
 import useViewModeStore from "@/features/projects/store/useViewMode.store"
@@ -57,6 +58,8 @@ const AllProjects = () => {
                 <CreateProjectDialog />
 
                 <EditProjectDialog />
+
+                <ViewProjectDialog />
             </div>
         </div>
     )
