@@ -6,14 +6,35 @@ export class Project {
     @Prop({ required: true })
     name: string;
 
-    @Prop({ minlength: 10, maxlength: 100 })
+    @Prop({ minlength: 10, maxlength: 300 })
     description?: string;
 
     @Prop({ default: "active" })
     status: "active" | "archived" | "completed";
 
+    @Prop({ enum: ["low", "medium", "high"], default: "medium" })
+    priority: string;
+
+    @Prop({ min: 0, max: 100, default: 0 })
+    progress: number;
+
+    @Prop({ default: 0 })
+    totalTasks: number;
+
+    @Prop({ default: 0 })
+    completedTasks: number;
+
+    @Prop({ default: 0 })
+    openTasks: number;
+    
+    @Prop()
+    dueDate: Date;
+
     @Prop()
     color?: string; // just design bruh
+
+    @Prop({ default: false })
+    starred: boolean;
 
     @Prop({ type: Types.ObjectId, ref: 'User', required: true })
     ownerId: Types.ObjectId;

@@ -1,4 +1,4 @@
-import { IsString, MinLength, IsEnum, MaxLength, IsOptional } from "class-validator";
+import { IsString, MinLength, IsEnum, MaxLength, IsOptional, IsDateString } from "class-validator";
 
 export class CreateProjectDto {
     @IsString()
@@ -6,13 +6,13 @@ export class CreateProjectDto {
 
     @IsString()
     @MinLength(10, { message: 'Description must be at least 10 characters long.' })
-    @MaxLength(100, { message: 'Description must be at most 100 characters long.' })
+    @MaxLength(300, { message: 'Description must be at most 300 characters long.' })
     description?: string;
-
-    @IsEnum(["active", "archived", "completed"], { message: 'Status must be one of the following: active, archived, completed.' })
-    status: "active" | "archived" | "completed";
 
     @IsString()
     @IsOptional()
     color?: string;
+
+    @IsDateString()
+    dueDate: string;
 }

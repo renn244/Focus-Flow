@@ -33,8 +33,8 @@ export class ProjectsService {
         if(!project) {
             throw new NotFoundException("Project not found");
         }
-        console.log(project.ownerId.toString(), ownerId);
-        if(project.ownerId.toString() !== ownerId) {
+        
+        if(project.ownerId._id.toString() !== ownerId) {
             throw new ForbiddenException("You do not have permission to access this project info");
         }
 
