@@ -24,6 +24,13 @@ type ProjectDialogState = {
     // Additional state for archive project dialog
     archiveProjectId: string | undefined; // Optional, can be set when opening the archive
     setArchiveProjectId: (id: string | undefined | null) => void; // Optional, can be set when opening the archive dialog
+
+    // Delete Project Dialog
+    isDeleteOpen: boolean;
+    setDeleteOpen: (value: boolean) => void;
+    // Additional state for delete project dialog
+    deleteProjectId: string | undefined; // Optional, can be set when opening the delete
+    setDeleteProjectId: (id: string | undefined | null) => void; //
 }
 
 const useProjectDialogStore = create<ProjectDialogState>((set) => ({
@@ -92,6 +99,27 @@ const useProjectDialogStore = create<ProjectDialogState>((set) => ({
         } else {
             set({ archiveProjectId: id });
             set({ isArchiveOpen: true }); // Automatically open the archive dialog when setting the ID
+        }
+    },
+
+    // Delete Project Dialog
+    isDeleteOpen: false,
+    setDeleteOpen: (value) => {
+        if(value === false) {
+            set({ isDeleteOpen: false });
+            set({ deleteProjectId: undefined }); // Reset deleteProjectId when closing the dialog
+        }
+    },
+
+    // Additional state for delete project dialog
+    deleteProjectId: undefined,
+    setDeleteProjectId: (id: string | undefined | null) => {
+        if(id === undefined || id === null) {
+            set({ deleteProjectId: undefined });
+            set({ isDeleteOpen: false }); // Close the delete dialog when ID is empty
+        } else {
+            set({ deleteProjectId: id });
+            set({ isDeleteOpen: true }); // Automatically open the delete dialog when setting the ID
         }
     }
 }));

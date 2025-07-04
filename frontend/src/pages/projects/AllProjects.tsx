@@ -3,6 +3,7 @@ import LoadingSpinner from "@/components/ui/loadingSpinner"
 import ArchivedProjectDialog from "@/features/projects/components/AllProject/ArchivedProjectDialog"
 import Controls from "@/features/projects/components/AllProject/Controls"
 import CreateProjectDialog from "@/features/projects/components/AllProject/CreateProjectDialog"
+import DeleteProjectDialog from "@/features/projects/components/AllProject/DeleteProjectDialog"
 import EditProjectDialog from "@/features/projects/components/AllProject/EditProjectDialog"
 import ProjectGridCard from "@/features/projects/components/AllProject/ProjectGridCard"
 import ProjectListCard from "@/features/projects/components/AllProject/ProjectListCard"
@@ -63,6 +64,8 @@ const AllProjects = () => {
                 <ViewProjectDialog />
                 
                 <ArchivedProjectDialog />
+
+                <DeleteProjectDialog />
             </div>
         </div>
     )
