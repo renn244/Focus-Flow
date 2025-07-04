@@ -28,7 +28,7 @@ const ViewProjectDialog = () => {
                 {error && (
                     <>Something went wrong</>
                 )}
-                {(!project && !isLoading && !error ) && (
+                {(!project && !isLoading && !error) && (
                     <>Not Found</>
                 )}
                 {project && (

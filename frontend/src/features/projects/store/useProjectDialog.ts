@@ -17,6 +17,13 @@ type ProjectDialogState = {
     // Additional state for view project dialog
     viewProjectId: string | undefined; // Optional, can be set when opening the view
     setViewProjectId: (id: string | undefined | null) => void; // Optional, can be set when opening the view dialog
+
+    // Achived Project Dialog
+    isArchiveOpen: boolean;
+    setArchiveOpen: (value: boolean) => void;
+    // Additional state for archive project dialog
+    archiveProjectId: string | undefined; // Optional, can be set when opening the archive
+    setArchiveProjectId: (id: string | undefined | null) => void; // Optional, can be set when opening the archive dialog
 }
 
 const useProjectDialogStore = create<ProjectDialogState>((set) => ({
@@ -64,6 +71,27 @@ const useProjectDialogStore = create<ProjectDialogState>((set) => ({
         } else {
             set({ viewProjectId: id });
             set({ isViewOpen: true }); // Automatically open the view dialog when setting the ID
+        }
+    },
+
+    // Archive Project Dialog
+    isArchiveOpen: false,
+    setArchiveOpen: (value) => {
+        if(value === false) {
+            set({ isArchiveOpen: false });
+            set({ archiveProjectId: undefined }); // Reset archiveProjectId when closing the dialog
+        }
+    },
+
+    // Additional state for archive project dialog
+    archiveProjectId: undefined,
+    setArchiveProjectId: (id: string | undefined | null) => {
+        if(id === undefined || id === null) {
+            set({ archiveProjectId: undefined });
+            set({ isArchiveOpen: false }); // Close the archive dialog when ID is empty
+        } else {
+            set({ archiveProjectId: id });
+            set({ isArchiveOpen: true }); // Automatically open the archive dialog when setting the ID
         }
     }
 }));

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "@/components/ui/loadingSpinner"
+import ArchivedProjectDialog from "@/features/projects/components/AllProject/ArchivedProjectDialog"
 import Controls from "@/features/projects/components/AllProject/Controls"
 import CreateProjectDialog from "@/features/projects/components/AllProject/CreateProjectDialog"
 import EditProjectDialog from "@/features/projects/components/AllProject/EditProjectDialog"
@@ -60,6 +61,8 @@ const AllProjects = () => {
                 <EditProjectDialog />
 
                 <ViewProjectDialog />
+                
+                <ArchivedProjectDialog />
             </div>
         </div>
     )

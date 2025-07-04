@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Archive, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Archive, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import useProjectDialogStore from "../../store/useProjectDialog";
 
 type ProjectCardOptionsProps = {
@@ -12,6 +12,7 @@ const ProjectCardOptions = ({
 }: ProjectCardOptionsProps) => {
     const setEditProjectId = useProjectDialogStore((state) => state.setEditProjectId);
     const setViewProjectId = useProjectDialogStore((state) => state.setViewProjectId);
+    const setArchiveProjectId = useProjectDialogStore((state) => state.setArchiveProjectId)
 
     return (
         <DropdownMenu>
@@ -30,12 +31,12 @@ const ProjectCardOptions = ({
                     Edit details
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setArchiveProjectId(projectId)}>
                     <Archive className="w-4 h-4 mr-2" />
                     Archive
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600">
-                    <Trash2 className="w-4 h-4 mr-2" />
+                <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                    <Trash2 className="w-4 h-4 mr-2 text-red-600" />
                     Delete
                 </DropdownMenuItem>
             </DropdownMenuContent>
