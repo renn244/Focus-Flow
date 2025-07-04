@@ -5,6 +5,8 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
+import { UpdateProjectDto } from './dto/update-project.dto';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
@@ -13,26 +15,46 @@ export class ProjectsController {
         private readonly projectsService: ProjectsService
     ) {}
 
+    @ApiBearerAuth()
     @Post()
     async createProject(@Body() body: CreateProjectDto, @User() user: UserJwt) {
         return this.projectsService.createProject(body, user);
     }
 
+    @ApiBearerAuth()
     @Get()
     async getProjects(@User() user: UserJwt) {
         return this.projectsService.getProjects(user);
     }
 
+    @ApiParam({ 
+        name: 'id', type: String, 
+        example: '60c72b2f9b1e8c001c8e4d3a',
+        description: 'Project Id (ObjectId)'
+    })
+    @ApiBearerAuth()
     @Get(':id')
     async getProjectById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
         return this.projectsService.getProjectById(id, user);
     }
 
+    @ApiParam({ 
+        name: 'id', type: String, 
+        description: 'Project Id (ObjectId)',
+        example: '60c72b2f9b1e8c001c8e4d3a',
+    })
+    @ApiBearerAuth()
     @Patch(':id')
-    async updateProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: CreateProjectDto, @User() user: UserJwt) {
+    async updateProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateProjectDto, @User() user: UserJwt) {
         return this.projectsService.updateProject(id, body, user);
     }
 
+    @ApiParam({ 
+        name: 'id', type: String,  
+        description: 'Project Id (ObjectId)',
+        example: '60c72b2f9b1e8c001c8e4d3a',
+    })
+    @ApiBearerAuth()
     @Delete(':id')
     async deleteProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
         return this.projectsService.deleteProject(id, user);

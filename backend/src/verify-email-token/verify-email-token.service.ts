@@ -6,6 +6,9 @@ import { UserService } from 'src/user/user.service';
 import { CreateVerifyTokenDto } from './dto/create-verify-token.dto';
 import { EmailService } from 'src/email/email.service';
 import generateToken from 'src/lib/utils/generateToken';
+import { VerifyEmailTokenDto } from './dto/verify-email-token.dto';
+import { ResendEmailTokenDto } from './dto/resend-email-token.dto';
+import { NewVerificationTokenDto } from './dto/new-verification-token.dto';
 
 @Injectable()
 export class VerifyEmailTokenService {
@@ -26,7 +29,7 @@ export class VerifyEmailTokenService {
         return newToken; 
     }
 
-    async verify(token: string) {
+    async verify({ token }: VerifyEmailTokenDto) {
         const emailToken = await this.verifyEmailTokenModel.findOne({ token });
 
         if(!emailToken) {
@@ -74,7 +77,7 @@ export class VerifyEmailTokenService {
         }
     }
 
-    async resend(email: string) {
+    async resend({ email }: ResendEmailTokenDto) {
         const token = await this.verifyEmailTokenModel.findOne({ email });
 
         if(!token) {
@@ -92,7 +95,7 @@ export class VerifyEmailTokenService {
         }
     }
 
-    async newVerification(email: string) {
+    async newVerification({ email }: NewVerificationTokenDto) {
         const existingToken = await this.verifyEmailTokenModel.findOne({ email });
         if(existingToken) {
             throw new BadRequestException('A verification token already exists for this email');

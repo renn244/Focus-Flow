@@ -1,5 +1,5 @@
+import { PartialType } from "@nestjs/swagger";
 import { CreateProjectDto } from "./create-project.dto";
-import { PartialType } from "@nestjs/mapped-types";
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     // @IsEnum(["active", "archived", "completed"], { message: 'Status must be one of the following: active, archived, completed.' })
