@@ -5,7 +5,7 @@ import type { AxiosResponse } from "axios";
 import useProjectDialogStore from "../store/useProjectDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-type deleteProjectSuccessResponse = any;
+type deleteProjectSuccessResponse = { message: string };
 type deleteProjectResponse = AxiosResponse<deleteProjectSuccessResponse, ExceptionResponse>;
 
 const deleteProject = async (projectId: string): Promise<deleteProjectResponse['data']> => {

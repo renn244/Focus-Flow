@@ -15,8 +15,6 @@ const MultiFactor = () => {
     const [selectedMethod, setSelectedMethod] = useState<MultifactorMethods>("authenticator")
     const availableMethods: MultifactorMethods[] = ["authenticator", "email"]
 
-
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
             <Card className="w-full max-w-md">

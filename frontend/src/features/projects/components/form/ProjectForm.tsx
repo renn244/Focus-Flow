@@ -56,7 +56,7 @@ const ProjectForm = ({
             name: initialData?.name || "", 
             description: initialData?.description ||"",
             priority: initialData?.priority || undefined, 
-            dueDate: initialData?.dueDate ? new Date(initialData.dueDate) : undefined,
+            dueDate: initialData?.dueDate ? initialData.dueDate : undefined,
             color: initialData?.color || "", 
         },
     })

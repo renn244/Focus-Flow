@@ -40,8 +40,8 @@ const EditProjectDialog = () => {
                         name: data.name,
                         description: data.description,
                         priority: data.priority,
-                        color: data.color,
-                        dueDate: data.dueDate,
+                        color: data.color || "",
+                        dueDate: new Date(data.dueDate),
                     }}
                     onsubmit={mutate as any}
                     isLoading={isPending}

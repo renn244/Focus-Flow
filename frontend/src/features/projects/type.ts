@@ -6,10 +6,33 @@ export type Project = {
     name: string;
     description: string;
     status: 'active' | 'archived' | 'completed';
-    color?: string; // just design bruh
+    priority: 'low' | 'medium' | 'high';
+    
+    progress: number;
+    totalTasks: number;
+    completedTasks: number;
+    openTasks: number;
+
+    dueDate: string; 
+    color?: string;
+    starred: boolean;
 
     createdAt: string;
     updatedAt: string;
 }
+
+export type ProjectList = Project[];
+
+export type ProjectWithOwner = Project & {
+    ownerId: {
+        _id: string;
+        name: string;
+        displayName: string;
+        email: string;
+        avatar?: string;
+    }
+}
+
+export type ProjectWithOwnerList = ProjectWithOwner[];
 
 export type ProjectSchema = z.infer<typeof ProjectFormSchema>;

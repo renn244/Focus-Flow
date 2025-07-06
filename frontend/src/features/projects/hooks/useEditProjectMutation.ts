@@ -4,9 +4,10 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import type { AxiosResponse } from "axios";
 import useProjectDialogStore from "../store/useProjectDialog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ProjectWithOwner } from "../type";
 
 
-type editProjectSuccessResponse = any;
+type editProjectSuccessResponse = ProjectWithOwner;
 type editProjectResponse = AxiosResponse<editProjectSuccessResponse, ExceptionResponse>;
 
 const editProject = async (id: string, data: any): Promise<editProjectResponse['data']> => {

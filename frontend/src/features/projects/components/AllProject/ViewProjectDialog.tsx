@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import LoadingSpinner from "@/components/ui/loadingSpinner"
 import { Progress } from "@/components/ui/progress"
+import { Link } from "@tanstack/react-router"
 import { format } from "date-fns"
 import { Calendar, CheckCircle, Circle, Clock, Edit, ExternalLink, Star, Target, User } from "lucide-react"
 import { priorityColors, statusColors } from "../../constants/ProjectBadge"
@@ -40,14 +41,13 @@ const ViewProjectDialog = () => {
 }
 
 const ViewProject = ({ project } : { project: any }) => {
+    const setViewOpen = useProjectDialogStore((state) => state.setViewOpen);
+    const setEditProjectId = useProjectDialogStore((state) => state.setEditProjectId);
     const daysUntilDue = Math.ceil((new Date(project.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 
     const onEdit = () => {
-        console.log("Edit project")
-    }
-    
-    const onViewFull = () => {
-        console.log("View full project")
+        setViewOpen(false);
+        setEditProjectId(project._id);
     }
 
     return (
@@ -76,12 +76,13 @@ const ViewProject = ({ project } : { project: any }) => {
                                 Edit
                             </Button>
                         )}
-                        {onViewFull && (
-                            <Button variant="outline" size="sm" onClick={onViewFull}>
+                        
+                        <Button variant="outline" size="sm" asChild>
+                            <Link to={`/projects/view/$projectId`} params={{ projectId: project._id }}>
                                 <ExternalLink className="w-4 h-4 mr-2" />
                                 View Full
-                            </Button>
-                        )}
+                            </Link>
+                        </Button>
                     </div>
                 </div>
 

@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Archive, Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import useProjectDialogStore from "../../store/useProjectDialog";
+import type { Project } from "../../type";
 
 type ProjectCardOptionsProps = {
-    projectId: string;
+    projectId: Project['_id'];
 }
 
 const ProjectCardOptions = ({

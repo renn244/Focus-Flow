@@ -2,8 +2,9 @@ import axiosInstance from "@/lib/httpService";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
+import type { ProjectWithOwner } from "../type";
 
-type getProjectByIdSuccessResponse = any; // project schema
+type getProjectByIdSuccessResponse = ProjectWithOwner; // project schema
 type getProjectByIdResponse = AxiosResponse<getProjectByIdSuccessResponse, ExceptionResponse>;
 
 const getProjectById = async (id: string): Promise<getProjectByIdResponse['data'] | null> => {

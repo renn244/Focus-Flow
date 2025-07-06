@@ -5,8 +5,9 @@ import { format } from "date-fns"
 import { Calendar, CheckCircle, Circle, Folder, Star } from "lucide-react"
 import { priorityColors, statusColors } from "../../constants/ProjectBadge"
 import ProjectCardOptions from "./ProjectCardOptions"
+import type { ProjectWithOwner } from "../../type"
 
-const ProjectGridCard = ({ project }: { project: any } ) => {
+const ProjectGridCard = ({ project }: { project: ProjectWithOwner } ) => {
     
     return (
         <Card className="hover:shadow-md transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-0">

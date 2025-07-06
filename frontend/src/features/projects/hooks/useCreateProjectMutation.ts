@@ -4,9 +4,9 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import useProjectDialogStore from "../store/useProjectDialog";
-import type { ProjectSchema } from "../type";
+import type { ProjectSchema, ProjectWithOwner } from "../type";
 
-type createProjectSuccessResponse = any;
+type createProjectSuccessResponse = ProjectWithOwner;
 type createProjectResponse = AxiosResponse<createProjectSuccessResponse, ExceptionResponse>;
 
 const createProject = async (data: ProjectSchema): Promise<createProjectResponse['data']> => {
