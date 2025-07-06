@@ -8,7 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 type deleteProjectSuccessResponse = any;
 type deleteProjectResponse = AxiosResponse<deleteProjectSuccessResponse, ExceptionResponse>;
 
-const deleteProject = async (projectId: string) => {
+const deleteProject = async (projectId: string): Promise<deleteProjectResponse['data']> => {
     const response = await axiosInstance.delete(`/projects/${projectId}`);
 
     if (response.status === 400) {
