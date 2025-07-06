@@ -5,7 +5,7 @@ import { validate } from 'class-validator';
 @Injectable()
 export class CustomValidationPipe implements PipeTransform {
     async transform(value: any, metadata: ArgumentMetadata) {
-        if(metadata.type !== 'body') {
+        if(metadata.type !== 'body' && metadata.type !== 'query') {
             return value;
         }
 

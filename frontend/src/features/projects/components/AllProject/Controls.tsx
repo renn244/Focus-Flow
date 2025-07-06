@@ -1,34 +1,21 @@
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Archive, Download, Grid3X3, List, Plus } from "lucide-react"
-import useViewModeStore from "../../store/useViewMode.store"
-import useSelectedProjectStore from "../../store/useSelectedProject.store"
-import useProjectFilterStore from "../../store/useProjectFilter"
+import { Grid3X3, List, Plus } from "lucide-react"
 import useProjectDialogStore from "../../store/useProjectDialog"
+import useProjectFilterStore from "../../store/useProjectFilter"
+import useViewModeStore from "../../store/useViewMode.store"
 
 const Controls = () => {
     const { viewMode, setViewMode } = useViewModeStore();
     const setCreateOpen = useProjectDialogStore((state) => state.setCreateOpen);
     const filterStatus = useProjectFilterStore((state) => state.filterStatus);
     const setFilterStatus = useProjectFilterStore((state) => state.setFilterStatus);
-    const selectedProjects = useSelectedProjectStore((state) => state.selectedProjects);
+    const filterPriority = useProjectFilterStore((state) => state.filterPriority);
+    const setFilterPriority = useProjectFilterStore((state) => state.setFilterPriority);
 
     return (
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-                {selectedProjects.length > 0 && (
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">{selectedProjects.length} selected</span>
-                        <Button variant="outline" size="sm">
-                            <Archive className="w-4 h-4 mr-2" />
-                            Archive
-                        </Button>
-                        <Button variant="outline" size="sm">
-                            <Download className="w-4 h-4 mr-2" />
-                            Export
-                        </Button>
-                    </div>
-                )}
 
                 {/* Filters */}
                 <div className="flex items-center gap-2">
@@ -40,11 +27,22 @@ const Controls = () => {
                             <SelectItem value="all">All Status</SelectItem>
                             <SelectItem value="active">Active</SelectItem>
                             <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="on-hold">On Hold</SelectItem>
                             <SelectItem value="archived">Archived</SelectItem>
                         </SelectContent>
                     </Select>
                     
+                    <Select value={filterPriority} onValueChange={setFilterPriority}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Priority</SelectItem>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                        </SelectContent>
+                    </Select>
+
                     {/* DO LATER!!! */}
                     {/* <Select value={sortBy} onValueChange={setSortBy}>
                         <SelectTrigger className="w-40">

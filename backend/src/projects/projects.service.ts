@@ -5,6 +5,7 @@ import { Project, ProjectDocument } from 'src/schema/Project.schema';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { GetProjectQueryDto } from './dto/get-project-query.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -19,9 +20,13 @@ export class ProjectsService {
         return project;
     }
 
-    async getProjects(user: UserJwt) {
+    async getProjects(user: UserJwt, query: GetProjectQueryDto) {
         const ownerId = user.id;
-        const projects = await this.projectModel.find({ ownerId}).populate('ownerId', 'username email displayName avatarUrl')
+        const projects = await this.projectModel.find({ 
+            ownerId, 
+            ...(query.status && query.status !== 'all' ? { status: query .status } : {}),
+            ...(query.priority && query.priority !== 'all' ? { priority: query.priority } : {})
+        }).populate('ownerId', 'username email displayName avatarUrl')
     
         return projects;
     }
