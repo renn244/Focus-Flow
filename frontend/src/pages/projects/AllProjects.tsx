@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import LoadingSpinner from "@/components/ui/loadingSpinner"
 import ArchivedProjectDialog from "@/features/projects/components/AllProject/ArchivedProjectDialog"
 import Controls from "@/features/projects/components/AllProject/Controls"
 import CreateProjectDialog from "@/features/projects/components/AllProject/CreateProjectDialog"
@@ -7,6 +6,7 @@ import DeleteProjectDialog from "@/features/projects/components/AllProject/Delet
 import EditProjectDialog from "@/features/projects/components/AllProject/EditProjectDialog"
 import ProjectGridCard from "@/features/projects/components/AllProject/ProjectGridCard"
 import ProjectListCard from "@/features/projects/components/AllProject/ProjectListCard"
+import ProjectSkeletonLoading from "@/features/projects/components/AllProject/Skeleton/ProjectSkeletonLoading"
 import ViewProjectDialog from "@/features/projects/components/AllProject/ViewProjectDialog"
 import { useAllProjects } from "@/features/projects/hooks/useAllProject"
 import useProjectDialogStore from "@/features/projects/store/useProjectDialog"
@@ -19,7 +19,7 @@ const AllProjects = () => {
     const { data: projects, error, isLoading } = useAllProjects();
 
     if(isLoading) {
-        return <LoadingSpinner />
+        return <ProjectSkeletonLoading />
     }
 
     if(error) {
@@ -27,7 +27,7 @@ const AllProjects = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen">
             <div className="p-6">
                 <Controls />
 

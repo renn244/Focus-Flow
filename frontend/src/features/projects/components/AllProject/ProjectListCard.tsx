@@ -1,26 +1,17 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle, Circle, Folder, Star } from "lucide-react"
 import { priorityColors, statusColors } from "../../constants/ProjectBadge"
-import useSelectedProjectStore from "../../store/useSelectedProject.store"
 import ProjectCardOptions from "./ProjectCardOptions"
 import { format } from "date-fns"
 
 const ProjectListCard = ({ project } : { project: any }) => {
-    const selectedProjects = useSelectedProjectStore((state) => state.selectedProjects);
-    const handleSelectProject = useSelectedProjectStore((state) => state.handleSelectProject);
 
     return (
         <Card className="hover:shadow-sm transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-0.5 rounded-sm">
             <CardContent className="p-2">
                 <div className="flex items-center gap-2">
-                    <Checkbox
-                    checked={selectedProjects.includes(project._id)}
-                    onCheckedChange={() => handleSelectProject(project._id)}
-                    onClick={(e) => e.stopPropagation()}
-                    />
 
                     <div className={`w-8 h-8 rounded ${project.color} flex items-center justify-center flex-shrink-0`}>
                         <Folder className="w-4 h-4 text-white" />
@@ -65,7 +56,7 @@ const ProjectListCard = ({ project } : { project: any }) => {
                             </div>
                         </div>
 
-                        <div className="flex -space-x-2">
+                        <div className="flex space-x-2">
                             {/* {project.team.slice(0, 3).map((member, index) => (
                                 <Avatar key={index} className="w-6 h-6 border-2 border-white">
                                     <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
