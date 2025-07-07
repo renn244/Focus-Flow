@@ -28,6 +28,12 @@ export class ProjectsController {
         return this.projectsService.getProjects(user, query);
     }
 
+    @ApiBearerAuth()
+    @Get('recent')
+    async getRecentProjects(@User() user: UserJwt) {
+        return this.projectsService.getRecentProjects(user);
+    }
+
     @ApiParam({ name: 'id', type: String,  example: '60c72b2f9b1e8c001c8e4d3a', description: 'Project Id (ObjectId)' })
     @ApiBearerAuth()
     @Get(':id')

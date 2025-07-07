@@ -38,6 +38,9 @@ export class Project {
 
     @Prop({ type: Types.ObjectId, ref: 'User', required: true })
     ownerId: Types.ObjectId;
+
+    @Prop({ default: Date.now })
+    lastSeen: Date;
 }
 
 export const projectSchema = SchemaFactory.createForClass(Project);

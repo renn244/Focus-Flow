@@ -9,14 +9,14 @@ const RecentProjectCard = ({ project }: { project: any }) => {
             <CardContent className="p-4">
                 <div className="space-y-2">
 
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between ">
                         <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded ${project.color} flex items-center justify-center`}>
+                            <div className={`w-8 h-8 p-2 rounded ${project.color} flex items-center justify-center`}>
                                 <Folder className="w-4 h-4 text-white" />
                             </div>
                             <div>
                                 <h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors">{project.name}</h3>
-                                <p className="text-sm text-gray-500">{project.description}</p>
+                                <p className="text-sm text-gray-500 line-clamp-2 min-h-10">{project.description}</p>
                             </div>
                         </div>
                         {project.starred && <Star className="w-4 h-4 text-yellow-500 fill-current" />}

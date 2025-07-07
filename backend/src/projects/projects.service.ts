@@ -31,6 +31,15 @@ export class ProjectsService {
         return projects;
     }
 
+    async getRecentProjects(user: UserJwt) {
+        const ownerId = user.id;
+        const projects = await this.projectModel.find({ ownerId })
+            .sort({ lastSeen: -1 })
+            .limit(5)
+
+        return projects;
+    }
+
     async getProjectById(id: Types.ObjectId, user: UserJwt) {
         const ownerId = user.id;
         const project = await this.projectModel.findById(id).populate('ownerId', 'username email displayName avatarUrl');
@@ -45,6 +54,8 @@ export class ProjectsService {
 
         return project
     }
+
+    
 
     async updateProject(id: Types.ObjectId, body: UpdateProjectDto, user: UserJwt) {
         const ownerId = user.id;
