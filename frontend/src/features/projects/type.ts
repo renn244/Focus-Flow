@@ -24,12 +24,11 @@ export type Project = {
 export type ProjectList = Project[];
 
 export type ProjectWithOwner = Project & {
-    ownerId: {
-        _id: string;
+    owner: {
         name: string;
         displayName: string;
         email: string;
-        avatar?: string;
+        avatarUrl?: string;
     }
 }
 

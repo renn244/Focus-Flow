@@ -6,6 +6,8 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { GetProjectQueryDto } from './dto/get-project-query.dto';
+import { plainToInstance } from 'class-transformer';
+import { ProjectDto, ProjectWithOwnerDto } from './dto/response-dto';
 
 @Injectable()
 export class ProjectsService {
@@ -17,7 +19,10 @@ export class ProjectsService {
         const ownerId = user.id;
         const project = await this.projectModel.create({ ...body, ownerId })
 
-        return project;
+        return plainToInstance(ProjectDto, project, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
     }
 
     async getProjects(user: UserJwt, query: GetProjectQueryDto) {
@@ -28,7 +33,10 @@ export class ProjectsService {
             ...(query.priority && query.priority !== 'all' ? { priority: query.priority } : {})
         }).populate('ownerId', 'username email displayName avatarUrl')
     
-        return projects;
+        return plainToInstance(ProjectWithOwnerDto, projects, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
     }
 
     async getRecentProjects(user: UserJwt) {
@@ -37,7 +45,10 @@ export class ProjectsService {
             .sort({ lastSeen: -1 })
             .limit(5)
 
-        return projects;
+        return plainToInstance(ProjectDto, projects, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
     }
 
     async getProjectById(id: Types.ObjectId, user: UserJwt) {
@@ -52,10 +63,11 @@ export class ProjectsService {
             throw new ForbiddenException("You do not have permission to access this project info");
         }
 
-        return project
-    }
-
-    
+        return plainToInstance(ProjectWithOwnerDto, project, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
+    }    
 
     async updateProject(id: Types.ObjectId, body: UpdateProjectDto, user: UserJwt) {
         const ownerId = user.id;
@@ -73,7 +85,10 @@ export class ProjectsService {
             { _id: id, ownerId }, body, { new: true }
         ).populate('ownerId', 'username email displayName avatarUrl');
     
-        return updatedProject;
+        return plainToInstance(ProjectWithOwnerDto, updatedProject, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
     }
 
     async deleteProject(id: Types.ObjectId, user: UserJwt) {

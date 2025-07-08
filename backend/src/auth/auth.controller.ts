@@ -47,8 +47,7 @@ export class AuthController {
     @ApiServiceUnavailableResponse({ description: 'Failed to create user' })
     // add ValidationException ApiResponse for swagger later
     @ApiResponse({
-        status: 201, type: 'application/json',
-        description: 'User created successfully',
+        status: 201, description: 'User created successfully',
         example: { message: 'User created successfully', email: 'john_doe@gmail.com',  }
     })
     @Post('local/signup')

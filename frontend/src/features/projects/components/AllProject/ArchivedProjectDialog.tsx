@@ -7,6 +7,7 @@ import { AlertTriangle, Archive, Info } from "lucide-react";
 import { useGetProjectById } from "../../hooks/useGetProjectById";
 import useProjectDialogStore from "../../store/useProjectDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { ProjectWithOwner } from "../../type";
 
 const ArchivedProjectDialog = () => {
     const isArchiveOpen = useProjectDialogStore((state) => state.isArchiveOpen);
@@ -37,7 +38,7 @@ const ArchivedProjectDialog = () => {
     )
 }
 
-const ArchivedProject = ({ project }: { project: any }) => {
+const ArchivedProject = ({ project }: { project: ProjectWithOwner }) => {
     const setArchiveOpen = useProjectDialogStore((state) => state.setArchiveOpen);
     // put the proper hook here
 

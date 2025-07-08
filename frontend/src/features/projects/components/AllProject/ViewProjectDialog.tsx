@@ -10,6 +10,7 @@ import { Calendar, CheckCircle, Circle, Clock, Edit, ExternalLink, Star, Target,
 import { priorityColors, statusColors } from "../../constants/ProjectBadge"
 import { useGetProjectById } from "../../hooks/useGetProjectById"
 import useProjectDialogStore from "../../store/useProjectDialog"
+import type { ProjectWithOwner } from "../../type"
 
 const ViewProjectDialog = () => {
     const isViewOpen = useProjectDialogStore((state) => state.isViewOpen);
@@ -40,7 +41,7 @@ const ViewProjectDialog = () => {
     )
 }
 
-const ViewProject = ({ project } : { project: any }) => {
+const ViewProject = ({ project } : { project: ProjectWithOwner }) => {
     const setViewOpen = useProjectDialogStore((state) => state.setViewOpen);
     const setEditProjectId = useProjectDialogStore((state) => state.setEditProjectId);
     const daysUntilDue = Math.ceil((new Date(project.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
@@ -161,10 +162,10 @@ const ViewProject = ({ project } : { project: any }) => {
                                 <span className="text-gray-600">Owner:</span>
                                 <div className="flex items-center gap-2">
                                     <Avatar className="w-5 h-5">
-                                        <AvatarImage src={project.ownerId.avatar || "/placeholder.svg"} alt={project.ownerId.name} />
-                                        <AvatarFallback className="text-xs">{project.ownerId.initials}</AvatarFallback>
+                                        <AvatarImage src={project.owner.avatarUrl || "/placeholder.svg"} alt={project.owner.name} />
+                                        <AvatarFallback className="text-xs">{project.owner.displayName.slice(0, 2)}</AvatarFallback>
                                     </Avatar>
-                                    <span className="font-medium">{project.ownerId.name}</span>
+                                    <span className="font-medium">{project.owner.name}</span>
                                 </div>
                             </div>
                             {/* <div className="flex items-center gap-2 text-sm">

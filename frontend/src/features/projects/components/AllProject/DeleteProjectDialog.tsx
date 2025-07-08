@@ -11,6 +11,7 @@ import useProjectDialogStore from "../../store/useProjectDialog"
 import { useGetProjectById } from "../../hooks/useGetProjectById"
 import { useState } from "react"
 import { useDeleteProjectMutation } from "../../hooks/useDeleteProjectMutation"
+import type { ProjectWithOwner } from "../../type"
 
 
 const DeleteProjectDialog = () => {
@@ -42,7 +43,7 @@ const DeleteProjectDialog = () => {
     )
 }
 
-const DeleteProject = ({ project }: { project: any }) => {
+const DeleteProject = ({ project }: { project: ProjectWithOwner }) => {
     const setDeleteOpen = useProjectDialogStore((state) => state.setDeleteOpen);
     const [confirmationText, setConfirmationText] = useState("");
 
