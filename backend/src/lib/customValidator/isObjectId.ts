@@ -22,13 +22,12 @@ import { Types } from "mongoose";
  * }
  */
 
-export function IsObjectId(property: any, validationOptions?: ValidationOptions) {
+export function IsObjectId(validationOptions?: ValidationOptions) {
     return function(object: Object, propertyName: string) {
         registerDecorator({
             name: 'IsObjectId',
             target: object.constructor,
             propertyName: propertyName,
-            constraints: [property],
             options: validationOptions,
             validator: {
                 validate(value: any, args: ValidationArguments) {

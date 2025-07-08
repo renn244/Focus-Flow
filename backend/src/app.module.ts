@@ -9,6 +9,7 @@ import { EmailModule } from './email/email.module';
 import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.module';
 import { ForgetPasswordTokenModule } from './forget-password-token/forget-password-token.module';
 import { ProjectsModule } from './projects/projects.module';
+import { BoardModule } from './board/board.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProjectsModule } from './projects/projects.module';
     EmailModule,
     VerifyEmailTokenModule,
     ForgetPasswordTokenModule,
-    ProjectsModule
+    ProjectsModule,
+    BoardModule
   ],
   controllers: [],
   providers: [],
