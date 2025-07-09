@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model, Types } from 'mongoose';
+import { ClientSession, Connection, Model, Types } from 'mongoose';
 import { Column, ColumnDocument } from 'src/schema/Column.schema';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
@@ -103,5 +103,28 @@ export class ColumnService {
         }
 
         return column.tasks.map(task => task.toString());
+    }
+
+    async addTaskToColumn(columnId: string, taskId: Types.ObjectId, session?: ClientSession) {
+        // might wanna add permission to check if the column belongs to the user
+        const updatedColumn = await this.columnModel.findOneAndUpdate(
+            { _id: columnId }, { $push: { tasks: taskId } }, { new: true }
+        );
+
+        return plainToInstance(ColumnDto, updatedColumn, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
+    }
+
+    async removeTaskFromColumn(columnId: string, taskId: Types.ObjectId, session?: ClientSession) {
+        const updatedColumn = await this.columnModel.findOneAndUpdate(
+            { _id: columnId }, { $pull: { tasks: taskId } }, { new: true, session }
+        );
+
+        return plainToInstance(ColumnDto, updatedColumn, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
     }
 }

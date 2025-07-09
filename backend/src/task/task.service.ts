@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model, Types } from 'mongoose';
 import { Task, TaskDocument } from 'src/schema/Task.schema';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
@@ -13,16 +13,30 @@ import { TaskDto } from './dto/response-dto';
 export class TaskService {
     constructor(
         @InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>,
+        @InjectConnection() private readonly connection: Connection,
         private readonly columnService: ColumnService,
     ) {}
 
     async createTask(body: CreateTaskDto) {
-        const newTask = await this.taskModel.create(body);
+        const session = await this.connection.startSession();
+        session.startTransaction();
+        
+        try {
+            const newTask = await this.taskModel.create([body], { session });
+            await this.columnService.addTaskToColumn(body.columnId, newTask[0]._id, session)
+            
+            await session.commitTransaction();
 
-        return plainToInstance(TaskDto, newTask, {
-            excludeExtraneousValues: true,
-            enableImplicitConversion: true,
-        });
+            return plainToInstance(TaskDto, newTask[0], {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        } catch (error) {
+            await session.abortTransaction();
+            throw error; // Re-throw the error to be handled by the filter
+        } finally {
+            session.endSession();
+        }
     }
 
     async getTaskByColumnId(boardId: Types.ObjectId) {
@@ -73,6 +87,8 @@ export class TaskService {
     async deleteTask(id: Types.ObjectId) {
         const task = await this.taskModel.deleteOne({ _id: id });
 
+        // make sure to remove the column from the board as well so that it does not leave a orphan reference
+        // await this.columnService.removeColumnFromBoard(id);
         if(task.deletedCount === 0) {
             throw new NotFoundException("Task not found or you do not have permission to delete this task");
         }
