@@ -25,7 +25,7 @@ export class BoardController {
 
     // use ProjectGuard here to ensure the user has access to the project
     @ApiBearerAuth()
-    @Get(':projectId')
+    @Get('byProject/:projectId')
     async getBoards(@Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId, @User() user: UserJwt) {
         return this.boardService.getBoards(projectId, user);
     }

@@ -15,6 +15,7 @@ import { BoardAccessGuard } from 'src/lib/guards/BoardAccessGuard';
     ])
   ],
   providers: [BoardService, BoardAccessGuard],
-  controllers: [BoardController]
+  controllers: [BoardController],
+  exports: [BoardService]
 })
 export class BoardModule {}

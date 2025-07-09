@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
 import { Board, BoardDocument } from 'src/schema/Board.schema';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
@@ -65,12 +65,48 @@ export class BoardService {
     }
 
     async deleteBoard(id: Types.ObjectId, user: UserJwt) {
-        const project = await this.boardModel.deleteOne({ _id: id });
+        const board = await this.boardModel.deleteOne({ _id: id });
 
-        if(project.deletedCount === 0) {
+        if(board.deletedCount === 0) {
             throw new NotFoundException("Board not found or you do not have permission to delete this board");
         }
 
         return { message: "Board deleted successfully" };
+    }
+
+    async getColumnsId(boardId: Types.ObjectId) {
+        const board = await this.boardModel.findById(boardId).select('columns');
+
+        if (!board) {
+            throw new NotFoundException('Board not found');
+        }
+
+        return board.columns.map(column => column.toString());
+    }
+
+    // maybe use rabit MQ in here??
+    async addColumnToBoard(boardId: string, columnId: Types.ObjectId, session?: ClientSession) {
+        // might wanna add permission to check if the board belongs to the user
+
+        const updatedBoard = await this.boardModel.findByIdAndUpdate(
+            { _id: boardId }, { $push: { columns: columnId } } , { new: true, session }
+        )
+
+        return plainToInstance(BoardDto, updatedBoard, { 
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        }) 
+    }
+
+    // maybe use rabit MQ in here??
+    async removeColumnFromBoard(boardId: string, columnId: Types.ObjectId, session?: ClientSession) {
+        const updatedBoard = await this.boardModel.findByIdAndUpdate(
+            { _id: boardId }, { $pull: { columns: columnId } }, { new: true, session }
+        );
+
+        return plainToInstance(BoardDto, updatedBoard, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
     }
 }
