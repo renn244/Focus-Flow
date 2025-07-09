@@ -6,6 +6,8 @@ import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { BoardService } from 'src/board/board.service';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
+import { plainToInstance } from 'class-transformer';
+import { ColumnDto } from './dto/response-dto';
 
 @Injectable()
 export class ColumnService {
@@ -25,7 +27,10 @@ export class ColumnService {
         
             await session.commitTransaction();
         
-            return newColumn;
+            return plainToInstance(ColumnDto, newColumn[0], {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            });
         } catch (error) {
             await session.abortTransaction();
             throw error; // Re-throw the error to be handled by the filter
@@ -43,7 +48,10 @@ export class ColumnService {
 
         const columns = await this.columnModel.find({ _id: { $in: columnIds } });
 
-        return columns
+        return plainToInstance(ColumnDto, columns, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        })
     }
 
     async getColumnById(id: Types.ObjectId) {
@@ -53,7 +61,10 @@ export class ColumnService {
             throw new NotFoundException('Column not found');
         }
 
-        return column;
+        return plainToInstance(ColumnDto, column, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
     }
 
     async updateColumn(id: Types.ObjectId, body: UpdateColumnDto) {
@@ -67,7 +78,10 @@ export class ColumnService {
             { _id: id }, body, { new: true }
         );
 
-        return updatedColumn;
+        return plainToInstance(ColumnDto, updatedColumn, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
     }
 
     async deleteColumn(id: Types.ObjectId) {

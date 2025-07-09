@@ -1,5 +1,6 @@
 import { Expose, plainToInstance, Transform } from "class-transformer";
 import { Types } from "mongoose";
+import { ColumnDto } from "src/column/dto/response-dto";
 
 export class BoardDto {
     @Expose()
@@ -13,30 +14,6 @@ export class BoardDto {
 
     @Expose()
     columns: any[]; // Assuming columns is an array of objects
-
-    @Expose()
-    createdAt: Date;
-
-    @Expose()
-    updatedAt: Date;
-}
-
-export class ColumnDto {
-    @Expose()
-    _id: string;
-
-    @Expose()
-    title: string;
-
-    @Expose()
-    color: string;
-
-    @Expose()
-    order: number;
-
-    @Expose()
-    @Transform(({ obj }) => obj.tasks || [])
-    tasks: Types.ObjectId[]; // Assuming tasks is an array of objects
 
     @Expose()
     createdAt: Date;

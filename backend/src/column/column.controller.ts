@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ColumnService } from './column.service';
 import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
@@ -21,24 +21,28 @@ export class ColumnController {
         return this.columnService.createColumn(body, user);
     }
 
+    @ApiParam({ name: 'boardId', type: String, description: 'Board Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Get('byBoard/:boardId')
     async getColumnsByBoardId(@Param('boardId', ParseObjectIdPipe) boardId: Types.ObjectId) {
         return this.columnService.getColumnsByBoardId(boardId);
     }
 
+    @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Get(':id')
     async getColumnById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
         return this.columnService.getColumnById(id);
     }
 
+    @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Patch(':id')
     async updateColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateColumnDto) {
         return this.columnService.updateColumn(id, body);
     }
 
+    @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Delete(':id')
     async deleteColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
