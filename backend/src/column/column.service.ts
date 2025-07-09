@@ -94,4 +94,14 @@ export class ColumnService {
 
         return { message: "Column deleted successfully" };
     }
+
+    async getTasksId(columnId: Types.ObjectId) {
+        const column = await this.columnModel.findById(columnId).select('tasks');
+
+        if(!column) {
+            throw new NotFoundException('Column not found');
+        }
+
+        return column.tasks.map(task => task.toString());
+    }
 }

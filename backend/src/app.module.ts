@@ -11,6 +11,7 @@ import { ForgetPasswordTokenModule } from './forget-password-token/forget-passwo
 import { ProjectsModule } from './projects/projects.module';
 import { BoardModule } from './board/board.module';
 import { ColumnModule } from './column/column.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { ColumnModule } from './column/column.module';
     ForgetPasswordTokenModule,
     ProjectsModule,
     BoardModule,
-    ColumnModule
+    ColumnModule,
+    TaskModule
   ],
   controllers: [],
   providers: [],

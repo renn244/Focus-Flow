@@ -16,6 +16,7 @@ import { BoardModule } from 'src/board/board.module';
     BoardModule
   ],
   providers: [ColumnService],
-  controllers: [ColumnController]
+  controllers: [ColumnController],
+  exports: [ColumnService]
 })
 export class ColumnModule {}
