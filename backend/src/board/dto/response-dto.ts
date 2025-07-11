@@ -22,7 +22,7 @@ export class BoardDto {
     updatedAt: Date;
 }
 
-export class BoardWithColumnsDto {
+export class BoardWithColumnsDto extends BoardDto {
     @Expose()
     @Transform(({ obj }) => 
         obj.columns ? plainToInstance(ColumnDto, obj.columns, { excludeExtraneousValues: true }) : []

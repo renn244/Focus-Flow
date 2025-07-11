@@ -4,14 +4,12 @@ import KanbanBoard from "../../../features/projectWorkSpace/components/Board/Kan
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
-import data from './example.data.json';
 
 type ProjectWorkspaceProps = {
-    projectId: string;
 }
 
-const ProjectWorkspace = () => {
-    const mockData = JSON.parse(JSON.stringify(data));
+const ProjectWorkspace = ({
+}: ProjectWorkspaceProps) => {
     const [searchQuery, setSearchQuery] = useState("");
 
     return (
@@ -66,9 +64,7 @@ const ProjectWorkspace = () => {
             </div>
 
             {/* Board */}
-            <div className="p-6">
-                <KanbanBoard columns={mockData.data}  />
-            </div>
+            <KanbanBoard />
         </div>
     )
 }

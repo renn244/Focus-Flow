@@ -9,6 +9,7 @@ type BoardCardProps = {
     column: Column
 }
 
+// Supposed to be column
 const BoardCard = ({
     column
 }: BoardCardProps) => {

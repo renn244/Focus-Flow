@@ -86,6 +86,7 @@ export class ColumnService {
 
     async deleteColumn(id: Types.ObjectId) {
         const column = await this.columnModel.deleteOne({ _id: id });
+        // find away to get the board id from the column
         // make sure to remove the column from the board as well so that it does not leave a orphan reference
         // await this.boardService.removeColumnFromBoard(id);
         if(column.deletedCount === 0) {

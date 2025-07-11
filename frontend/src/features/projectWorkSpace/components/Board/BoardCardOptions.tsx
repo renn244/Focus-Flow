@@ -3,6 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal } from "lucide-react"
 import { useState } from "react"
 
+// Supposed to be named column
 const BoardCardOptions = () => {
     const [open, setOpen] = useState<boolean>(false)
     

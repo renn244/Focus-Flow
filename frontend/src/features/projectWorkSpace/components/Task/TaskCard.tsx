@@ -19,8 +19,8 @@ const TaskCard = ({
     task
 }: TaskCardProps) => {
     return (
-        <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer group">
-            <CardHeader className="pb-2">
+        <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer group gap-0">
+            <CardHeader className="pb-0">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                         <Badge className="text-xs font-mono">

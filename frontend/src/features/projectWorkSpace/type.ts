@@ -1,3 +1,5 @@
+import type { z } from "zod";
+import type { BoardFormSchema } from "./components/forms/BoardForm";
 
 export type Column = {
     id: string;
@@ -22,3 +24,5 @@ export type Task = {
     attachments: number;
     status: string;
 }
+
+export type BoardSchema = z.infer<typeof BoardFormSchema>;

@@ -85,14 +85,25 @@ export class TaskService {
     }
 
     async deleteTask(id: Types.ObjectId) {
-        const task = await this.taskModel.deleteOne({ _id: id });
+        const session = await this.connection.startSession();
+        session.startTransaction();
 
-        // make sure to remove the column from the board as well so that it does not leave a orphan reference
-        // await this.columnService.removeColumnFromBoard(id);
-        if(task.deletedCount === 0) {
-            throw new NotFoundException("Task not found or you do not have permission to delete this task");
+        try {
+            const deletedTask = await this.taskModel.findByIdAndDelete(id, { session });
+
+            if(!deletedTask) {
+                throw new NotFoundException("Task not found or you do not have permission to delete this task");
+            }
+
+            await this.columnService.removeTaskFromColumn(deletedTask.columnId.toString(), deletedTask._id, session);
+       
+            await session.commitTransaction();
+            return { message: "Task deleted successfully" };
+        } catch (error) {
+            await session.abortTransaction();
+            throw error; // Re-throw the error to be handled by the filter
+        } finally {
+            session.endSession();
         }
-
-        return { message: "Task deleted successfully" }
     }
 }

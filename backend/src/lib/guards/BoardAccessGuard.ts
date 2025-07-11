@@ -29,7 +29,7 @@ export class BoardAccessGuard implements CanActivate {
         // later on also add if the user is a member of the project
         // or if there is a role based access control in place
         // isOwner 
-        if(board?.projectId.ownerId.toString() !== user._id.toString()) {
+        if(board?.projectId.ownerId.toString() !== user.id.toString()) {
             return false
         }
 

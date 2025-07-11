@@ -26,8 +26,8 @@ export class BoardService {
     }
 
     async getBoards(projectId: Types.ObjectId, user: UserJwt) {
-        const boards = await this.boardModel.find({ projectId }).populate('columns');
-        
+        const boards = await this.boardModel.find({ projectId: projectId.toString() }).populate('columns');
+
         return plainToInstance(BoardWithColumnsDto, boards, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
