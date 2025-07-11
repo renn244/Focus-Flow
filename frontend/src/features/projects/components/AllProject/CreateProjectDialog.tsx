@@ -6,7 +6,7 @@ import { useCreateProjectMutation } from "../../hooks/useCreateProjectMutation";
 const CreateProjectDialog = () => {
     const isCreateOpen = useProjectDialogStore((state) => state.isCreateOpen);
     const setCreateOpen = useProjectDialogStore((state) => state.setCreateOpen);
-    const { mutate, isPending } = useCreateProjectMutation();
+    const { mutateAsync, isPending } = useCreateProjectMutation();
 
     return (
         <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
@@ -14,7 +14,7 @@ const CreateProjectDialog = () => {
                 <DialogHeader>
                     <DialogTitle>Create New Project</DialogTitle>
                 </DialogHeader>
-                <ProjectForm isLoading={isPending} onsubmit={mutate as any} />
+                <ProjectForm isLoading={isPending} onsubmit={mutateAsync as any} />
             </DialogContent>
         </Dialog>
     )

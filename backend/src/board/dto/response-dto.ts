@@ -10,6 +10,9 @@ export class BoardDto {
     name: string;
     
     @Expose()
+    description?: string;
+
+    @Expose()
     projectId: string;
 
     @Expose()

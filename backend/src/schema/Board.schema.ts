@@ -6,6 +6,9 @@ export class Board {
     @Prop({ required: true })
     name: string;
 
+    @Prop({ required: false, minlength: 10, maxlength: 200 })
+    description?: string;
+
     @Prop({ required: true, type: Types.ObjectId, ref: 'Project' })
     projectId: Types.ObjectId;
 

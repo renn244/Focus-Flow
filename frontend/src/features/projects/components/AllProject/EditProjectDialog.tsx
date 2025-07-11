@@ -11,7 +11,7 @@ const EditProjectDialog = () => {
     const setEditOpen = useProjectDialogStore((state) => state.setEditOpen);
 
     const { data, isLoading, error } = useGetProjectById(editProjectId || "");
-    const { mutate, isPending } = useEditProjectMutation(editProjectId || "");
+    const { mutateAsync, isPending } = useEditProjectMutation(editProjectId || "");
 
     if(isEditOpen === false || !editProjectId) {
         return null
@@ -43,7 +43,7 @@ const EditProjectDialog = () => {
                         color: data.color || "",
                         dueDate: new Date(data.dueDate),
                     }}
-                    onsubmit={mutate as any}
+                    onsubmit={mutateAsync as any}
                     isLoading={isPending}
                     isUpdate
                     />

@@ -13,7 +13,10 @@ import { Textarea } from "@/components/ui/textarea"
 
 export const BoardFormSchema = z.object({
     name: z.string().min(1, "Board name is required"),
-    description: z.string(),
+    description: z.string()
+        .min(10, "Description must be at least 10 characters long")
+        .max(200, "Description must be at most 200 characters long")
+        .optional(),
     projectId: z.string().min(1, "Project ID is required"),
 })
 

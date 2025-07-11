@@ -9,7 +9,7 @@ const CreateBoardDialog = () => {
     const setCreateOpen = useBoardDialogStore((state) => state.setCreateOpen);
     const projectId = useProjectIdStore((state) => state.projectId) as string;
 
-    const { mutate, isPending } = useCreateBoardMutation();
+    const { mutateAsync, isPending } = useCreateBoardMutation();
 
     return (
         <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
@@ -19,7 +19,7 @@ const CreateBoardDialog = () => {
                 </DialogHeader>
 
                 <BoardForm isLoading={isPending} projectId={projectId} 
-                onsubmit={mutate as any} />
+                onsubmit={mutateAsync as any} />
             </DialogContent>
         </Dialog>
     )
