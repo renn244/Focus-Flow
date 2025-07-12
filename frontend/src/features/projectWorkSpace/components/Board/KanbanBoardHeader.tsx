@@ -38,7 +38,7 @@ const KanbanBoardHeader = ({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            <DropdownMenuItem onClick={() => setEditBoardId(board?._id)}>
+                            <DropdownMenuItem onClick={() => setEditBoardId(board._id)}>
                                 <Edit className="h-4 w-4" />
                                 Edit Board
                             </DropdownMenuItem>

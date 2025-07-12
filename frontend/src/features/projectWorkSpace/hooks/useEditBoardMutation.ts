@@ -4,9 +4,9 @@ import axiosInstance from "@/lib/httpService";
 import { ValidationError } from "@/lib/handleNestError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useBoardDialogStore from "../store/useBoardDialog";
+import type { BoardWithColumns } from "../type";
 
-
-type editBoardSuccessResponse = any;
+type editBoardSuccessResponse = BoardWithColumns;
 type editBoardResponse = AxiosResponse<editBoardSuccessResponse, ExceptionResponse>;
 
 const editBoard = async (id: string, data: any): Promise<editBoardResponse['data']> => {

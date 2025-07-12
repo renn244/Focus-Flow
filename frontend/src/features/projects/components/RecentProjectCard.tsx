@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChevronDown, Folder, Star } from "lucide-react"
+import type { Project } from "../type"
 
-const RecentProjectCard = ({ project }: { project: any }) => {
+const RecentProjectCard = ({ project }: { project: Project }) => {
     return (
         <Card className="hover:shadow-md transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-1">
             <CardContent className="p-4">
@@ -41,7 +42,7 @@ const RecentProjectCard = ({ project }: { project: any }) => {
                     </div>
 
 
-                    <div className="pt-2 border-t border-gray-100">
+                    {/* <div className="pt-2 border-t border-gray-100">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="w-full justify-between text-sm h-8 px-2">
@@ -68,7 +69,7 @@ const RecentProjectCard = ({ project }: { project: any }) => {
                                 )}
                             </DropdownMenuContent>
                         </DropdownMenu>
-                    </div>
+                    </div> */}
                 </div>
             </CardContent>
         </Card>

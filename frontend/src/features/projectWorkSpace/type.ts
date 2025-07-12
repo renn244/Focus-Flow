@@ -1,15 +1,33 @@
 import type { z } from "zod";
 import type { BoardFormSchema } from "./components/forms/BoardForm";
 
-export type Column = {
-    id: string;
-    title: string;
-    color: string;
-    tasks: Task[];
+export type Board = {
+    _id: string;
+    name: string;
+    description?: string;
+    projectId: string;
+    columns: string[]; // Array of column object Ids
+    createdAt: string;
+    updatedAt: string;
 }
 
+export type BoardWithColumns = {
+    columns: Column[];
+} & Omit<Board, 'columns'>;
+
+export type Column = {
+    _id: string;
+    title: string;
+    color: string;
+    order: number;
+    tasks: string[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+// follow the backend (not priority rn)
 export type Task = {
-    id: string;
+    _id: string;
     title: string;
     description: string;
     priority: "low" | "medium" | "high";

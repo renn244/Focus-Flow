@@ -23,6 +23,7 @@ const KanbanBoard = ({
                 {columns?.map((column) => (
                     <ColumnCard column={column} />
                 ))}
+                    
             </div> */}
 
             <CreateBoardDialog />

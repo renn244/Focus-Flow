@@ -3,8 +3,9 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import type { AxiosResponse } from "axios";
 import axiosInstance from "@/lib/httpService";
 import useProjectFilterStore from "../store/useProjectFilter";
+import type { ProjectWithOwnerList } from "../type";
 
-type AllProjectsSuccessResponse = any[];
+type AllProjectsSuccessResponse = ProjectWithOwnerList;
 type AllProjectsResponse = AxiosResponse<AllProjectsSuccessResponse, ExceptionResponse>;
 
 const allProjects = async (query: any): Promise<AllProjectsResponse['data']> => {

@@ -2,9 +2,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import BoardForm from "../forms/BoardForm"
 import { useEditBoardMutation } from "../../hooks/useEditBoardMutation";
 import useBoardDialogStore from "../../store/useBoardDialog";
+import type { BoardWithColumns } from "../../type";
 
 type EditBoardDialogProps = {
-    board: any;
+    board: BoardWithColumns;
 }
 
 const EditBoardDialog = ({

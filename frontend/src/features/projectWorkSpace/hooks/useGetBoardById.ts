@@ -2,8 +2,9 @@ import axiosInstance from "@/lib/httpService";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import type { BoardWithColumns } from "../type";
 
-type getBoardByIdSuccessResponse = any;
+type getBoardByIdSuccessResponse = BoardWithColumns;
 type getBoardByIdResponse = AxiosResponse<getBoardByIdSuccessResponse, ExceptionResponse>;
 
 const getBoardById = async (boardId: string): Promise<getBoardByIdResponse['data'] | null> => {

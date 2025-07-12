@@ -2,9 +2,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import useSelectBoardStore from "../../store/useSelectBoard";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import type { BoardWithColumns } from "../../type";
 
 type SwitchBoardProps = {
-    boards: any[];
+    boards: BoardWithColumns[];
 }
 
 const SwitchBoard = ({
@@ -21,7 +22,6 @@ const SwitchBoard = ({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-64">
-                {/* Map of available boards within this project */}
                 {boards?.map((board) => (
                     <DropdownMenuItem
                     key={board._id}

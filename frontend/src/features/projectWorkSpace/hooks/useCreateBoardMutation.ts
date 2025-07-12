@@ -1,13 +1,13 @@
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import type { AxiosResponse } from "axios";
-import type { BoardSchema } from "../type";
+import type { Board, BoardSchema } from "../type";
 import axiosInstance from "@/lib/httpService";
 import { ValidationError } from "@/lib/handleNestError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useBoardDialogStore from "../store/useBoardDialog"
 import { useProjectIdStore } from "../store/useProjectIdDialog";
 
-type createBoardSuccessResponse = any;
+type createBoardSuccessResponse = Board;
 type createBoardResponse = AxiosResponse<createBoardSuccessResponse, ExceptionResponse>;
 
 const createBoard = async (data: BoardSchema): Promise<createBoardResponse['data']> => {
