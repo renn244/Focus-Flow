@@ -1,6 +1,6 @@
 import { useGetBoards } from "../../hooks/useGetBoards";
 import { Button } from "@/components/ui/button"
-import { Edit, MoreHorizontal, Plus } from "lucide-react"
+import { Edit, MoreHorizontal, Plus, Trash2 } from "lucide-react"
 import { useGetBoardById } from "../../hooks/useGetBoardById";
 import useBoardDialogStore from "../../store/useBoardDialog";
 import { useProjectIdStore } from "../../store/useProjectIdDialog";
@@ -21,7 +21,7 @@ const KanbanBoardHeader = ({
     const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);
     
     const { data: boards } = useGetBoards(projectId!);    
-    const { data: board } = useGetBoardById(selectedBoardId || boards?.[0]._id || "");
+    const { data: board } = useGetBoardById(selectedBoardId || boards?.[0]?._id || "");
 
     return (
         <div className="flex items-center justify-between mb-6">
@@ -30,19 +30,25 @@ const KanbanBoardHeader = ({
                     {board?.name && <h2 className="text-xl font-semibold text-slate-900">{board.name}</h2>}
                     {board?.description && <p className="text-sm text-slate-600">{board.description}</p>}
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm">
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                        <DropdownMenuItem onClick={() => setEditBoardId(board?._id)}>
-                            <Edit className="h-4 w-4" />
-                            Edit Board
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                {board && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm">
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => setEditBoardId(board?._id)}>
+                                <Edit className="h-4 w-4" />
+                                Edit Board
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Trash2 />
+                                Delete Board
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
             </div>
 
             <div className="flex items-center gap-3">

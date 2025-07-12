@@ -33,7 +33,7 @@ const SwitchBoard = ({
                             <div className={`w-2 h-2 rounded-full ${selectedBoardId === board._id ? "bg-blue-500" : "bg-slate-300"}`} />
                             <span className="font-medium">{board.name}</span>
                         </div>
-                        <span className="text-xs text-slate-500 ml-4">{board.description}</span>
+                        <span className="text-xs text-slate-500 line-clamp-2 ml-4">{board.description}</span>
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>

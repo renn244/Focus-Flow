@@ -3,8 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal } from "lucide-react"
 import { useState } from "react"
 
-// Supposed to be named column
-const BoardCardOptions = () => {
+const ColumnCardOptions = () => {
     const [open, setOpen] = useState<boolean>(false)
     
     return (
@@ -23,4 +22,4 @@ const BoardCardOptions = () => {
     )
 }
 
-export default BoardCardOptions
+export default ColumnCardOptions;

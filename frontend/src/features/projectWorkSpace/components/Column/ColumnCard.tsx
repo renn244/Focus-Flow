@@ -1,18 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import BoardCardOptions from "./BoardCardOptions"
+import BoardCardOptions from "./ColumnCardOptions"
 import TaskCard from "../Task/TaskCard"
 import { Badge } from "@/components/ui/badge"
 import type { Column } from "../../type"
 
-type BoardCardProps = {
+type ColumnCardProps = {
     column: Column
 }
 
-// Supposed to be column
-const BoardCard = ({
+const ColumnCard = ({
     column
-}: BoardCardProps) => {
+}: ColumnCardProps) => {
     return (
         <div key={column.id} className="flex flex-col">
             <div className={`${column.color} rounded-lg p-4 mb-4`}>
@@ -44,4 +43,4 @@ const BoardCard = ({
     )
 }
 
-export default BoardCard
+export default ColumnCard
