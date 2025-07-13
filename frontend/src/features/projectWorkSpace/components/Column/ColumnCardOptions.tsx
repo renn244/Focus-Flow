@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
+import { Edit, MoreHorizontal, Plus, Trash2 } from "lucide-react"
 import { useState } from "react"
+import useColumnDialogStore from "../../store/useColumnDialog"
 
-const ColumnCardOptions = () => {
+type ColumnCardOptionsProps = {
+    columnId: string;
+}
+
+const ColumnCardOptions = ({
+    columnId
+}: ColumnCardOptionsProps) => {
+    const setEditColumnId = useColumnDialogStore((state) => state.setEditColumnId)
     const [open, setOpen] = useState<boolean>(false)
     
     return (
@@ -14,9 +22,19 @@ const ColumnCardOptions = () => {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>Add task</DropdownMenuItem>
-                <DropdownMenuItem>Edit column</DropdownMenuItem>
-                <DropdownMenuItem>Clear completed</DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add task
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setEditColumnId(columnId)}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit column
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                className="text-red-600 focus:text-red-600">
+                    <Trash2 className="h-4 w-4 mr-2 text-red-600" />
+                    Remove Column
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )

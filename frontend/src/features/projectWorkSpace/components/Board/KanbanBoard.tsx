@@ -1,6 +1,8 @@
 import { useGetColumnByBoardId } from "../../hooks/useGetColumnByBoardId";
 import useSelectBoardStore from "../../store/useSelectBoard";
 import ColumnCard from "../Column/ColumnCard";
+import CreateColumnDialog from "../Column/CreateColumnDialog";
+import EditColumnDialog from "../Column/EditColumnDialog";
 import CreateBoardDialog from "./CreateBoardDialog";
 import KanbanBoardHeader from "./KanbanBoardHeader"
 
@@ -19,12 +21,13 @@ const KanbanBoard = ({
             {/* Board Header here!! */}
             <KanbanBoardHeader />
 
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {columns?.map((column) => (
                     <ColumnCard column={column} />
                 ))}
-                    
-            </div> */}
+                <CreateColumnDialog />
+                <EditColumnDialog />
+            </div>
 
             <CreateBoardDialog />
 

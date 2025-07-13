@@ -18,7 +18,7 @@ const getColumnByBoardId = async (boardId: string): Promise<getColumnByBoardIdRe
 
 export const useGetColumnByBoardId = (boardId: string) => {
     return useQuery({
-        queryKey: ["column", "byboard", boardId],
+        queryKey: ["columns", "byboard", boardId],
         queryFn: () => getColumnByBoardId(boardId),
         enabled: !!boardId, // Only run the query if boardId is provided
         refetchOnWindowFocus: false, // Optional: Prevent refetching on window focus

@@ -3,18 +3,20 @@ import { Plus } from "lucide-react"
 import BoardCardOptions from "./ColumnCardOptions"
 import TaskCard from "../Task/TaskCard"
 import { Badge } from "@/components/ui/badge"
-import type { Column } from "../../type"
 
 type ColumnCardProps = {
-    column: Column
+    column: any
 }
 
 const ColumnCard = ({
     column
 }: ColumnCardProps) => {
     return (
-        <div key={column.id} className="flex flex-col">
-            <div className={`${column.color} rounded-lg p-4 mb-4`}>
+        <div key={column._id} className="flex flex-col">
+            <div 
+            // can't use this it looks ugly tbh so find a way to lighten the color
+            // style={{ backgroundColor: column.color }}
+            className={`bg-gray-300/50 bg-opacity-50 rounded-lg p-4 mb-4`}>
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <h2 className="font-semibold text-slate-800">{column.title}</h2>
@@ -22,7 +24,7 @@ const ColumnCard = ({
                             {column.tasks.length}
                         </Badge>
                     </div>
-                    <BoardCardOptions />
+                    <BoardCardOptions columnId={column._id} />
                 </div>
 
                 <Button
