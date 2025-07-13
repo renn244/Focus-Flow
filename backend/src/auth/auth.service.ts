@@ -11,8 +11,9 @@ import { UserService } from 'src/user/user.service';
 import { LocalSignUpDto } from './dto/LocalSignUp.dto';
 import { ValidationException } from 'src/lib/Exception/ValidationException';
 import { VerifyEmailTokenService } from 'src/verify-email-token/verify-email-token.service';
-import { Types } from 'mongoose';
+import { MongooseError, Types } from 'mongoose';
 import { EmailService } from 'src/email/email.service';
+import handleMongooseError from 'src/lib/MongooseExceptionHandler';
 
 @Injectable()
 export class AuthService {
@@ -86,6 +87,13 @@ export class AuthService {
 
             return this.login(user);
         } catch(error: any) {
+            if(error instanceof MongooseError || error.name === "MongoServerError") {
+                const errorMessage = handleMongooseError(error)
+                return { 
+                    message: errorMessage 
+                        ? Object.values(errorMessage)[0]?.message : 'An error occurred while validating GitHub user' 
+                };
+            }
             return { message: error.message || 'An error occurred while validating GitHub user' };
         }
     }
