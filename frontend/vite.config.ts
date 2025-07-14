@@ -8,7 +8,6 @@ import { qrcode } from 'vite-plugin-qrcode';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    qrcode(),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,

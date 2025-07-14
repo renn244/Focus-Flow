@@ -8,6 +8,7 @@ import SwitchBoard from "./SwitchBoard";
 import useSelectBoardStore from "../../store/useSelectBoard";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import EditBoardDialog from "./EditBoardDialog";
+import { useEffect } from "react";
 
 type KanbanBoardHeaderProps = {
 }
@@ -17,11 +18,18 @@ const KanbanBoardHeader = ({
     const projectId = useProjectIdStore((state) => state.projectId);
     const setCreateOpen = useBoardDialogStore((state) => state.setCreateOpen);
     const setEditBoardId = useBoardDialogStore((state) => state.setEditBoardId);
+    const setSelectedBoardId = useSelectBoardStore((state) => state.setSelectedBoardId);
 
     const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);
     
     const { data: boards } = useGetBoards(projectId!);    
     const { data: board } = useGetBoardById(selectedBoardId || boards?.[0]?._id || "");
+
+    useEffect(() => {
+        if (boards && boards.length > 0 && !selectedBoardId) {
+            setSelectedBoardId(boards[0]._id);
+        }
+    })
 
     return (
         <div className="flex items-center justify-between mb-6">
