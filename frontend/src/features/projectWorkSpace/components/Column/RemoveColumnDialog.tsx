@@ -9,7 +9,7 @@ import { AlertTriangle, Info, MoveRight, Trash2, X } from "lucide-react"
 import { useMemo, useState } from "react"
 
 const RemoveColumnDialog = () => {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const [selectedMoveToColumn, setSelectedMoveToColumn] = useState("");
     const [isRemoving, setIsRemoving] = useState(false);
 

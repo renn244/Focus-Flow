@@ -3,6 +3,8 @@ import { Plus } from "lucide-react"
 import BoardCardOptions from "./ColumnCardOptions"
 import TaskCard from "../Task/TaskCard"
 import { Badge } from "@/components/ui/badge"
+import { CSS } from "@dnd-kit/utilities"
+import { useSortable } from "@dnd-kit/sortable"
 
 type ColumnCardProps = {
     column: any
@@ -11,8 +13,14 @@ type ColumnCardProps = {
 const ColumnCard = ({
     column
 }: ColumnCardProps) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ 
+        id: column._id
+    })
+    const style = { transform: CSS.Translate.toString(transform), transition, duration: "0.5s" }
+
     return (
-        <div key={column._id} className="flex flex-col">
+        <div ref={setNodeRef} key={column._id} {...listeners} {...attributes}
+        className="flex flex-col" style={style}>
             <div 
             // can't use this it looks ugly tbh so find a way to lighten the color
             // style={{ backgroundColor: column.color }}
@@ -37,7 +45,7 @@ const ColumnCard = ({
             </div>
 
             <div className="flex-1 space-y-3">
-                {column.tasks.map((task) => (
+                {column.tasks.map((task: any) => (
                     <TaskCard key={task.id} task={task} />
                 ))}
             </div>

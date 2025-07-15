@@ -35,6 +35,13 @@ export class ColumnController {
         return this.columnService.getColumnById(id);
     }
 
+    @ApiParam({ name: 'boardId', type: String, description: 'Board Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
+    @ApiBearerAuth()
+    @Patch('reorder/:boardId')
+    async reorderColumns(@Param('boardId', ParseObjectIdPipe) boardId: Types.ObjectId, @Body() body: { columns: { _id: Types.ObjectId, order: number }[] }) {
+        return this.columnService.updateOrderColumns(boardId, body);
+    }
+
     @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Patch(':id')
