@@ -1,7 +1,7 @@
 name: "Bug Report"
 description: "Report a bug or issue to help us improve FocusFlow."
 labels: ["bug"]
-body: 
+body:
   - type: markdown
     attributes:
       value: |
@@ -10,29 +10,32 @@ body:
 
         Before submitting, please check if you've done the following:
   - type: checkboxes
-    id: preconditions
     attributes:
       label: "Preconditions"
       options:
         - label: Checked the [documentation](https://docs.focusflow.app) for guidance.
+          required: false
         - label: Searched for existing issues to avoid duplicates.
+          required: false
         - label: Provided clear and concise information about the bug.
-        - label: tried to understand the issue or fix it.
+          required: false
+        - label: Tried to understand the issue or fix it.
+          required: false
   - type: input
     id: title
     attributes:
       label: "Issue Title"
-      placeholder: "E.g, 'App crashes on startup'"
+      placeholder: "E.g., 'App crashes on startup'"
       description: "A brief summary of the issue you're experiencing."
-    validation:
+    validations:
       required: true
   - type: textarea
     id: description
     attributes:
       label: "Description"
-      placeholder: "E.g, 'The app crashes when I try to open it.'"
+      placeholder: "E.g., 'The app crashes when I try to open it.'"
       description: "Describe the issue in detail, including steps to reproduce, expected behavior, and actual behavior."
-    validation:
+    validations:
       required: true
   - type: dropdown
     id: environment
@@ -43,8 +46,7 @@ body:
         - "Development"
         - "Staging"
         - "Production"
-      default: "Development"
-    validation:
+    validations:
       required: true
   - type: textarea
     id: steps_to_reproduce
@@ -55,12 +57,13 @@ body:
         2. `npm start:dev`
         3. See error...
       description: "List the steps to reproduce the issue."
-    validation:
+    validations:
       required: true
   - type: textarea
     id: other_things
     attributes:
-      label: "Other"
+      label: "Other Information"
       description: |
         Anything else relevant? eg: Logs, OS version, IDE, package manager, etc.
-        **Tip:** You can attach images, recordings or log files by clicking this area to highlight it and then dragging files in
+        **Tip:** You can attach images, recordings or log files by clicking this area to highlight it and then dragging files in.
+      render: markdown
