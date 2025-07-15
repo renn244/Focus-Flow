@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { ClientSession, Connection, Model, Types } from 'mongoose';
-import { Column, ColumnDocument } from 'src/schema/Column.schema';
-import { CreateColumnDto } from './dto/create-column.dto';
-import { UpdateColumnDto } from './dto/update-column.dto';
+import { plainToInstance } from 'class-transformer';
+import { ClientSession, Connection, Model, Types, UpdateOneModel } from 'mongoose';
 import { BoardService } from 'src/board/board.service';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
-import { plainToInstance } from 'class-transformer';
+import { Column, ColumnDocument } from 'src/schema/Column.schema';
+import { CreateColumnDto } from './dto/create-column.dto';
 import { ColumnDto } from './dto/response-dto';
+import { UpdateColumnDto } from './dto/update-column.dto';
 
 @Injectable()
 export class ColumnService {
@@ -22,12 +22,53 @@ export class ColumnService {
         session.startTransaction();
 
         try {
-            const newColumn = await this.columnModel.create([body], { session });
+            const newColumn = await this.columnModel.create([{...body, order: 99}], { session });
             await this.boardService.addColumnToBoard(body.boardId, newColumn[0]._id, session);
         
             await session.commitTransaction();
         
             return plainToInstance(ColumnDto, newColumn[0], {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            });
+        } catch (error) {
+            await session.abortTransaction();
+            throw error; // Re-throw the error to be handled by the filter
+        } finally {
+            session.endSession();
+        }
+    }
+
+    // This method is gonna be used with rabbit mq listening to create preset columns when a board is created
+    async createPresetColumn(boardId: Types.ObjectId) {
+        const session = await this.connection.startSession();
+        session.startTransaction();
+
+        try {
+            const newColumn = await this.columnModel.bulkWrite([
+                {
+                    insertOne: {
+                        document: { name: "To Do", order: 0, color: "#9CA3AF", boardId }
+                    }
+                },
+                {
+                    insertOne: {
+                        document: { name: "In Progress", order: 1, color: "#3B82F6", boardId }
+                    }
+                },
+                {
+                    insertOne: {
+                        document: { name: "Completed", order: 2, color: "#22C55E", boardId }
+                    }
+                }
+            ]);
+            await this.boardService.addColumnToBoard(boardId.toString(), newColumn[0]._id, session);
+        
+            await session.commitTransaction();
+        
+            const columns = await this.getColumnsByBoardId(boardId); // Refresh the columns after creation
+
+            return plainToInstance(ColumnDto, columns, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,
             });
@@ -46,7 +87,7 @@ export class ColumnService {
             return [];
         }
 
-        const columns = await this.columnModel.find({ _id: { $in: columnIds } });
+        const columns = await this.columnModel.find({ _id: { $in: columnIds } }).sort({ order: 1 });
 
         return plainToInstance(ColumnDto, columns, {
             excludeExtraneousValues: true,
@@ -82,6 +123,39 @@ export class ColumnService {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         });
+    }
+
+    async updateOrderColumns(
+        boardId: Types.ObjectId, 
+        body: { columns: { _id: Types.ObjectId, order: number }[] }
+    ) {
+        const session = await this.connection.startSession();
+        session.startTransaction();
+
+        try {
+            const columnIds = await this.boardService.getColumnsId(boardId);
+            if (!columnIds || columnIds.length === 0) {
+                throw new NotFoundException('No columns found for this board');
+            }
+
+            const updatedColumns = await this.columnModel.bulkWrite(
+                body.columns.map(column => ({
+                    updateOne: {
+                        filter: { _id: column._id },
+                        update: { $set: { order: column.order } },
+                    } satisfies UpdateOneModel<ColumnDocument>
+                }))
+            )
+
+            await session.commitTransaction();
+            return { message: "Columns reordered successfully", updatedCount: updatedColumns.modifiedCount };
+        } catch (error) {
+            console.log(error);
+            await session.abortTransaction();
+            throw error; // Re-throw the error to be handled by the filter
+        } finally {
+            session.endSession();
+        }
     }
 
     async deleteColumn(id: Types.ObjectId) {

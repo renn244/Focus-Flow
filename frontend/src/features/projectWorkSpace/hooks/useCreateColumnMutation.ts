@@ -5,6 +5,7 @@ import axiosInstance from "@/lib/httpService";
 import { ValidationError } from "@/lib/handleNestError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useSelectBoardStore from "../store/useSelectBoard";
+import useColumnDialogStore from "../store/useColumnDialog";
 
 type createColumnSuccessResponse = any;
 type createColumnResponse = AxiosResponse<createColumnSuccessResponse, ExceptionResponse>;
@@ -26,12 +27,13 @@ const createColumn = async (data: ColumnSchema): Promise<createColumnResponse['d
 const useCreateColumnMutation = () => {
     const queryClient = useQueryClient();
     const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);
+    const setCreateOpen = useColumnDialogStore((state) => state.setCreateOpen);
 
     return useMutation({
         mutationFn: createColumn,
         onSuccess: () => {
-            // Handle success, e.g., show a success message or update state
-            queryClient.invalidateQueries({ queryKey: ['column', 'byboard', selectedBoardId] });
+            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', selectedBoardId] });
+            setCreateOpen(false);
         }
     })
 }
