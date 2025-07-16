@@ -12,8 +12,9 @@ const ColumnCardOptions = ({
     columnId
 }: ColumnCardOptionsProps) => {
     const setEditColumnId = useColumnDialogStore((state) => state.setEditColumnId)
+    const setRemoveColumnId = useColumnDialogStore((state) => state.setRemoveColumnId);
     const [open, setOpen] = useState<boolean>(false)
-    
+
     return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
             <DropdownMenuTrigger asChild>
@@ -30,7 +31,7 @@ const ColumnCardOptions = ({
                     <Edit className="h-4 w-4 mr-2" />
                     Edit column
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem onClick={() => setRemoveColumnId(columnId)}
                 className="text-red-600 focus:text-red-600">
                     <Trash2 className="h-4 w-4 mr-2 text-red-600" />
                     Remove Column

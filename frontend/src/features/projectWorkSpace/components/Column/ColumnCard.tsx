@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { GripVertical, Plus } from "lucide-react"
 import BoardCardOptions from "./ColumnCardOptions"
 import TaskCard from "../Task/TaskCard"
 import { Badge } from "@/components/ui/badge"
@@ -19,8 +19,7 @@ const ColumnCard = ({
     const style = { transform: CSS.Translate.toString(transform), transition, duration: "0.5s" }
 
     return (
-        <div ref={setNodeRef} key={column._id} {...listeners} {...attributes}
-        className="flex flex-col" style={style}>
+        <div ref={setNodeRef} key={column._id} className="flex flex-col" style={style}>
             <div 
             // can't use this it looks ugly tbh so find a way to lighten the color
             // style={{ backgroundColor: column.color }}
@@ -32,7 +31,12 @@ const ColumnCard = ({
                             {column.tasks.length}
                         </Badge>
                     </div>
-                    <BoardCardOptions columnId={column._id} />
+                    <div className="flex items-center gap-1">
+                        <Button size="sm" variant="ghost" {...listeners} {...attributes}>
+                            <GripVertical className="h-4 w-4" />
+                        </Button>
+                        <BoardCardOptions columnId={column._id} />
+                    </div>
                 </div>
 
                 <Button

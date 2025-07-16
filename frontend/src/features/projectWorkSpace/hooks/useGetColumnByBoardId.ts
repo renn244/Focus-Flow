@@ -23,5 +23,6 @@ export const useGetColumnByBoardId = (boardId: string) => {
         enabled: !!boardId, // Only run the query if boardId is provided
         refetchOnWindowFocus: false, // Optional: Prevent refetching on window focus
         staleTime: 5 * 60 * 1000, // Optional: Cache the result for 5 minutes
+        gcTime: 10 * 60 * 1000, // Optional: Garbage collect after 10 minutes
     });
 }
