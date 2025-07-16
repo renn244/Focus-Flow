@@ -1,0 +1,56 @@
+name: "Feature Request"
+description: "Give move Idea to add new features or improvements to FocusFlow."
+labels: ["feature"]
+body: 
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        Please fill out the following details to help us understand your request.
+
+        Before submitting, please check if you've done the following:
+  - type: checkboxes
+    attributes:
+      label: "Preconditions"
+      options:
+        - label: Checked the [documentation](https://docs.focusflow.app) for guidance.
+          required: false
+        - label: Searched for existing issues to avoid duplicates.
+          required: false
+        - label: Provided clear and concise information about the feature.
+          required: false
+  - type: input
+    id: title
+    attributes:
+      label: "Feature Title"
+      placeholder: "E.g., 'Add dark mode support'"
+      description: "A brief summary of the feature you're requesting."
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      placeholder: "E.g., 'It would be great to have a dark mode option for better usability at night.'"
+      description: "Describe the feature in detail, including its purpose and how it would benefit users."
+    validations:
+      required: true
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: "Use Cases"
+      placeholder: |
+        1. `As a user, I want to...`
+        2. `So that I can...`
+      description: "List specific use cases or scenarios where this feature would be useful."
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_info
+    attributes:
+      label: "Additional Information"
+      placeholder: "E.g., 'This feature is similar to...'"
+      description: "Any additional information that might help us understand your request better."
+    validations:
+      required: false
