@@ -1,11 +1,11 @@
-import type { ExceptionResponse } from "@/types/ExceptionResponse";
-import type { AxiosResponse } from "axios";
-import type { Board, BoardSchema } from "../type";
-import axiosInstance from "@/lib/httpService";
 import { ValidationError } from "@/lib/handleNestError";
+import axiosInstance from "@/lib/httpService";
+import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useBoardDialogStore from "../store/useBoardDialog"
-import { useProjectIdStore } from "../store/useProjectIdDialog";
+import type { AxiosResponse } from "axios";
+import useBoardDialogStore from "../store/useBoardDialog";
+import { useProjectIdStore } from "../store/useProjectId";
+import type { Board, BoardSchema } from "../type";
 
 type createBoardSuccessResponse = Board;
 type createBoardResponse = AxiosResponse<createBoardSuccessResponse, ExceptionResponse>;

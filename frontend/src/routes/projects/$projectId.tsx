@@ -1,4 +1,4 @@
-import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectIdDialog";
+import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
 import ProjectWorkspace from "@/pages/projects/ProjectWorkSpace/ProjectWorkspace";
 import { useEffect } from "react";
 

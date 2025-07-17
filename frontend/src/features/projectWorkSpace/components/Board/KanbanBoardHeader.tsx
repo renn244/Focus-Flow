@@ -1,14 +1,15 @@
-import { useGetBoards } from "../../hooks/useGetBoards";
-import { Button } from "@/components/ui/button"
-import { Edit, MoreHorizontal, Plus, Trash2 } from "lucide-react"
-import { useGetBoardById } from "../../hooks/useGetBoardById";
-import useBoardDialogStore from "../../store/useBoardDialog";
-import { useProjectIdStore } from "../../store/useProjectIdDialog";
-import SwitchBoard from "./SwitchBoard";
-import useSelectBoardStore from "../../store/useSelectBoard";
+import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import EditBoardDialog from "./EditBoardDialog";
+import { Edit, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
+import { useGetBoardById } from "../../hooks/useGetBoardById";
+import { useGetBoards } from "../../hooks/useGetBoards";
+import useBoardDialogStore from "../../store/useBoardDialog";
+import { useProjectIdStore } from "../../store/useProjectId";
+import useSelectBoardStore from "../../store/useSelectBoard";
+import DeleteBoardDialog from "./DeleteBoardDialog";
+import EditBoardDialog from "./EditBoardDialog";
+import SwitchBoard from "./SwitchBoard";
 
 type KanbanBoardHeaderProps = {
 }
@@ -16,9 +17,11 @@ type KanbanBoardHeaderProps = {
 const KanbanBoardHeader = ({
 }: KanbanBoardHeaderProps) => {
     const projectId = useProjectIdStore((state) => state.projectId);
+    const setSelectedBoardId = useSelectBoardStore((state) => state.setSelectedBoardId);
+
     const setCreateOpen = useBoardDialogStore((state) => state.setCreateOpen);
     const setEditBoardId = useBoardDialogStore((state) => state.setEditBoardId);
-    const setSelectedBoardId = useSelectBoardStore((state) => state.setSelectedBoardId);
+    const setDeleteBoardId = useBoardDialogStore((state) => state.setDeleteBoardId);
 
     const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);
     
@@ -50,7 +53,7 @@ const KanbanBoardHeader = ({
                                 <Edit className="h-4 w-4" />
                                 Edit Board
                             </DropdownMenuItem>
-                            <DropdownMenuItem
+                            <DropdownMenuItem onClick={() => setDeleteBoardId(board._id)}
                             className="text-red-600 focus:text-red-600">
                                 <Trash2 className="h-4 w-4 text-red-600" />
                                 Delete Board
@@ -71,6 +74,8 @@ const KanbanBoardHeader = ({
 
             {/* Dialogs */}
             {board && <EditBoardDialog board={board} />}
+
+            {board && <DeleteBoardDialog />}
         </div>
     )
 }

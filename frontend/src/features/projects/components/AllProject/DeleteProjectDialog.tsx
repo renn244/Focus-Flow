@@ -55,6 +55,7 @@ const DeleteProject = ({ project }: { project: ProjectWithOwner }) => {
             <DialogHeader>
                 <DialogTitle>Delete Project</DialogTitle>
             </DialogHeader>
+            
             <div className="w-full max-w-3xl mx-auto">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 p-3 rounded-lg bg-red-100 flex items-center justify-center">

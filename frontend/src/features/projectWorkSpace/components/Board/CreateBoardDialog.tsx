@@ -1,8 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import BoardForm from "../forms/BoardForm"
 import { useCreateBoardMutation } from "../../hooks/useCreateBoardMutation"
 import useBoardDialogStore from "../../store/useBoardDialog"
-import { useProjectIdStore } from "../../store/useProjectIdDialog"
+import { useProjectIdStore } from "../../store/useProjectId"
+import BoardForm from "../forms/BoardForm"
 
 const CreateBoardDialog = () => {
     const isCreateOpen = useBoardDialogStore((state) => state.isCreateOpen);
