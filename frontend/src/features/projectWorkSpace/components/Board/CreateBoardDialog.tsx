@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useCreateBoardMutation } from "../../hooks/useCreateBoardMutation"
+import { useCreateBoardMutation } from "../../hooks/Board/useCreateBoardMutation" 
 import useBoardDialogStore from "../../store/useBoardDialog"
 import { useProjectIdStore } from "../../store/useProjectId"
 import BoardForm from "../forms/BoardForm"

@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import  ColumnForm from "../forms/ColumnForm"
 import useSelectBoardStore from "../../store/useSelectBoard";
-import useCreateColumnMutation from "../../hooks/useCreateColumnMutation";
+import useCreateColumnMutation from "../../hooks/Column/useCreateColumnMutation"; 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import useColumnDialogStore from "../../store/useColumnDialog";

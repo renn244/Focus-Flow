@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import TaskForm from "../forms/TaskForm"
 import useTaskDialogStore from "../../store/useTaskDialog"
 import useSelectBoardStore from "../../store/useSelectBoard";
-import { useCreateTaskMutation } from "../../hooks/useCreateTaskMutation";
+import { useCreateTaskMutation } from "../../hooks/Task/useCreateTaskMutation";
 
 const CreateTaskDialog = () => {
     const isCreateOpen = useTaskDialogStore((state) => state.isCreateOpen);

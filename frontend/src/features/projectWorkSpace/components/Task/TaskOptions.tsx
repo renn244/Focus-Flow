@@ -2,8 +2,15 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react"
+import type { Task } from "../../type";
 
-const TaskOptions = () => {
+type TaskOptionsProps = {
+    taskId: Task['_id'];
+}
+
+const TaskOptions = ({
+    taskId
+}: TaskOptionsProps) => {
     const [open, setOpen] = useState<boolean>(false);
     
     return (

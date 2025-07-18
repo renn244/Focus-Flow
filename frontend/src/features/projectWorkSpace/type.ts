@@ -27,22 +27,23 @@ export type Column = {
     updatedAt: string;
 }
 
-// follow the backend (not priority rn)
 export type Task = {
     _id: string;
     title: string;
     description: string;
     priority: "low" | "medium" | "high";
-    assignee: {
-        name: string;
-        avatar?: string;
-        initials: string;
-    },
-    dueDate: string;
-    tags: string[];
-    comments: number;
-    attachments: number;
-    status: string;
+    boardId: string;
+    columnId: string;
+
+    dueDate?: string;
+    tags?: string[];
+    order?: number
+
+    createdAt: string;
+    updatedAt: string;
+//  comments: number;
+//  attachments: number;
+//  status: string;
 }
 
 export type BoardSchema = z.infer<typeof BoardFormSchema>;

@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import BoardForm from "../forms/BoardForm"
-import { useEditBoardMutation } from "../../hooks/useEditBoardMutation";
+import { useEditBoardMutation } from "../../hooks/Board/useEditBoardMutation";
 import useBoardDialogStore from "../../store/useBoardDialog";
 import type { BoardWithColumns } from "../../type";
 

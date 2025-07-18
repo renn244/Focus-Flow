@@ -1,9 +1,9 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import ColumnForm from '../forms/ColumnForm'
-import { useGetColumnById } from '../../hooks/useGetColumnById'
+import { useGetColumnById } from '../../hooks/Column/useGetColumnById'
 import useColumnDialogStore from '../../store/useColumnDialog'
 import LoadingSpinner from '@/components/ui/loadingSpinner'
-import { useEditColumnMutation } from '../../hooks/useEditColumnMutation'
+import { useEditColumnMutation } from '../../hooks/Column/useEditColumnMutation'
 
 const EditColumnDialog = () => {
     const isEditOpen = useColumnDialogStore((state) => state.isEditOpen);

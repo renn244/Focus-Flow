@@ -31,7 +31,7 @@ const TaskCard = ({
                             {task.priority}
                         </Badge>
                     </div>
-                    <TaskOptions />
+                    <TaskOptions taskId={task._id} />
                 </div>
             </CardHeader>
             <CardContent className="pt-0">
@@ -39,7 +39,7 @@ const TaskCard = ({
                 {task.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{task.description}</p>}
 
                 <div className="flex flex-wrap gap-1 mb-3">
-                    {task.tags.map((tag, index) => (
+                    {task.tags?.map((tag, index) => (
                         <Badge key={index} className="text-xs">
                             {tag}
                         </Badge>
@@ -47,7 +47,7 @@ const TaskCard = ({
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                         <Avatar className="w-6 h-6">
                             <AvatarImage src={task.assignee.avatar || "/placeholder.svg"} alt={task.assignee.name} />
                             <AvatarFallback className="text-xs">{task.assignee.initials}</AvatarFallback>
@@ -56,9 +56,9 @@ const TaskCard = ({
                             <Clock className="w-3 h-3" />
                             {task.dueDate}
                         </div>
-                    </div>
+                    </div> */}
 
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                         {task.comments > 0 && (
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <MessageSquare className="w-3 h-3" />
@@ -71,7 +71,7 @@ const TaskCard = ({
                                 {task.attachments}
                             </div>
                         )}
-                    </div>
+                    </div> */}
                 </div>
             </CardContent>
         </Card>

@@ -1,7 +1,7 @@
 import Sortable from "@/components/common/DndKit/Sortable";
 import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { useGetColumnByBoardId } from "../../hooks/useGetColumnByBoardId";
-import { useReorderColumnMutation } from "../../hooks/useReorderColumnMutation";
+import { useGetColumnByBoardId } from "../../hooks/Column/useGetColumnByBoardId"; 
+import { useReorderColumnMutation } from "../../hooks/Column/useReorderColumnMutation";
 import useSelectBoardStore from "../../store/useSelectBoard";
 import ColumnCard from "../Column/ColumnCard";
 import CreateColumnDialog from "../Column/CreateColumnDialog";
