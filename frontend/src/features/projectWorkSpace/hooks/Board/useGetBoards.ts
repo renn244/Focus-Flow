@@ -2,7 +2,7 @@ import axiosInstance from "@/lib/httpService";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import type { BoardWithColumns } from "../type";
+import type { BoardWithColumns } from "../../type"; 
 
 type getBoardsSuccessResponse = BoardWithColumns[];
 type getBoardResponse = AxiosResponse<getBoardsSuccessResponse, ExceptionResponse>;

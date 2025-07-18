@@ -2,8 +2,8 @@ import { ValidationError } from "@/lib/handleNestError";
 import axiosInstance from "@/lib/httpService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import useTaskDialogStore from "../store/useTaskDialog";
-import type { TaskSchema } from "../type";
+import useTaskDialogStore from "../../store/useTaskDialog"; 
+import type { TaskSchema } from "../../type";
 
 type createTaskSuccessResponse = any;
 type createTaskResponse = AxiosResponse<createTaskSuccessResponse, any>;

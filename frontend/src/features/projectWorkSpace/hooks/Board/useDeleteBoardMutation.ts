@@ -2,9 +2,9 @@ import axiosInstance from "@/lib/httpService";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import { useProjectIdStore } from "../store/useProjectId";
-import useSelectBoardStore from "../store/useSelectBoard";
-import useBoardDialogStore from "../store/useBoardDialog";
+import { useProjectIdStore } from "../../store/useProjectId"; 
+import useSelectBoardStore from "../../store/useSelectBoard"; 
+import useBoardDialogStore from "../../store/useBoardDialog"; 
 
 type deleteBoardSuccessResponse = { message: string };
 type deleteBoardResponse = AxiosResponse<deleteBoardSuccessResponse, ExceptionResponse>;
