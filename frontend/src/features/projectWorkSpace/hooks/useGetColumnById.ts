@@ -2,11 +2,12 @@ import axiosInstance from "@/lib/httpService";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
+import type { Column } from "../type";
 
-type getColumnByIdSuccessResponse = any;
+type getColumnByIdSuccessResponse = Column;
 type getColumnByIdResponse = AxiosResponse<getColumnByIdSuccessResponse, ExceptionResponse>;
 
-const getColumnById = async (columnId: string): Promise<getColumnByIdResponse['data']> => {
+const getColumnById = async (columnId: string): Promise<getColumnByIdResponse['data'] | null> => {
     const response = await axiosInstance.get(`/column/${columnId}`);
 
     if (response.status === 400) {

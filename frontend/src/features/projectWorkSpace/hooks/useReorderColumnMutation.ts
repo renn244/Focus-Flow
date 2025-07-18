@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import { toast } from "sonner";
 
-type reorderColumnSuccessResponse = any;
+type reorderColumnSuccessResponse = { message: string, updatedCount: number };
 type reorderColumnResponse = AxiosResponse<reorderColumnSuccessResponse, ExceptionResponse>;
 
 const reorderColumn = async (boardId: string, reorderColumn: { _id: string, order: number }[]): Promise<reorderColumnResponse['data']> => {

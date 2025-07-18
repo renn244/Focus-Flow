@@ -1,13 +1,13 @@
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import type { AxiosResponse } from "axios";
-import type { ColumnSchema } from "../type";
+import type { Column, ColumnSchema } from "../type";
 import axiosInstance from "@/lib/httpService";
 import { ValidationError } from "@/lib/handleNestError";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useSelectBoardStore from "../store/useSelectBoard";
 import useColumnDialogStore from "../store/useColumnDialog";
 
-type createColumnSuccessResponse = any;
+type createColumnSuccessResponse = Column;
 type createColumnResponse = AxiosResponse<createColumnSuccessResponse, ExceptionResponse>;
 
 const createColumn = async (data: ColumnSchema): Promise<createColumnResponse['data']> => {

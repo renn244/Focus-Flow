@@ -6,9 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { CSS } from "@dnd-kit/utilities"
 import { useSortable } from "@dnd-kit/sortable"
 import useTaskDialogStore from "../../store/useTaskDialog"
+import type { Column } from "../../type"
 
 type ColumnCardProps = {
-    column: any
+    column: Column
 }
 
 const ColumnCard = ({
@@ -16,9 +17,7 @@ const ColumnCard = ({
 }: ColumnCardProps) => {
     const setCreateColumnId = useTaskDialogStore((state) => state.setCreateColumnId);
 
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ 
-        id: column._id
-    })
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: column._id })
     const style = { transform: CSS.Translate.toString(transform), transition, duration: "0.5s" }
 
     return (

@@ -12,6 +12,7 @@ import { useGetColumnById } from "../../hooks/useGetColumnById"
 import { useRemoveColumnMutation } from "../../hooks/useRemoveColumnMutation"
 import useColumnDialogStore from "../../store/useColumnDialog"
 import useSelectBoardStore from "../../store/useSelectBoard"
+import type { Column } from "../../type"
 
 const RemoveColumnDialog = () => {
     const isRemoveOpen = useColumnDialogStore((state) => state.isRemoveOpen);
@@ -49,7 +50,7 @@ const RemoveColumnDialog = () => {
 }
 
 type RemoveColumnProps = {
-    columnToRemove: any
+    columnToRemove: Column
 }
 
 const RemoveColumn = ({
@@ -65,7 +66,7 @@ const RemoveColumn = ({
     const { mutateAsync: removeColumn, isPending: isRemoving } = useRemoveColumnMutation(removeColumnId || "");
 
     const selectedColumn = useMemo(() => {
-        return columns?.find((c) => c.id === selectedMoveToColumn);
+        return columns?.find((c) => c._id === selectedMoveToColumn);
     }, [selectedMoveToColumn, columns]);
 
     return (

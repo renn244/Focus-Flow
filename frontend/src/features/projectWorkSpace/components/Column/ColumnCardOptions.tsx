@@ -3,9 +3,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Edit, MoreHorizontal, Plus, Trash2 } from "lucide-react"
 import { useState } from "react"
 import useColumnDialogStore from "../../store/useColumnDialog"
+import type { Column } from "../../type"
 
 type ColumnCardOptionsProps = {
-    columnId: string;
+    columnId: Column['_id'];
 }
 
 const ColumnCardOptions = ({

@@ -5,7 +5,7 @@ import type { AxiosResponse } from "axios";
 import useSelectBoardStore from "../store/useSelectBoard";
 import useColumnDialogStore from "../store/useColumnDialog";
 
-type removeColumnSuccessResponse = any;
+type removeColumnSuccessResponse = { message: string };
 type removeColumnResponse = AxiosResponse<removeColumnSuccessResponse, ExceptionResponse>;
 
 const removeColumn = async (columnId: string): Promise<removeColumnResponse['data']> => {

@@ -7,7 +7,7 @@ type SortableProps<T extends Record<string, any>> = {
     items: T[];
     onChange: (data: T[]) => void;
     renderItem: (item: T, index: number) => ReactNode;
-} & Omit<ComponentProps<typeof SortableContext>, 'children'> 
+} & Omit<ComponentProps<typeof SortableContext>, 'children' | 'items'> 
 
 const Sortable = <T extends Record<string, any>>({
     dataKey, items, 

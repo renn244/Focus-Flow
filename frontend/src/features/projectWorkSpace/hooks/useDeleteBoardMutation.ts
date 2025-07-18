@@ -6,7 +6,7 @@ import { useProjectIdStore } from "../store/useProjectId";
 import useSelectBoardStore from "../store/useSelectBoard";
 import useBoardDialogStore from "../store/useBoardDialog";
 
-type deleteBoardSuccessResponse = any;
+type deleteBoardSuccessResponse = { message: string };
 type deleteBoardResponse = AxiosResponse<deleteBoardSuccessResponse, ExceptionResponse>;
 
 const deleteBoard = async (boardId: string): Promise<deleteBoardResponse['data']> => {

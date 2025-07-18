@@ -11,6 +11,7 @@ import CreateBoardDialog from "./CreateBoardDialog";
 import KanbanBoardHeader from "./KanbanBoardHeader";
 import transformReorderColumn from "../../utils/transformReorderColumn";
 import CreateTaskDialog from "../Task/CreateTaskDialog";
+import type { Column } from "../../type";
 
 type KanbanBoardProps = {
 }
@@ -28,7 +29,7 @@ const KanbanBoard = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-screen">
 
-                <Sortable
+                <Sortable<Column>
                 items={columns || []} dataKey="_id" 
                 onChange={async (data) => {
                     const columnOrders = transformReorderColumn(data);

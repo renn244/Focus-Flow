@@ -4,8 +4,9 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import useColumnDialogStore from "../store/useColumnDialog";
+import type { Column } from "../type";
 
-type editColumnSuccessResponse = any;
+type editColumnSuccessResponse = Column;
 type editColumnResponse = AxiosResponse<editColumnSuccessResponse, ExceptionResponse>;
 
 const editColumn = async (id: string, data: any): Promise<editColumnResponse['data']> => {
