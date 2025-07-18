@@ -130,13 +130,14 @@ const RemoveColumn = ({
                                         <SelectValue placeholder="Select destination column" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {columns?.filter((col) => col._id !== columnToRemove._id)
+                                        {columns
+                                        ?.filter((col) => col._id !== columnToRemove._id)
                                         .map((column) => (
                                             <SelectItem key={column._id} value={column._id}>
                                                 <div className="flex items-center gap-2">
                                                     <div className={`w-3 h-3 rounded ${column.color}`} />
                                                     <span>{column.title}</span>
-                                                    <span className="text-xs text-gray-500">({column.task.length} tasks)</span>
+                                                    <span className="text-xs text-gray-500">({column.tasks.length} tasks)</span>
                                                 </div>
                                             </SelectItem>
                                         ))}
@@ -157,7 +158,7 @@ const RemoveColumn = ({
                                             <div style={{ backgroundColor: selectedColumn.color }} className={`w-3 h-3 rounded`} />
                                             <span className="font-medium">{selectedColumn.title}</span>
                                             <span className="text-gray-600">
-                                                ({selectedColumn.task.length + columnToRemove.tasks.length} tasks after move)
+                                                ({selectedColumn.tasks.length + columnToRemove.tasks.length} tasks after move)
                                             </span>
                                         </div>
                                     </div>
