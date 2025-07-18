@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type { BoardFormSchema } from "./components/forms/BoardForm";
 import type { columnFormSchema } from "./components/forms/ColumnForm";
+import type { TaskFormSchema } from "./components/forms/TaskForm";
 
 export type Board = {
     _id: string;
@@ -46,3 +47,4 @@ export type Task = {
 
 export type BoardSchema = z.infer<typeof BoardFormSchema>;
 export type ColumnSchema = z.infer<typeof columnFormSchema>;
+export type TaskSchema = z.infer<typeof TaskFormSchema>;

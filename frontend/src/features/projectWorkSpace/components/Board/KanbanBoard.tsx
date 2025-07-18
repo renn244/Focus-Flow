@@ -10,6 +10,7 @@ import RemoveColumnDialog from "../Column/RemoveColumnDialog";
 import CreateBoardDialog from "./CreateBoardDialog";
 import KanbanBoardHeader from "./KanbanBoardHeader";
 import transformReorderColumn from "../../utils/transformReorderColumn";
+import CreateTaskDialog from "../Task/CreateTaskDialog";
 
 type KanbanBoardProps = {
 }
@@ -44,8 +45,11 @@ const KanbanBoard = ({
                 <RemoveColumnDialog />
             </div>
 
+            {/* Board Dialog */}
             <CreateBoardDialog />
 
+            {/* Task Dialog */}
+            <CreateTaskDialog />
         </div>
     )
 }

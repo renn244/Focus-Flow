@@ -24,7 +24,7 @@ const TaskCard = ({
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                         <Badge className="text-xs font-mono">
-                            {task.id}
+                            {task._id}
                         </Badge>
                         <Badge className={`text-xs ${priorityColors[task.priority as keyof typeof priorityColors]}`}>
                             <Flag className="w-3 h-3 mr-1" />

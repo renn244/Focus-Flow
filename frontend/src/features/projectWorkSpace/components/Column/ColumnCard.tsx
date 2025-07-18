@@ -5,6 +5,7 @@ import TaskCard from "../Task/TaskCard"
 import { Badge } from "@/components/ui/badge"
 import { CSS } from "@dnd-kit/utilities"
 import { useSortable } from "@dnd-kit/sortable"
+import useTaskDialogStore from "../../store/useTaskDialog"
 
 type ColumnCardProps = {
     column: any
@@ -13,6 +14,8 @@ type ColumnCardProps = {
 const ColumnCard = ({
     column
 }: ColumnCardProps) => {
+    const setCreateColumnId = useTaskDialogStore((state) => state.setCreateColumnId);
+
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ 
         id: column._id
     })
@@ -39,7 +42,7 @@ const ColumnCard = ({
                     </div>
                 </div>
 
-                <Button
+                <Button onClick={() => setCreateColumnId(column._id)}
                 variant="ghost"
                 className="w-full justify-start text-slate-600 hover:text-slate-800 hover:bg-white/50"
                 >
@@ -48,11 +51,11 @@ const ColumnCard = ({
                 </Button>
             </div>
 
-            <div className="flex-1 space-y-3">
+            {/* <div className="flex-1 space-y-3">
                 {column.tasks.map((task: any) => (
                     <TaskCard key={task.id} task={task} />
                 ))}
-            </div>
+            </div> */}
         </div>
     )
 }

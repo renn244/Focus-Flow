@@ -13,7 +13,7 @@ const ProjectWorkspace = ({
     const [searchQuery, setSearchQuery] = useState("");
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="min-h-screen max-w-screen bg-gradient-to-br from-slate-50 to-slate-100">
             {/* Header */}
             <div className="bg-white border-b border-slate-200 px-6 py-4">
                 <div className="flex items-center justify-between">
