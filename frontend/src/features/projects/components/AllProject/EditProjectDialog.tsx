@@ -4,13 +4,15 @@ import ProjectForm from "../form/ProjectForm";
 import { useEditProjectMutation } from "../../hooks/useEditProjectMutation";
 import { useGetProjectById } from "../../hooks/useGetProjectById";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog";
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog";
 
 const EditProjectDialog = () => {
     const isEditOpen = useProjectDialogStore((state) => state.isEditOpen);
     const editProjectId = useProjectDialogStore((state) => state.editProjectId);
     const setEditOpen = useProjectDialogStore((state) => state.setEditOpen);
 
-    const { data, isLoading, error } = useGetProjectById(editProjectId || "");
+    const { data, isLoading, error, refetch, isRefetching } = useGetProjectById(editProjectId || "");
     const { mutateAsync, isPending } = useEditProjectMutation(editProjectId || "");
 
     if(isEditOpen === false || !editProjectId) {
@@ -29,10 +31,17 @@ const EditProjectDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Something went wrong</>
+                    <SomethingWentWrongDialog
+                    onBack={() => setEditOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {(!data && !isLoading && !error ) && (
-                    <>Not Found</>
+                    <NotFoundDialog
+                    onBack={() => setEditOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    title="Project Not Found"
+                    />
                 )}
                 {data && (
                     <ProjectForm

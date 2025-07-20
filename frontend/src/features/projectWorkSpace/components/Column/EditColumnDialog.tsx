@@ -4,13 +4,15 @@ import { useGetColumnById } from '../../hooks/Column/useGetColumnById'
 import useColumnDialogStore from '../../store/useColumnDialog'
 import LoadingSpinner from '@/components/ui/loadingSpinner'
 import { useEditColumnMutation } from '../../hooks/Column/useEditColumnMutation'
+import NotFoundDialog from '@/components/common/Dialog/NotFound-Dialog'
+import SomethingWentWrongDialog from '@/components/common/Dialog/SomethingWentWrong-Dialog'
 
 const EditColumnDialog = () => {
     const isEditOpen = useColumnDialogStore((state) => state.isEditOpen);
     const editColumnId = useColumnDialogStore((state) => state.editColumnId);
     const setEditOpen = useColumnDialogStore((state) => state.setEditOpen);
 
-    const { data, isLoading, error } = useGetColumnById(editColumnId);
+    const { data, isLoading, error, refetch, isRefetching } = useGetColumnById(editColumnId);
     const { mutateAsync, isPending } = useEditColumnMutation(editColumnId || '');
 
     if(isEditOpen === false || !editColumnId) {
@@ -29,10 +31,16 @@ const EditColumnDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Something went wrong</>
+                    <SomethingWentWrongDialog 
+                    onBack={() => setEditOpen(false)} 
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
-                {!data && !isLoading && (
-                    <>Column not found</>
+                {(!data && !isLoading && !error) && (
+                    <NotFoundDialog 
+                    onBack={() => setEditOpen(false)} 
+                    onRetry={refetch} retryLoading={isRefetching}
+                    title="Column not found" />
                 )}
                 {data && (
                     <ColumnForm 

@@ -12,6 +12,8 @@ import { useGetProjectById } from "../../hooks/useGetProjectById"
 import { useState } from "react"
 import { useDeleteProjectMutation } from "../../hooks/useDeleteProjectMutation"
 import type { ProjectWithOwner } from "../../type"
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog"
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog"
 
 
 const DeleteProjectDialog = () => {
@@ -19,7 +21,7 @@ const DeleteProjectDialog = () => {
     const deleteProjectId = useProjectDialogStore((state) => state.deleteProjectId);
     const setDeleteOpen = useProjectDialogStore((state) => state.setDeleteOpen);
 
-    const { data: project, isLoading, error } = useGetProjectById(deleteProjectId || "");
+    const { data: project, isLoading, error, refetch, isRefetching } = useGetProjectById(deleteProjectId || "");
 
     return (
         <Dialog open={isDeleteOpen} onOpenChange={setDeleteOpen}>
@@ -30,10 +32,17 @@ const DeleteProjectDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Something went wrong</>
+                    <SomethingWentWrongDialog
+                    onBack={() => setDeleteOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {(!project && !isLoading && !error) && (
-                    <>Not Found</>
+                    <NotFoundDialog
+                    onBack={() => setDeleteOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    title="Project Not Found"
+                    />
                 )}
                 {project && (
                     <DeleteProject project={project} />

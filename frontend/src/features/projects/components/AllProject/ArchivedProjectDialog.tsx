@@ -8,13 +8,15 @@ import { useGetProjectById } from "../../hooks/useGetProjectById";
 import useProjectDialogStore from "../../store/useProjectDialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { ProjectWithOwner } from "../../type";
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog";
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog";
 
 const ArchivedProjectDialog = () => {
     const isArchiveOpen = useProjectDialogStore((state) => state.isArchiveOpen);
     const archiveProjectId = useProjectDialogStore((state) => state.archiveProjectId);
     const setArchiveOpen = useProjectDialogStore((state) => state.setArchiveOpen);
 
-    const { data: project, isLoading, error } = useGetProjectById(archiveProjectId || "");
+    const { data: project, isLoading, error, refetch, isRefetching } = useGetProjectById(archiveProjectId || "");
 
     return (
         <Dialog open={isArchiveOpen} onOpenChange={setArchiveOpen}>
@@ -25,10 +27,16 @@ const ArchivedProjectDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Somethign went wrong</>
+                    <SomethingWentWrongDialog
+                    onBack={() => setArchiveOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {(!project && !isLoading && !error) && (
-                    <>Not Found</>
+                    <NotFoundDialog 
+                    onBack={() => setArchiveOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {project && (
                     <ArchivedProject project={project} />

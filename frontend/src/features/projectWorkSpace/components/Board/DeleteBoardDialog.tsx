@@ -10,13 +10,15 @@ import { useDeleteBoardMutation } from "../../hooks/Board/useDeleteBoardMutation
 import { useGetBoardById } from "../../hooks/Board/useGetBoardById" 
 import type { BoardWithColumns } from "../../type"
 import { format } from "date-fns"
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog"
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog"
 
 const DeleteBoardDialog = () => {
     const isDeleteOpen = useBoardDialogStore((state) => state.isDeleteOpen);
     const setDeleteOpen = useBoardDialogStore((state) => state.setDeleteOpen);
     const deleteBoardId = useBoardDialogStore((state) => state.deleteBoardId);
 
-    const { data: boardToDelete, isLoading, error } = useGetBoardById(deleteBoardId || "");
+    const { data: boardToDelete, isLoading, error, refetch, isRefetching } = useGetBoardById(deleteBoardId || "");
 
     return (
         <Dialog open={isDeleteOpen} onOpenChange={setDeleteOpen}>
@@ -27,10 +29,17 @@ const DeleteBoardDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Something went wrong</>
+                    <SomethingWentWrongDialog 
+                    onBack={() => setDeleteOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {(!boardToDelete && !isLoading && !error) && (
-                    <>Not Found</>
+                    <NotFoundDialog 
+                    onBack={() => setDeleteOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    title="Board Not Found"
+                    />
                 )}
                 {boardToDelete && (
                     <DeleteBoard boardToDelete={boardToDelete} />

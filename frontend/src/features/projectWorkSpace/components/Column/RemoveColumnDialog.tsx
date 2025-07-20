@@ -13,13 +13,15 @@ import { useRemoveColumnMutation } from "../../hooks/Column/useRemoveColumnMutat
 import useColumnDialogStore from "../../store/useColumnDialog"
 import useSelectBoardStore from "../../store/useSelectBoard"
 import type { Column } from "../../type"
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog"
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog"
 
 const RemoveColumnDialog = () => {
     const isRemoveOpen = useColumnDialogStore((state) => state.isRemoveOpen);
     const setRemoveOpen = useColumnDialogStore((state) => state.setRemoveOpen);
     const removeColumnId = useColumnDialogStore((state) => state.removeColumnId);
 
-    const { data: columnToRemove, isLoading, error } = useGetColumnById(removeColumnId);
+    const { data: columnToRemove, isLoading, error, refetch, isRefetching } = useGetColumnById(removeColumnId);
 
     if(isRemoveOpen === false || !removeColumnId) {
         return null;
@@ -34,10 +36,17 @@ const RemoveColumnDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Something went wrong</>
+                    <SomethingWentWrongDialog 
+                    onBack={() => setRemoveOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {(!columnToRemove && !isLoading && !error) && (
-                    <>Not Found</>
+                    <NotFoundDialog 
+                    onBack={() => setRemoveOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    title="Column not found"
+                    />
                 )}
                 {columnToRemove && (
                     <RemoveColumn 
