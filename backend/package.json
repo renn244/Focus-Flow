@@ -32,7 +32,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.0",
-    "@sentry/cli": "^2.46.0",
+    "@sentry/cli": "^2.50.0",
     "@sentry/nestjs": "^9.31.0",
     "@sentry/profiling-node": "^9.31.0",
     "bcrypt": "^6.0.0",
