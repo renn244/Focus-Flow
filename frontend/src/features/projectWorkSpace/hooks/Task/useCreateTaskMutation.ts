@@ -3,9 +3,9 @@ import axiosInstance from "@/lib/httpService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import useTaskDialogStore from "../../store/useTaskDialog"; 
-import type { TaskSchema } from "../../type";
+import type { Task, TaskSchema } from "../../type";
 
-type createTaskSuccessResponse = any;
+type createTaskSuccessResponse = Task;
 type createTaskResponse = AxiosResponse<createTaskSuccessResponse, any>;
 
 const createTask = async (data: TaskSchema): Promise<createTaskResponse['data']> => {
@@ -29,8 +29,7 @@ export const useCreateTaskMutation = () => {
     return useMutation({
         mutationFn: createTask,
         onSuccess: (_, variable) => {
-            // later use instead setQueryData. because it's expensive to invalidate all tasks
-            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', variable.boardId] });
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'bycolumn', variable.columnId] });
             setCreateOpen(false);
         }
     })

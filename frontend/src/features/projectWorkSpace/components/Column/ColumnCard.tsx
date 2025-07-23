@@ -7,6 +7,7 @@ import { CSS } from "@dnd-kit/utilities"
 import { useSortable } from "@dnd-kit/sortable"
 import useTaskDialogStore from "../../store/useTaskDialog"
 import type { Column } from "../../type"
+import { useGetTaskByColumnId } from "../../hooks/Task/useGetTaskByColumnId"
 
 type ColumnCardProps = {
     column: Column
@@ -20,12 +21,14 @@ const ColumnCard = ({
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: column._id })
     const style = { transform: CSS.Translate.toString(transform), transition, duration: "0.5s" }
 
+    const { data: tasks, isLoading } = useGetTaskByColumnId(column._id);
+
     return (
         <div ref={setNodeRef} key={column._id} className="flex flex-col" style={style}>
             <div 
             // can't use this it looks ugly tbh so find a way to lighten the color
             // style={{ backgroundColor: column.color }}
-            className={`bg-gray-300/50 bg-opacity-50 rounded-lg p-4 mb-4`}>
+            className={`bg-gray-300/50 bg-opacity-50 rounded-lg p-4 mb-1.5`}>
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <h2 className="font-semibold text-slate-800">{column.title}</h2>
@@ -50,11 +53,11 @@ const ColumnCard = ({
                 </Button>
             </div>
 
-            {/* <div className="flex-1 space-y-3">
-                {column.tasks.map((task: any) => (
+            <div className="flex-1 space-y-3">
+                {tasks?.map((task: any) => (
                     <TaskCard key={task.id} task={task} />
                 ))}
-            </div> */}
+            </div>
         </div>
     )
 }

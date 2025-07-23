@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import TaskOptions from "./TaskOptions"
 import { Badge } from "@/components/ui/badge"
 import type { Task } from "../../type"
+import { format } from "date-fns"
 
 const priorityColors = {
     low: "bg-green-100 text-green-800",
@@ -19,44 +20,43 @@ const TaskCard = ({
     task
 }: TaskCardProps) => {
     return (
-        <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer group gap-0">
-            <CardHeader className="pb-0">
-                <div className="flex items-start justify-between">
+        <Card className="mb-1.5 p-3 hover:shadow-md transition-shadow cursor-pointer group gap-0">
+            <CardHeader className="pb-0 mb-0 px-0">
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Badge className="text-xs font-mono">
-                            {task._id}
-                        </Badge>
                         <Badge className={`text-xs ${priorityColors[task.priority as keyof typeof priorityColors]}`}>
-                            <Flag className="w-3 h-3 mr-1" />
+                            <Flag className="w-3 h-3 mr-1"   />   
                             {task.priority}
                         </Badge>
                     </div>
                     <TaskOptions taskId={task._id} />
                 </div>
             </CardHeader>
-            <CardContent className="pt-0">
-                <h3 className="font-semibold text-sm mb-2 line-clamp-2">{task.title}</h3>
-                {task.description && <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{task.description}</p>}
+            <CardContent className="pt-0 px-0">
+                <h3 className="font-semibold mb-0.5 line-clamp-2">{task.title}</h3>
+                {task.description && <p className="text-xs text-muted-foreground mb-2 line-clamp-1">{task.description}</p>}
 
-                <div className="flex flex-wrap gap-1 mb-3">
+                <div className="flex flex-wrap gap-1 mb-1.5">
                     {task.tags?.map((tag, index) => (
-                        <Badge key={index} className="text-xs">
+                        <Badge key={index} className="text-xs p-0.75 px-1.5">
                             {tag}
                         </Badge>
                     ))}
                 </div>
 
                 <div className="flex items-center justify-between">
-                    {/* <div className="flex items-center gap-2">
-                        <Avatar className="w-6 h-6">
+                    <div className="flex items-center gap-2">
+                        {/* <Avatar className="w-6 h-6">
                             <AvatarImage src={task.assignee.avatar || "/placeholder.svg"} alt={task.assignee.name} />
                             <AvatarFallback className="text-xs">{task.assignee.initials}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Clock className="w-3 h-3" />
-                            {task.dueDate}
-                        </div>
-                    </div> */}
+                        </Avatar> */}
+                        {task.dueDate && (
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Clock className="w-3 h-3" />
+                                {format(new Date(task.dueDate), 'MMM dd, yyyy')}
+                            </div>
+                        )}
+                    </div>
 
                     {/* <div className="flex items-center gap-2">
                         {task.comments > 0 && (

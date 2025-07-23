@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import type { TaskSchema } from "../../type";
+import type { Task, TaskSchema } from "../../type";
 import { handleNestError, ValidationError } from "@/lib/handleNestError";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import { InputTags } from "@/components/ui/input-tags";
 import { Badge } from "@/components/ui/badge";
 import useTaskDialogStore from "../../store/useTaskDialog";
 
+// later add assignee as well as 
 export const TaskFormSchema = z.object({
     title: z.string().min(1, "Task title is required"),
     description: z.string()
@@ -36,7 +37,7 @@ export const TaskFormSchema = z.object({
 const commonTags = ["Frontend", "Backend", "Design", "UI/UX", "API", "Database"]
 
 type TaskFormProps = {
-    onsubmit: (data: TaskSchema) => Promise<void>;
+    onsubmit: (data: TaskSchema) => Promise<Task>;
     isLoading: boolean;
     isUpdate?: boolean;
     className?: string;
@@ -158,7 +159,7 @@ const TaskForm = ({
                     <FormField
                         control={form.control}
                         name="dueDate"
-                        render={({ field }) => (
+                        render={() => (
                         <FormItem>
                             <FormLabel className="text-sm font-medium">Due Date</FormLabel>
                             <FormControl>
@@ -218,24 +219,6 @@ const TaskForm = ({
                     </FormItem>
                 )}
                 />
-
-                {/* <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-                    <h4 className="text-sm font-medium text-slate-700">Task Summary</h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                        <div>
-                            Column: <span className="font-medium">{columnTitle}</span>
-                        </div>
-                        <div>
-                            Priority: <span className="font-medium capitalize">{form.watch("priority")}</span>
-                        </div>
-                        <div>
-                            Due Date: <span className="font-medium">{form.watch("dueDate") || "Not set"}</span>
-                        </div>
-                        <div>
-                            Tags: <span className="font-medium">{selectedTags.length} selected</span>
-                        </div>
-                    </div>
-                </div> */}
 
                 <DialogFooter className="gap-2">
                     <Button type="button" variant="outline" onClick={() => setCreateOpen(false)} disabled={isLoading}>
