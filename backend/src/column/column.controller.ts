@@ -7,6 +7,8 @@ import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
+import { EventPattern, Payload } from '@nestjs/microservices';
+import { IsPublic } from 'src/lib/Decorators/IsPublic';
 
 @Controller('column')
 @UseGuards(JwtAuthGuard)

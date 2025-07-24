@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
 import { Task, TaskDocument } from 'src/schema/Task.schema';
@@ -8,12 +8,15 @@ import { ColumnService } from 'src/column/column.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { plainToInstance } from 'class-transformer';
 import { TaskDto } from './dto/response-dto';
+import { RABBITMQ_NAMES } from 'src/lib/constants/RABBITMQ';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class TaskService {
     constructor(
         @InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>,
         @InjectConnection() private readonly connection: Connection,
+        @Inject(RABBITMQ_NAMES.TASK_SERVICE) private rabbitClient: ClientProxy,
         private readonly columnService: ColumnService,
     ) {}
 
@@ -26,6 +29,7 @@ export class TaskService {
             await this.columnService.addTaskToColumn(body.columnId, newTask[0]._id, session)
             
             await session.commitTransaction();
+            this.rabbitClient.emit('task_created', newTask[0])
 
             return plainToInstance(TaskDto, newTask[0], {
                 excludeExtraneousValues: true,
