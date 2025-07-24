@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose, plainToInstance, Transform } from "class-transformer";
 
 export class TaskDto {
     @Expose()
@@ -36,4 +36,33 @@ export class TaskDto {
 
     @Expose()
     updatedAt: Date;
+}
+
+class ColumnDto {
+    @Expose()
+    _id: string;
+
+    @Expose()
+    title: string;
+
+    @Expose()
+    color: string;
+}
+
+class BoardDto {
+    @Expose()
+    _id: string;
+
+    @Expose()
+    name: string;
+}
+
+export class TaskWithBoardAndColumnDto extends TaskDto {
+    @Expose()
+    @Transform(({ obj }) => plainToInstance(ColumnDto, obj.columnId, { excludeExtraneousValues: true }))
+    column: ColumnDto;
+
+    @Expose()
+    @Transform(({ obj }) => plainToInstance(BoardDto, obj.boardId, { excludeExtraneousValues: true }))
+    board: BoardDto;
 }

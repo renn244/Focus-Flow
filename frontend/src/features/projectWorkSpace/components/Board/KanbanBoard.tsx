@@ -14,6 +14,7 @@ import CreateTaskDialog from "../Task/CreateTaskDialog";
 import type { Column } from "../../type";
 import EditTaskDialog from "../Task/EditTaskDialog";
 import RemoveTaskDialog from "../Task/RemoveTaskDialog";
+import ViewTaskDialog from "../Task/ViewTaskDialog";
 
 type KanbanBoardProps = {
 }
@@ -52,6 +53,8 @@ const KanbanBoard = ({
             <CreateBoardDialog />
 
             {/* Task Dialog */}
+            <ViewTaskDialog />
+
             <CreateTaskDialog />
 
             <EditTaskDialog />

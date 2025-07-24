@@ -7,7 +7,7 @@ import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { ColumnService } from 'src/column/column.service';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { plainToInstance } from 'class-transformer';
-import { TaskDto } from './dto/response-dto';
+import { TaskDto, TaskWithBoardAndColumnDto } from './dto/response-dto';
 
 @Injectable()
 export class TaskService {
@@ -55,13 +55,13 @@ export class TaskService {
     }
 
     async getTask(id: Types.ObjectId) {
-        const task = await this.taskModel.findById(id);
+        const task = await this.taskModel.findById(id).populate('columnId', 'title color _id').populate('boardId', 'name _id');
 
         if (!task) {
             throw new NotFoundException('Task not found');
         }
 
-        return plainToInstance(TaskDto, task, {
+        return plainToInstance(TaskWithBoardAndColumnDto, task, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         })

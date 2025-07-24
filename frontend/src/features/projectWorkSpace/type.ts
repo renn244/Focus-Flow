@@ -46,6 +46,11 @@ export type Task = {
 //  status: string;
 }
 
+export type TaskWithBoardAndColumn = {
+    board: Omit<Board, 'description' | 'projectId' | 'columns' | 'createdAt' | 'updatedAt'>;
+    column: Omit<Column, 'order' | 'tasks' | 'createdAt' | 'updatedAt'>;
+} & Omit<Task, 'boardId' | 'columnId'>;
+
 export type BoardSchema = z.infer<typeof BoardFormSchema>;
 export type ColumnSchema = z.infer<typeof columnFormSchema>;
 export type TaskSchema = z.infer<typeof TaskFormSchema>;

@@ -1,10 +1,10 @@
 import type { AxiosResponse } from "axios";
-import type { Task } from "../../type";
+import type { TaskWithBoardAndColumn } from "../../type";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import axiosInstance from "@/lib/httpService";
 import { useQuery } from "@tanstack/react-query";
 
-type getTaskByIdSuccessResponse = Task;
+type getTaskByIdSuccessResponse = TaskWithBoardAndColumn;
 type getTaskByIdResponse = AxiosResponse<getTaskByIdSuccessResponse, ExceptionResponse>;
 
 const getTaskById = async (taskId: string): Promise<getTaskByIdResponse['data']> => {

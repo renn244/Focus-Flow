@@ -14,6 +14,7 @@ const TaskOptions = ({
 }: TaskOptionsProps) => {
     const [open, setOpen] = useState<boolean>(false);
 
+    const setViewTaskId = useTaskDialogStore((state) => state.setViewTaskId);
     const setEditTaskId = useTaskDialogStore((state) => state.setEditTaskId);
     const setRemoveTaskId = useTaskDialogStore((state) => state.setRemoveTaskId);
 
@@ -25,7 +26,7 @@ const TaskOptions = ({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setViewTaskId(taskId)}>
                     <Eye className="h-4 w-4" />
                     View task
                 </DropdownMenuItem>

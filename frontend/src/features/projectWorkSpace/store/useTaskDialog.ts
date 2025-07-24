@@ -6,6 +6,11 @@ type TaskDialogState = {
     createColumnId: string | null;
     setCreateColumnId: (id: string | null) => void;
 
+    isViewOpen: boolean;
+    setViewOpen: (value: boolean) => void;
+    viewTaskId: string | null;
+    setViewTaskId: (id: string | null) => void;
+
     isEditOpen: boolean;
     setEditOpen: (value: boolean) => void;
     editTaskId: string | null;
@@ -33,6 +38,24 @@ const useTaskDialogStore = create<TaskDialogState>((set) => ({
         } else {
             set({ createColumnId: id });
             set({ isCreateOpen: true }); // Automatically open the create dialog when setting the ID
+        }
+    },
+
+    isViewOpen: false,
+    setViewOpen: (value) => {
+        if(value === false) {
+            set({ isViewOpen: false });
+            set({ viewTaskId: null }); // Reset viewTaskId when closing the dialog
+        }
+    },
+    viewTaskId: null,
+    setViewTaskId: (id) => {
+        if(id === undefined || id === null) {
+            set({ viewTaskId: null });
+            set({ isViewOpen: false }); // Close the view dialog when ID is empty
+        } else {
+            set({ viewTaskId: id });
+            set({ isViewOpen: true }); // Automatically open the view dialog when setting the ID
         }
     },
 

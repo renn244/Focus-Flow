@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { AlertTriangle, Calendar, Clock, Flag, Tag, Trash2, User } from "lucide-react"
 import useTaskDialogStore from "../../store/useTaskDialog"
 import { useGetTaskById } from "../../hooks/Task/useGetTaskById"
-import type { Task } from "../../type"
+import type { Task, TaskWithBoardAndColumn } from "../../type"
 import { useState } from "react"
 import { priorityColors } from "../../constant/priorityColors"
 import LoadingSpinner from "@/components/ui/loadingSpinner"
@@ -59,7 +59,7 @@ const RemoveTaskDialog = () => {
 }
 
 type RemoveTaskProps = {
-    task: Task;
+    task: TaskWithBoardAndColumn;
 }
 
 const RemoveTask = ({
@@ -74,7 +74,7 @@ const RemoveTask = ({
     const isOverdue = task.dueDate ? new Date(task.dueDate) < new Date() : false;
     const hasHighImpact = task.priority === "high"; // add other things that make it high impact later on
 
-    const { mutateAsync: removeTask, isPending: isRemoving } = useDeleteTaskMutation(task._id, task.columnId);
+    const { mutateAsync: removeTask, isPending: isRemoving } = useDeleteTaskMutation(task._id, task.column._id);
 
     return (
         <>
