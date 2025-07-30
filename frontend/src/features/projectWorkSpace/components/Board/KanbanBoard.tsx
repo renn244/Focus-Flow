@@ -11,7 +11,7 @@ import CreateBoardDialog from "./CreateBoardDialog";
 import KanbanBoardHeader from "./KanbanBoardHeader";
 import transformReorderColumn from "../../utils/transformReorderColumn";
 import CreateTaskDialog from "../Task/CreateTaskDialog";
-import type { Column } from "../../type";
+import type { Column, ColumnWithTasks } from "../../type";
 import EditTaskDialog from "../Task/EditTaskDialog";
 import RemoveTaskDialog from "../Task/RemoveTaskDialog";
 import ViewTaskDialog from "../Task/ViewTaskDialog";
@@ -32,14 +32,14 @@ const KanbanBoard = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-screen">
 
-                <Sortable<Column>
+                <Sortable<ColumnWithTasks>
                 items={columns || []} dataKey="_id" 
                 onChange={async (data) => {
                     const columnOrders = transformReorderColumn(data);
-                    await reorderColumn(columnOrders);
+                    // await reorderColumn(columnOrders);
                 }}
                 strategy={horizontalListSortingStrategy}    
-                renderItem={(item) => <ColumnCard key={item._id} column={item} /> }
+                renderItem={(item, _, isOverlay) => <ColumnCard key={item._id} column={item as any} isOverlay={isOverlay} /> }
                 />
 
                 <CreateColumnDialog />

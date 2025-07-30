@@ -1,10 +1,12 @@
-import { Clock, Flag, MessageSquare, Paperclip } from "lucide-react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import TaskOptions from "./TaskOptions"
 import { Badge } from "@/components/ui/badge"
-import type { Task } from "../../type"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { useDraggable } from "@dnd-kit/core"
+import { CSS } from "@dnd-kit/utilities"
 import { format } from "date-fns"
+import { Clock, Flag, GripVertical } from "lucide-react"
+import type { TaskWithBoardAndColumn } from "../../type"
+import TaskOptions from "./TaskOptions"
 
 const priorityColors = {
     low: "bg-green-100 text-green-800",
@@ -13,23 +15,42 @@ const priorityColors = {
 }
 
 type TaskCardProps = {
-    task: Task
+    task: TaskWithBoardAndColumn,
+    columnId: TaskWithBoardAndColumn["_id"];
 }
 
 const TaskCard = ({
-    task
+    task, columnId
 }: TaskCardProps) => {
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({ 
+        id: task._id,
+        data: { id: task._id, columnId: columnId, type: "task" }
+    })
+
+    const style = {
+        transform: CSS.Translate.toString(transform),
+    }
+
     return (
-        <Card className="mb-1.5 p-3 hover:shadow-md transition-shadow cursor-pointer group gap-0">
+        <Card 
+        ref={setNodeRef} 
+        style={style}
+        className="mb-1.5 p-3 hover:shadow-md transition-shadow cursor-pointer group gap-0">
             <CardHeader className="pb-0 mb-0 px-0">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <Badge className={`text-xs ${priorityColors[task.priority as keyof typeof priorityColors]}`}>
+                        <Badge className={`text-xs ${priorityColors[task.priority]}`}>
                             <Flag className="w-3 h-3 mr-1"   />   
                             {task.priority}
                         </Badge>
                     </div>
-                    <TaskOptions taskId={task._id} />
+                    <div className="flex items-center gap-2">
+                        <Button className="group-hover:opacity-100 opacity-0 transition-opacity"
+                        size="sm" variant="ghost" {...listeners} {...attributes}>
+                            <GripVertical className="h-4 w-4" />
+                        </Button>
+                        <TaskOptions taskId={task._id} />
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="pt-0 px-0">

@@ -24,10 +24,6 @@ const ColumnCardOptions = ({
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add task
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setEditColumnId(columnId)}>
                     <Edit className="h-4 w-4 mr-2" />
                     Edit column

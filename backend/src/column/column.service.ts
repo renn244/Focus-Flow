@@ -6,7 +6,7 @@ import { BoardService } from 'src/board/board.service';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { Column, ColumnDocument } from 'src/schema/Column.schema';
 import { CreateColumnDto } from './dto/create-column.dto';
-import { ColumnDto } from './dto/response-dto';
+import { ColumnDto, ColumnWithTasksDto } from './dto/response-dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 
 @Injectable()
@@ -87,9 +87,24 @@ export class ColumnService {
             return [];
         }
 
-        const columns = await this.columnModel.find({ _id: { $in: columnIds } }).sort({ order: 1 });
+        const columns = await this.columnModel.find({ _id: { $in: columnIds } })
+            .populate({ 
+                path: 'tasks', 
+                populate: [
+                    {
+                        path: 'boardId',
+                        select: 'name _id'
+                    },
+                    {
+                        path: 'columnId',
+                        select: 'title color _id'
+                    }
+                ]
+            })
+            .sort({ order: 1 });
+        
 
-        return plainToInstance(ColumnDto, columns, {
+        return plainToInstance(ColumnWithTasksDto, columns, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         })
