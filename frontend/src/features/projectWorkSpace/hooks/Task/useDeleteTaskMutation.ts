@@ -3,6 +3,7 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import useTaskDialogStore from "../../store/useTaskDialog";
+import useSelectBoardStore from "../../store/useSelectBoard";
 
 
 type deleteTaskSuccessResponse = { message: string };
@@ -21,13 +22,13 @@ const deleteTask = async (taskId: string): Promise<deleteTaskResponse['data']> =
 export const useDeleteTaskMutation = (taskId: string, columnId: string) => {
     const queryClient = useQueryClient();
     const setRemoveOpen = useTaskDialogStore((state) => state.setRemoveOpen);
+    const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);
 
     return useMutation({
         mutationFn: () => deleteTask(taskId),
         onSuccess: () => {
             setRemoveOpen(false);
-
-            queryClient.invalidateQueries({ queryKey: ['tasks', 'bycolumn', columnId] });
+            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', selectedBoardId] })
         },
     })
 }

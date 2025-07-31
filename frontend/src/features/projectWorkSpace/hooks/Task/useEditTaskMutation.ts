@@ -30,7 +30,7 @@ export const useEditTaskMutation = (taskId: string) => {
     return useMutation<Task, Error, Task>({
         mutationFn: (data) => editTask(taskId, data),
         onSuccess: (data, variable) => {
-            queryClient.invalidateQueries({ queryKey: ['tasks', 'bycolumn', variable.columnId] });
+            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', variable.boardId] })
             queryClient.invalidateQueries({ queryKey: ['task', data._id] });
             setEditOpen(false);
         }
