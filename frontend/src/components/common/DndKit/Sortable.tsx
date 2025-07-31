@@ -1,31 +1,47 @@
 import ColumnCard from "@/features/projectWorkSpace/components/Column/ColumnCard";
-import type { TaskWithBoardAndColumn } from "@/features/projectWorkSpace/type";
 import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragOverEvent, type DragStartEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
+
+type onHandleParams<T = any> = {
+    dataKey: keyof T;
+    expectedData: T[] | null;
+    currentData: T[];
+    setExpectedData: (data: T[] | null) => void;
+    setCurrentData: (data: T[]) => void;
+
+    activeItem: any;
+    setActiveItem: (column: any) => void;
+
+    onChange: (functionType: string, data: any) => void;
+}
 
 type SortableProps<T extends Record<string, any>> = {
     dataKey: keyof T;
     items: T[];
+
     onChange: (functionType: string, data: any) => void;
+    onDragEnd: (event: DragEndEvent, params: onHandleParams<T>) => void;
+    onDragOver: (event: DragOverEvent, params: onHandleParams<T>) => void;
+    onDragStart: (event: DragStartEvent, params: onHandleParams<T>) => void;
+
     renderItem: (item: T, index: number, isOverlay?: boolean) => ReactNode;
 } & Omit<ComponentProps<typeof SortableContext>, 'children' | 'items'> 
 
 const Sortable = <T extends Record<string, any>>({
     dataKey, items, 
     onChange, renderItem,
+    onDragEnd, onDragOver, onDragStart,
     ...props
 }: SortableProps<T>) => {
-    const [activeColumn, setActiveColumn] = useState<any>(null);
+    const [activeItem, setActiveItem] = useState<any>(null);
 
     const [expectedData, setExpectedData] = useState<T[] | null>(null);
     const [currentData, setCurrentData] = useState<T[]>(items || []);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     )
 
     useEffect(() => {
@@ -33,94 +49,35 @@ const Sortable = <T extends Record<string, any>>({
     }, [items])
 
     const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
+        onDragEnd(event, {
+            expectedData, currentData, dataKey,
+            setExpectedData, setCurrentData,
+            onChange, activeItem, setActiveItem,
+        })
 
-        if(active.data.current?.type === 'task' && over) {
-            const taskId = active.id; // task Id also
-            const taskCurrentColumnId = active.data.current.columnId; // current column Id
-            const taskFutureColumnId = over.id; // future columnId
-
-            if(taskCurrentColumnId === taskFutureColumnId) return;
-
-            onChange('movedTask', { taskId, taskCurrentColumnId, taskFutureColumnId })
-            setCurrentData(expectedData || []);
-        } else if(active.id !== over?.id) {
-            onChange('reorderedColumns', expectedData || []);
-            setCurrentData(expectedData || []);
-        }
-
-        setActiveColumn(null);
+        setActiveItem(null);
     }
 
     const handleDragOver = (event: DragOverEvent) => {
-        const { active, over } = event;
-
-        // for dragging task over columns
-        if(active.data.current?.type === 'task' && over) {
-            const taskId = active.id; // task Id also
-            const taskCurrentColumnId = active.data.current.columnId; // current column Id
-            const columnId = over.id; // future columnId
-
-            if(taskCurrentColumnId === columnId) return;
-
-            // get the task data
-            const columns = currentData.find((item) => item._id === taskCurrentColumnId);
-            const task = columns?.tasks.find((task: TaskWithBoardAndColumn) => task._id === taskId);
-
-            // and then remove the task from the column
-            const removedTask = currentData.map((item) => {
-                if(item._id === taskCurrentColumnId) {
-                    return {
-                        ...item,
-                        tasks: item.tasks.filter((task: TaskWithBoardAndColumn) => task._id !== taskId)
-                    }
-                }
-                return item;
-            })
-
-            // then add the task to the column where its being dragged into
-            const addedTask = removedTask.map((item) => {
-                if(item._id === columnId) {
-                    return {
-                        ...item,
-                        tasks: [...item.tasks, task]
-                    }
-                }
-                return item;
-            })
-
-            setExpectedData(addedTask);
-
-            return
-        }
-
-        // if we are sorting from column to column, both active and over have sortable
-        // for dragging columns over each other
-        if(active.id !== over?.id) {
-            const ids = currentData?.map((item: any) => item[dataKey]) as string[] || [];
-            const oldIndex = ids.indexOf(active.id as string);
-            const newIndex = ids.indexOf(over?.id as string);
-            
-            const newColumns = arrayMove(currentData || [], oldIndex, newIndex);
-            const orderedData = newColumns.sort((a, b) => a[dataKey] - b[dataKey]);
-
-            setExpectedData(orderedData);
-        }
+        onDragOver(event, {
+            expectedData, currentData, dataKey,
+            setExpectedData, setCurrentData,
+            onChange, activeItem, setActiveItem,
+        })
     }
 
-    const onDragStart = (event: DragStartEvent) => {
-        const { active } = event;
-
-        if(active.data.current?.type === 'column') {
-            const column = currentData.find((item) => item._id === active.id);
-            setActiveColumn(column);
-        }
+    const handleDragStart = (event: DragStartEvent) => {
+        onDragStart(event, {
+            expectedData, currentData, dataKey,
+            setExpectedData, setCurrentData,
+            onChange, activeItem, setActiveItem,
+        })
     }
 
     return (
         <DndContext
         sensors={sensors}
-        onDragStart={onDragStart}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
         onDragOver={handleDragOver}
         >
@@ -132,7 +89,7 @@ const Sortable = <T extends Record<string, any>>({
             </SortableContext>
 
             <DragOverlay>
-                {activeColumn ? <ColumnCard column={activeColumn} isOverlay /> : null}
+                {activeItem ? <ColumnCard column={activeItem} isOverlay /> : null}
             </DragOverlay>
         </DndContext>
     )
