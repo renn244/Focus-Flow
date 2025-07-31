@@ -1,20 +1,21 @@
 import Sortable from "@/components/common/DndKit/Sortable";
 import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { useGetColumnByBoardId } from "../../hooks/Column/useGetColumnByBoardId"; 
+import { useGetColumnByBoardId } from "../../hooks/Column/useGetColumnByBoardId";
 import { useReorderColumnMutation } from "../../hooks/Column/useReorderColumnMutation";
+import { useTaskMovedMutation } from "../../hooks/Task/useTaskMovedMutation";
 import useSelectBoardStore from "../../store/useSelectBoard";
+import type { ColumnWithTasks } from "../../type";
 import ColumnCard from "../Column/ColumnCard";
 import CreateColumnDialog from "../Column/CreateColumnDialog";
 import EditColumnDialog from "../Column/EditColumnDialog";
 import RemoveColumnDialog from "../Column/RemoveColumnDialog";
-import CreateBoardDialog from "./CreateBoardDialog";
-import KanbanBoardHeader from "./KanbanBoardHeader";
-import transformReorderColumn from "../../utils/transformReorderColumn";
 import CreateTaskDialog from "../Task/CreateTaskDialog";
-import type { Column, ColumnWithTasks } from "../../type";
 import EditTaskDialog from "../Task/EditTaskDialog";
 import RemoveTaskDialog from "../Task/RemoveTaskDialog";
 import ViewTaskDialog from "../Task/ViewTaskDialog";
+import CreateBoardDialog from "./CreateBoardDialog";
+import KanbanBoardHeader from "./KanbanBoardHeader";
+import transformReorderColumn from "../../utils/transformReorderColumn";
 
 type KanbanBoardProps = {
 }
@@ -24,6 +25,7 @@ const KanbanBoard = ({
     const selectBoardId = useSelectBoardStore((state) => state.selectedBoardId);
     const { data: columns } = useGetColumnByBoardId(selectBoardId || "");
     const { mutateAsync: reorderColumn } = useReorderColumnMutation(selectBoardId || "");
+    const { mutateAsync: moveTask } = useTaskMovedMutation();
 
     return (
         <div className="p-6">
@@ -34,9 +36,12 @@ const KanbanBoard = ({
 
                 <Sortable<ColumnWithTasks>
                 items={columns || []} dataKey="_id" 
-                onChange={async (data) => {
-                    const columnOrders = transformReorderColumn(data);
-                    // await reorderColumn(columnOrders);
+                onChange={async (fnType, data) => {
+                    if(fnType === "movedTask") {
+                        await moveTask(data);
+                    } else if(fnType === "reorderedColumns") {
+                        await reorderColumn(transformReorderColumn(data));
+                    }
                 }}
                 strategy={horizontalListSortingStrategy}    
                 renderItem={(item, _, isOverlay) => <ColumnCard key={item._id} column={item as any} isOverlay={isOverlay} /> }

@@ -84,6 +84,33 @@ export class TaskService {
         });
     }
 
+    async updateMovedTask(taskId: Types.ObjectId, taskCurrentColumnId: Types.ObjectId, taskFutureColumnId: Types.ObjectId) {
+        const session = await this.connection.startSession();
+        session.startTransaction();
+
+        try {
+            const updatedTask = await this.taskModel.findOneAndUpdate(
+                { _id: taskId }, { columnId: taskFutureColumnId }, { new: true, session }
+            );
+            
+            if(!updatedTask) {
+                throw new NotFoundException('Task not found');
+            }
+            
+            await this.columnService.removeTaskFromColumn(taskCurrentColumnId.toString(), taskId, session);
+            await this.columnService.addTaskToColumn(taskFutureColumnId.toString(), taskId, session);
+
+            await session.commitTransaction();
+            return { message: "Task moved successfully" };
+        } catch (error) {
+            console.log(error);
+            await session.abortTransaction();
+            throw error;
+        } finally {
+            session.endSession();
+        }
+    }
+
     async deleteTask(id: Types.ObjectId) {
         const session = await this.connection.startSession();
         session.startTransaction();

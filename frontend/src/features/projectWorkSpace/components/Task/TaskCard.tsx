@@ -16,7 +16,7 @@ const priorityColors = {
 
 type TaskCardProps = {
     task: TaskWithBoardAndColumn,
-    columnId: TaskWithBoardAndColumn["_id"];
+    columnId?: TaskWithBoardAndColumn["_id"];
 }
 
 const TaskCard = ({
@@ -26,10 +26,7 @@ const TaskCard = ({
         id: task._id,
         data: { id: task._id, columnId: columnId, type: "task" }
     })
-
-    const style = {
-        transform: CSS.Translate.toString(transform),
-    }
+    const style = { transform: CSS.Translate.toString(transform) }
 
     return (
         <Card 

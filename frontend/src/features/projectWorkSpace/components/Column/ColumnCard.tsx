@@ -18,11 +18,13 @@ const ColumnCard = ({
 }: ColumnCardProps) => {
     const setCreateColumnId = useTaskDialogStore((state) => state.setCreateColumnId);
 
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: column._id })
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: column._id, data: { type: 'column', columnId: column._id } })
     const style = { transform: CSS.Translate.toString(transform), transition, duration: "0.5s" }
 
     return (
-        <div ref={setNodeRef} key={column._id} className={`flex flex-col  
+        <div 
+        ref={setNodeRef}
+        key={column._id} className={`flex flex-col  
         ${isOverlay ? 'ring-2 ring-blue-500 rounded-lg' : ''} 
         ${isDragging ? 'z-50 opacity-40' : ''}`} 
         style={style}>

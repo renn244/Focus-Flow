@@ -37,6 +37,13 @@ export class TaskController {
 
     @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @Patch('moved/:id')
+    async moveTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @Body() body: { taskCurrentColumnId: Types.ObjectId, taskFutureColumnId: Types.ObjectId }) {
+        return this.taskService.updateMovedTask(taskId, body.taskCurrentColumnId, body.taskFutureColumnId);
+    }
+
+    @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
+    @ApiBearerAuth()
     @Patch(':id')
     async updateTask(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateTaskDto, @User() user: UserJwt) {
         return this.taskService.updateTask(id, body, user);

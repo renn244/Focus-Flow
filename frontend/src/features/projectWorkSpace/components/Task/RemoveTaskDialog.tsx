@@ -244,7 +244,7 @@ const RemoveTask = ({
                     </Button>
                     <Button
                     onClick={() => removeTask()}
-                    disabled={isRemoving}
+                    disabled={isRemoving || !isConfirmationValid}
                     variant="destructive"
                     className="flex-1"
                     >

@@ -1,13 +1,13 @@
 import ColumnCard from "@/features/projectWorkSpace/components/Column/ColumnCard";
 import type { TaskWithBoardAndColumn } from "@/features/projectWorkSpace/type";
-import { DndContext, DragOverlay, type DragEndEvent, type DragOverEvent, type DragStartEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
+import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragOverEvent, type DragStartEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useState, type ComponentProps, type ReactNode } from "react";
 
 type SortableProps<T extends Record<string, any>> = {
     dataKey: keyof T;
     items: T[];
-    onChange: (data: T[]) => void;
+    onChange: (functionType: string, data: any) => void;
     renderItem: (item: T, index: number, isOverlay?: boolean) => ReactNode;
 } & Omit<ComponentProps<typeof SortableContext>, 'children' | 'items'> 
 
@@ -17,8 +17,16 @@ const Sortable = <T extends Record<string, any>>({
     ...props
 }: SortableProps<T>) => {
     const [activeColumn, setActiveColumn] = useState<any>(null);
+
     const [expectedData, setExpectedData] = useState<T[] | null>(null);
     const [currentData, setCurrentData] = useState<T[]>(items || []);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    )
 
     useEffect(() => {
         setCurrentData(items || [])
@@ -26,11 +34,22 @@ const Sortable = <T extends Record<string, any>>({
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-        
-        if(active.id !== over?.id) {
+
+        if(active.data.current?.type === 'task' && over) {
+            const taskId = active.id; // task Id also
+            const taskCurrentColumnId = active.data.current.columnId; // current column Id
+            const taskFutureColumnId = over.id; // future columnId
+
+            if(taskCurrentColumnId === taskFutureColumnId) return;
+
+            onChange('movedTask', { taskId, taskCurrentColumnId, taskFutureColumnId })
             setCurrentData(expectedData || []);
-            onChange(expectedData || []);
+        } else if(active.id !== over?.id) {
+            onChange('reorderedColumns', expectedData || []);
+            setCurrentData(expectedData || []);
         }
+
+        setActiveColumn(null);
     }
 
     const handleDragOver = (event: DragOverEvent) => {
@@ -41,6 +60,8 @@ const Sortable = <T extends Record<string, any>>({
             const taskId = active.id; // task Id also
             const taskCurrentColumnId = active.data.current.columnId; // current column Id
             const columnId = over.id; // future columnId
+
+            if(taskCurrentColumnId === columnId) return;
 
             // get the task data
             const columns = currentData.find((item) => item._id === taskCurrentColumnId);
@@ -73,6 +94,7 @@ const Sortable = <T extends Record<string, any>>({
             return
         }
 
+        // if we are sorting from column to column, both active and over have sortable
         // for dragging columns over each other
         if(active.id !== over?.id) {
             const ids = currentData?.map((item: any) => item[dataKey]) as string[] || [];
@@ -88,14 +110,16 @@ const Sortable = <T extends Record<string, any>>({
 
     const onDragStart = (event: DragStartEvent) => {
         const { active } = event;
-        const column = currentData.find((item) => item._id === active.id);
 
-        setActiveColumn(column);
+        if(active.data.current?.type === 'column') {
+            const column = currentData.find((item) => item._id === active.id);
+            setActiveColumn(column);
+        }
     }
 
     return (
         <DndContext
-        // Won't be able to reach this
+        sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={handleDragEnd}
         onDragOver={handleDragOver}
