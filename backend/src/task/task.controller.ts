@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskService } from './task.service';
+import { MoveTaskDto } from './dto/move-task.dto';
 
 @Controller('task')
 @UseGuards(JwtAuthGuard)
@@ -33,6 +34,13 @@ export class TaskController {
     @Get(':id')
     async getTask(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
         return this.taskService.getTask(id);
+    }
+
+    @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
+    @ApiBearerAuth()
+    @Patch('moved/:id')
+    async moveTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @Body() body: MoveTaskDto) {
+        return this.taskService.updateMovedTask(taskId, body);
     }
 
     @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })

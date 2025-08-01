@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import useTaskDialogStore from "../../store/useTaskDialog"; 
 import type { Task, TaskSchema } from "../../type";
+import useSelectBoardStore from "../../store/useSelectBoard";
 
 type createTaskSuccessResponse = Task;
 type createTaskResponse = AxiosResponse<createTaskSuccessResponse, any>;
@@ -29,7 +30,7 @@ export const useCreateTaskMutation = () => {
     return useMutation({
         mutationFn: createTask,
         onSuccess: (_, variable) => {
-            queryClient.invalidateQueries({ queryKey: ['tasks', 'bycolumn', variable.columnId] });
+            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', variable.boardId] });
             setCreateOpen(false);
         }
     })

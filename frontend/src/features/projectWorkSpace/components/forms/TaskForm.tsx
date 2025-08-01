@@ -1,24 +1,24 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import type { Task, TaskSchema } from "../../type";
-import { handleNestError, ValidationError } from "@/lib/handleNestError";
-import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { DialogFooter } from "@/components/ui/dialog";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { InputTags } from "@/components/ui/input-tags";
-import { Badge } from "@/components/ui/badge";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { handleNestError, ValidationError } from "@/lib/handleNestError";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import useTaskDialogStore from "../../store/useTaskDialog";
+import type { Task, TaskSchema } from "../../type";
 
 // later add assignee as well as 
 export const TaskFormSchema = z.object({
@@ -29,8 +29,8 @@ export const TaskFormSchema = z.object({
         .optional(),
     dueDate: z.date().optional(),
     priority: z.enum(["low", "medium", "high"]).default("medium"),
-    columnId: z.string().min(1, "Column ID is required"),
-    boardId: z.string().min(1, "Board ID is required"),
+    columnId: z.string().optional(),
+    boardId: z.string().optional(),
     tags: z.array(z.string()).optional(),
 })
 
@@ -59,8 +59,8 @@ const TaskForm = ({
             description: initialData?.description || "", 
             dueDate: initialData?.dueDate || undefined,
             priority: initialData?.priority || "medium", 
-            columnId: columnId || initialData?.columnId || "",
-            boardId: boardId || initialData?.boardId || "", 
+            columnId: columnId || initialData?.columnId || undefined,
+            boardId: boardId || initialData?.boardId || undefined, 
             tags: initialData?.tags || [],
         }
     })
@@ -68,6 +68,20 @@ const TaskForm = ({
 
     const onSubmit = async (data: TaskSchema) => {
         try {
+            if(isUpdate && !data.columnId) {
+                form.setError('columnId', {
+                    type: 'manual',
+                    message: 'Column ID is required for updating the task'
+                })
+            }
+
+            if(isUpdate && !data.boardId) {
+                form.setError('boardId', {
+                    type: 'manual',
+                    message: 'Board ID is required for updating the task'
+                })
+            }
+            
             await onsubmit(data);
         } catch(error: any | ValidationError) {
             if(error instanceof ValidationError) {

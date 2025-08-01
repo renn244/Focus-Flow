@@ -1,30 +1,33 @@
-import { Button } from "@/components/ui/button"
-import { GripVertical, Plus } from "lucide-react"
-import BoardCardOptions from "./ColumnCardOptions"
-import TaskCard from "../Task/TaskCard"
 import { Badge } from "@/components/ui/badge"
-import { CSS } from "@dnd-kit/utilities"
+import { Button } from "@/components/ui/button"
 import { useSortable } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
+import { GripVertical, Plus } from "lucide-react"
 import useTaskDialogStore from "../../store/useTaskDialog"
-import type { Column } from "../../type"
-import { useGetTaskByColumnId } from "../../hooks/Task/useGetTaskByColumnId"
+import type { ColumnWithTasks } from "../../type"
+import TaskList from "../Task/TaskList"
+import BoardCardOptions from "./ColumnCardOptions"
 
 type ColumnCardProps = {
-    column: Column
+    column: ColumnWithTasks,
+    isOverlay?: boolean;
 }
 
 const ColumnCard = ({
-    column
+    column, isOverlay = false
 }: ColumnCardProps) => {
     const setCreateColumnId = useTaskDialogStore((state) => state.setCreateColumnId);
 
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: column._id })
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: column._id, data: { type: 'column', columnId: column._id } })
     const style = { transform: CSS.Translate.toString(transform), transition, duration: "0.5s" }
 
-    const { data: tasks, isLoading } = useGetTaskByColumnId(column._id);
-
     return (
-        <div ref={setNodeRef} key={column._id} className="flex flex-col" style={style}>
+        <div 
+        ref={setNodeRef}
+        key={column._id} className={`flex flex-col  
+        ${isOverlay ? 'ring-2 ring-blue-500 rounded-lg' : ''} 
+        ${isDragging ? 'z-50 opacity-40' : ''}`} 
+        style={style}>
             <div 
             // can't use this it looks ugly tbh so find a way to lighten the color
             // style={{ backgroundColor: column.color }}
@@ -53,11 +56,7 @@ const ColumnCard = ({
                 </Button>
             </div>
 
-            <div className="flex-1 space-y-3">
-                {tasks?.map((task: any) => (
-                    <TaskCard key={task.id} task={task} />
-                ))}
-            </div>
+            <TaskList column={column} />
         </div>
     )
 }

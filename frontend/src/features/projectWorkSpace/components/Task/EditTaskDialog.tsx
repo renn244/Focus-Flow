@@ -55,8 +55,6 @@ const EditTaskDialog = () => {
                         title: data.title,
                         description: data.description,
                         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-                        columnId: data.column._id.toString(),
-                        boardId: data.column._id.toString(),
                         priority: data.priority,
                         tags: data.tags
                     }}
