@@ -1,16 +1,17 @@
+import { createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 // Import the generated route tree
-import { routeTree } from './routeTree.gen'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import AuthProvider from './context/authContext'
+import App from './App'
+import AuthProvider, { type AuthContextType } from './context/authContext'
+import { routeTree } from './routeTree.gen'
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 // Create a new router instance
-const router = createRouter({ 
+export const router = createRouter({ 
   routeTree,
   defaultPreload: 'intent',
   // since we are using the `@tanstack/react-query` package, we can set the default preload stale time to 0
@@ -18,7 +19,7 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
   scrollRestoration: true,
   context: {
-    queryClient
+    queryClient, authContext: undefined
   }
 })
 
@@ -27,7 +28,8 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router,
     context: {
-      queryClient: QueryClient
+      queryClient: QueryClient,
+      authContext: AuthContextType | undefined 
     }
   }
 }
@@ -40,7 +42,7 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <RouterProvider router={router} context={{ queryClient }} />
+          <App />
         </AuthProvider>
       </QueryClientProvider>
     </StrictMode>,

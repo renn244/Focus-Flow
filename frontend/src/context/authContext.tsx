@@ -2,17 +2,17 @@ import { createContext, useContext } from "react";
 import type { User } from "@/types/User";
 import { useAuthProvider } from "@/features/auth/hooks/useAuthProvider";
 
-type AuthContextType = {
+export type AuthContextType = {
     isAuthenticated: boolean;
     isLoading: boolean;
-    user: User | undefined; // handle later
+    user: User | null; // handle later
     checkAuth: () => Promise<void>;
 }
 
 const initialContextState: AuthContextType = {
     isAuthenticated: false,
     isLoading: true,
-    user: undefined,
+    user: null,
     checkAuth: async () => undefined
 }
 
