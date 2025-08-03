@@ -26,13 +26,18 @@ const KanbanBoardHeader = ({
     const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);
     
     const { data: boards } = useGetBoards(projectId!);    
-    const { data: board } = useGetBoardById(selectedBoardId || boards?.[0]?._id || "");
+    const { data: board, isLoading: isLoadingBoard } = useGetBoardById(selectedBoardId || boards?.[0]?._id || "");
 
     useEffect(() => {
         if (boards && boards.length > 0 && !selectedBoardId) {
             setSelectedBoardId(boards[0]._id);
         }
-    })
+
+        const isBoardExists = boards?.some(board => board._id === selectedBoardId);
+        if((!isBoardExists && !isLoadingBoard)) {
+            setSelectedBoardId(boards?.[0]?._id);
+        }
+    }, [selectedBoardId, projectId, boards])
 
     return (
         <div className="flex items-center justify-between mb-6">
