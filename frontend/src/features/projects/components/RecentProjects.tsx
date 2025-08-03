@@ -1,16 +1,12 @@
-import RecentProjectCard from './RecentProjectCard';
 import { Button } from '@/components/ui/button';
-import { ExternalLink } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { ExternalLink } from 'lucide-react';
 import { useRecentProjects } from '../hooks/useRecentProjects';
-import LoadingSpinner from '@/components/ui/loadingSpinner';
+import RecentProjectCard from './RecentProjectCard';
+import RecentProjectSkeletonCard from './Skeleton/RecentProjectSkeletonCard';
 
 const RecentProjects = () => {
     const { data: recentProjects, isLoading } = useRecentProjects();
-
-    if(isLoading) {
-        return <LoadingSpinner />
-    }
 
     return (
         <div className="mb-8">
@@ -25,11 +21,17 @@ const RecentProjects = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {recentProjects?.slice(0, 4).map((project) => (
-                    <Link to='/projects/$projectId' params={{ projectId: project._id }} key={project._id}>
-                        <RecentProjectCard key={project._id} project={project} />
-                    </Link>
-                ))}
+                {isLoading ? (
+                    Array.from({ length: 4 }).map((_, index) => (
+                        <RecentProjectSkeletonCard key={index} />
+                    ))
+                ) : (
+                    recentProjects?.slice(0, 4).map((project) => (
+                        <Link to='/projects/$projectId' params={{ projectId: project._id }} key={project._id}>
+                            <RecentProjectCard key={project._id} project={project} />
+                        </Link>
+                    ))
+                )}
             </div>
         </div>
     )
