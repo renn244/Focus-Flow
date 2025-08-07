@@ -23,23 +23,23 @@ const ViewFullProject = ({ project }: ViewFullProjectProps) => {
                 <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
                     <TabsList defaultValue="overview">
                         <TabsTrigger value="overview" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
-                            <BarChart3 className="w-4 h-4 mr-2" />
+                            <BarChart3 className="w-4 h-4" />
                             Overview
                         </TabsTrigger>
                         <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
-                            <CheckCircle2 className="w-4 h-4 mr-2" />
+                            <CheckCircle2 className="w-4 h-4" />
                             Tasks
                         </TabsTrigger>
                         <TabsTrigger value="team" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
-                            <Users className="w-4 h-4 mr-2" />
+                            <Users className="w-4 h-4" />
                             Team
                         </TabsTrigger>
                         <TabsTrigger value="activity" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
-                            <ActivityIcon className="w-4 h-4 mr-2" />
+                            <ActivityIcon className="w-4 h-4" />
                             Activity
                         </TabsTrigger>
                         <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
-                            <PieChart className="w-4 h-4 mr-2" />
+                            <PieChart className="w-4 h-4" />
                             Analytics
                         </TabsTrigger>
                     </TabsList>
