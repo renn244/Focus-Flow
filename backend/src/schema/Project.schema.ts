@@ -39,6 +39,9 @@ export class Project {
     @Prop({ type: Types.ObjectId, ref: 'User', required: true })
     ownerId: Types.ObjectId;
 
+    @Prop({ type: [Types.ObjectId], ref: 'TeamMember', default: [] })
+    teamMembers: Types.ObjectId[];
+
     @Prop({ default: Date.now })
     lastSeen: Date;
 }
