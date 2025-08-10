@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
 import { Project, ProjectDocument } from 'src/schema/Project.schema';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
@@ -91,6 +91,36 @@ export class ProjectsService {
         });
     }
 
+    async addMemberToProject(projectId: Types.ObjectId, memberId: Types.ObjectId, session?: ClientSession) {
+        const updatedProject = await this.projectModel.findOneAndUpdate(
+            { _id: projectId }, { $push: { members: memberId } }, { new: true, session }
+        ).populate('ownerId', 'username email displayName avatarUrl');
+
+        if(!updatedProject) {
+            throw new NotFoundException("Project not found");
+        }
+
+        return plainToInstance(ProjectWithOwnerDto, updatedProject, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
+    }
+ 
+    async removeMemberFromProject(projectId: Types.ObjectId, memberId: Types.ObjectId, session?: ClientSession) {
+        const updatedProject = await this.projectModel.findOneAndUpdate(
+            { _id: projectId }, { $pull: { members: memberId } }, { new: true, session }
+        ).populate('ownerId', 'username email displayName avatarUrl');
+
+        if(!updatedProject) {
+            throw new NotFoundException("Project not found");
+        }
+
+        return plainToInstance(ProjectWithOwnerDto, updatedProject, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true
+        });
+    }
+
     async deleteProject(id: Types.ObjectId, user: UserJwt) {
         const ownerId = user.id;
         const project = await this.projectModel.deleteOne({ _id: id, ownerId });
@@ -103,4 +133,4 @@ export class ProjectsService {
             message: "Project deleted successfully"
         };
     }
-}
+} 
