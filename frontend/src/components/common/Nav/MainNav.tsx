@@ -2,11 +2,15 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthContext } from '@/context/authContext'
 import { Link } from '@tanstack/react-router'
-import { Bell, Calendar, Search, Settings, Users } from 'lucide-react'
-import { useState } from 'react'
+import { Bell, Search, Settings } from 'lucide-react'
+import { useState, type PropsWithChildren } from 'react'
 import UserDropDown from './UserDropDown'
 
-const MainNav = () => {
+type MainNavProps = {} & PropsWithChildren
+
+const MainNav = ({
+    children
+}: MainNavProps) => {
     const { user } = useAuthContext();
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -18,17 +22,7 @@ const MainNav = () => {
                         Project Dashboard
                     </Link> 
                     <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="text-slate-600">
-                            <Calendar className="w-4 h-4 mr-2" />
-                            Board
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-slate-600">
-                            <Users className="w-4 h-4 mr-2" />
-                            Team
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-slate-600">
-                            Calendar
-                        </Button>
+                        {children}
                     </div>
                 </div>
 
