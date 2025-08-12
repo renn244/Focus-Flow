@@ -7,3 +7,11 @@ export class SearchUserDto {
   @IsString()
   projectId: string;
 }
+
+export class getMember {
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  memberId: string;
+}

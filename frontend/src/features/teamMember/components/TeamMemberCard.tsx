@@ -59,19 +59,19 @@ const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: 
                                 <DropdownMenuItem 
                                 // onClick={() => handleMemberAction("view-profile", member)}
                                 >
-                                    <User className="w-4 h-4 mr-2" />
+                                    <User className="w-4 h-4" />
                                     View Profile
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
-                                    <Settings className="w-4 h-4 mr-2" />
+                                    <Settings className="w-4 h-4" />
                                     Change Role
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                 // onClick={() => handleMemberAction("remove", member)}
-                                className="text-red-600"
+                                className="text-red-600 focus:text-red-600"
                                 >
-                                    <Trash2 className="w-4 h-4 mr-2" />
+                                    <Trash2 className="w-4 h-4 text-red-600" />
                                     Remove Member
                                 </DropdownMenuItem>
                             </DropdownMenuContent>

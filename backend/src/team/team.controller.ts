@@ -7,7 +7,7 @@ import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { RemoveMemberDto } from './dto/remove-member.dto';
-import { SearchUserDto } from './dto/search-user.dto';
+import { getMember, SearchUserDto } from './dto/search-user.dto';
 
 @Controller('team')
 @UseGuards(JwtAuthGuard)
@@ -15,6 +15,16 @@ export class TeamController {
     constructor(
         private readonly teamService: TeamService,
     ) {}
+
+    // also verify that if the user current User the one form @User, has proper permission to get the data
+
+    @ApiBearerAuth()
+    @ApiQuery({ name: 'projectId', type: String, required: true, description: 'The ID of the project to search users in' })
+    @ApiQuery({ name: 'memberId', type: String, required: false, description: 'The ID of the member to find' })
+    @Get()
+    async getMember(@Query() query: getMember, @User() user: UserJwt) {
+        return this.teamService.getMember(query.projectId, query.memberId);
+    }
 
     // put in here instead of user because we also need to exlude the current members of the projects
     @ApiBearerAuth()

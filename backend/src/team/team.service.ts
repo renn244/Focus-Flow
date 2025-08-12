@@ -41,6 +41,26 @@ export class TeamService {
         return members;
     }
 
+    async getMember(projectId: string, memberId: string) {
+        const member = await this.teamMemberModel.findOne({ projectId: projectId, _id: memberId })
+            .populate('userId', 'username email displayName avatarUrl');
+
+        if(!member) {
+            throw new NotFoundException('Team member not found');
+        }
+
+        const projectMembers = await this.getMembers(new Types.ObjectId(projectId));
+
+        if(!projectMembers.find((member) => member._id.toString() === memberId.toString())) {
+            throw new BadRequestException('Member not a member of the project');
+        }
+
+        return plainToInstance(TeamMemberWithUser, member, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        })
+    }
+
     async removeCache(projectId: Types.ObjectId) {
         await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(projectId.toString())); 
     }
@@ -62,6 +82,7 @@ export class TeamService {
         })
     }
 
+    // check if the user has the permission to add the member in guard maybe
     async addMember(user: UserJwt, body: AddMemberDto) {
         const session = await this.connection.startSession();
         session.startTransaction();
@@ -97,6 +118,7 @@ export class TeamService {
         }
     }
 
+    // check if the user has the permission to remove the member in guard maybe
     async removeMember(user: UserJwt, body: RemoveMemberDto) {
         const session = await this.connection.startSession();
         session.startTransaction();
