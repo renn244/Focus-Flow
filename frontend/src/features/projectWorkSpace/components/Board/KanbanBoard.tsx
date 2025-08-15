@@ -18,6 +18,7 @@ import CreateBoardDialog from "./CreateBoardDialog";
 import KanbanBoardHeader from "./KanbanBoardHeader";
 import TeamManagement from "@/features/teamMember/components/TeamManagement";
 import AddMemberDialog from "@/features/teamMember/components/AddMemberDialog";
+import RemoveMemberDialog from "@/features/teamMember/components/RemoveMemberDialog";
 
 type KanbanBoardProps = {
 }
@@ -151,6 +152,8 @@ const KanbanBoard = ({
             <TeamManagement />
 
             <AddMemberDialog />
+
+            <RemoveMemberDialog />
         </div>
     )
 }

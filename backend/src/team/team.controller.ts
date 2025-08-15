@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { TeamService } from './team.service';
 import { AddMemberDto } from './dto/add-member.dto';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
@@ -8,6 +8,7 @@ import { Types } from 'mongoose';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { RemoveMemberDto } from './dto/remove-member.dto';
 import { getMember, SearchUserDto } from './dto/search-user.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Controller('team')
 @UseGuards(JwtAuthGuard)
@@ -47,6 +48,14 @@ export class TeamController {
     @Post('add-member')
     async addMember(@User() user: UserJwt, @Body() body: AddMemberDto) {
         return this.teamService.addMember(user, body);
+    }
+
+    @ApiBearerAuth()
+    @ApiNotFoundResponse({ description: 'Team member not found' })
+    @Patch('update-role/:memberId')
+    async updateRole(@User() user: UserJwt, @Param('memberId', ParseObjectIdPipe) memberId: Types.ObjectId, 
+    @Body() body: UpdateRoleDto) {
+        return this.teamService.updateRole(user, memberId, body);
     }
 
     @ApiBearerAuth()

@@ -24,6 +24,7 @@ const ChangeRoleDialog = () => {
     const projectId = useProjectIdStore((state) => state.projectId);
 
     const { data: member } = useGetMember(projectId, memberId);
+    // const { mutateAsync, isPending } = use
 
     if(!member) return
 
@@ -163,7 +164,7 @@ const ChangeRoleDialog = () => {
                     // className={isDowngrade || isChangingToOwner ? "bg-orange-600 hover:bg-orange-700" : ""}
                     >
                         <UserCog className="w-4 h-4 mr-2" />
-                        {isSubmitting ? "Updating..." : hasChanges ? "Update Role" : "No Changes"}
+                        {isSubmitting ? "Updating..." : "Update Role"}
                     </Button>
                 </div>
             </DialogContent>

@@ -4,6 +4,7 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import type { TeamMember } from "../type";
+import { useRemoveMemberDialog } from "../store/removeMemberStore";
 
 type removeMemberSuccessResponse = TeamMember;
 type removeMemberResponse = AxiosResponse<removeMemberSuccessResponse, ExceptionResponse>;
@@ -28,10 +29,12 @@ const removeMember = async (params: removeMemberParams): Promise<removeMemberRes
 
 export const useRemoveMemberMutation = () => {
     const queryClient = useQueryClient();
+    const setIsOpen = useRemoveMemberDialog(state => state.setIsOpen);
 
     return useMutation({
         mutationFn: removeMember,
         onSuccess: (_, variable) => {
+            setIsOpen(false);
             queryClient.invalidateQueries({ queryKey: ['teamMembers', variable.projectId] });
         }
     })

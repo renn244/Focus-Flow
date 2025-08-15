@@ -12,6 +12,7 @@ import { UserService } from 'src/user/user.service';
 import { AddMemberDto } from './dto/add-member.dto';
 import { RemoveMemberDto } from './dto/remove-member.dto';
 import { TeamMemberType, TeamMemberUser, TeamMemberWithUser } from './dto/response-dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class TeamService {
@@ -42,8 +43,9 @@ export class TeamService {
     }
 
     async getMember(projectId: string, memberId: string) {
-        const member = await this.teamMemberModel.findOne({ projectId: projectId, _id: memberId })
-            .populate('userId', 'username email displayName avatarUrl');
+        const member = await this.teamMemberModel.findOne({ 
+            projectId: projectId, _id: memberId,
+        }).populate('userId', 'username email displayName avatarUrl');
 
         if(!member) {
             throw new NotFoundException('Team member not found');
@@ -59,10 +61,6 @@ export class TeamService {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         })
-    }
-
-    async removeCache(projectId: Types.ObjectId) {
-        await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(projectId.toString())); 
     }
 
     async searchUser(query: string, projectId: string, user: UserJwt) {
@@ -157,5 +155,21 @@ export class TeamService {
         } finally {
             session.endSession();
         }
+    }
+
+    // make sure the user has the proper authorization to update the role
+    async updateRole(user: UserJwt, memberId: Types.ObjectId, body: UpdateRoleDto) {
+        const updatedTeamMember = await this.teamMemberModel.findOneAndUpdate(
+            { _id: memberId }, { role: body.newRole }, { new: true }
+        ).populate('userId', 'username email displayName avatarUrl');
+
+        if(!updatedTeamMember) {
+            throw new NotFoundException('Team member not found');
+        }
+
+        return plainToInstance(TeamMemberType, updatedTeamMember, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
     }
 }

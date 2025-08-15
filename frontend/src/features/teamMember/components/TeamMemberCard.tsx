@@ -8,9 +8,12 @@ import { motion } from 'framer-motion';
 import { Calendar, Mail, MoreHorizontal, Settings, Trash2, User } from 'lucide-react';
 import { permissionColors, permissionIcons } from '../constants/permission';
 import type { TeamMemberWithUser } from '../type';
+import { useRemoveMemberDialog } from '../store/removeMemberStore';
 
 const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: number }) => {
     const PermissionIcon = permissionIcons[member.role as keyof typeof permissionIcons];
+
+    const setMemberId = useRemoveMemberDialog(state => state.setMemberId);
 
     return (
         <motion.div
@@ -68,7 +71,7 @@ const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: 
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                // onClick={() => handleMemberAction("remove", member)}
+                                onClick={() => setMemberId(member._id)}
                                 className="text-red-600 focus:text-red-600"
                                 >
                                     <Trash2 className="w-4 h-4 text-red-600" />

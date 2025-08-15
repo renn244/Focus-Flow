@@ -1,5 +1,4 @@
-import { OmitType } from "@nestjs/swagger";
-import { Exclude, Expose, Transform } from "class-transformer";
+import { Exclude, Expose, plainToInstance, Transform } from "class-transformer";
 
 
 export class TeamMemberType {
@@ -33,11 +32,17 @@ export class TeamMemberUser {
     displayName: string;
 
     @Expose()
-    avatarUrl: Date;
+    avatarUrl: string;
 }
 
-export class TeamMemberWithUser extends OmitType(TeamMemberType, ['userId']) {
-    @Transform(({ obj }) => obj.userId ? obj.userId : null)
+export class TeamMemberWithUser extends TeamMemberType {
+    @Transform(
+        ({ obj }) => plainToInstance(TeamMemberUser, obj.userId, { excludeExtraneousValues: true }) 
+        ? obj.userId : null
+    )
     @Expose()
     user: TeamMemberUser;
+
+    @Exclude()
+    userId: string;
 }

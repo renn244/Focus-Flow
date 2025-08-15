@@ -11,6 +11,7 @@ import { useGetMember } from "../hooks/useGetMember";
 import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
 import { permissionColors, permissionIcons } from "../constants/permission";
 import { useAuthContext } from "@/context/authContext";
+import { useRemoveMemberMutation } from "../hooks/useRemoveMemberMutation";
 
 const RemoveMemberDialog = () => {
     const { user } = useAuthContext();
@@ -21,6 +22,7 @@ const RemoveMemberDialog = () => {
     const projectId = useProjectIdStore((state) => state.projectId);
 
     const { data: member } = useGetMember(projectId, memberId);
+    const { mutateAsync, isPending } = useRemoveMemberMutation()
 
     if(!member) return
 
@@ -42,24 +44,26 @@ const RemoveMemberDialog = () => {
                     </div>
                 </DialogHeader>
 
-                <div className="space-y-4">
+                <div className="space-y-2">
 
-                    <Card>
-                        <CardContent className="p-4">
+                    <Card className="py-0">
+                        <CardContent className="p-3">
                             <div className="flex items-center gap-3">
                                 <Avatar className="w-12 h-12">
                                     <AvatarImage src={member.user.avatarUrl || "/placeholder.svg"} alt={member.user.displayName} />
                                     <AvatarFallback>{member.user.displayName.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1">
-                                    <h3 className="font-semibold text-gray-900">{member.user.displayName}</h3>
-                                    <p className="text-sm text-gray-600">{member.user.email}</p>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <Badge variant="outline" className={permissionColors[member.role]}>
-                                            <PermissionIcon className="w-3 h-3 mr-1" />
-                                            {member.role}
-                                        </Badge>
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-semibold text-gray-900">{member.user.displayName}</h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <Badge variant="outline" className={permissionColors[member.role]}>
+                                                <PermissionIcon className="w-3 h-3 mr-1" />
+                                                {member.role}
+                                            </Badge>
+                                        </div>
                                     </div>
+                                    <p className="text-sm text-gray-600">{member.user.email}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -79,7 +83,7 @@ const RemoveMemberDialog = () => {
                         <Alert className="border-red-200 bg-red-50">
                             <AlertTriangle className="h-4 w-4 text-red-600" />
                             <AlertDescription className="text-red-800">
-                                <strong>This action is permanent.</strong> {member.name} will lose access to this project and all
+                                <strong>This action is permanent.</strong> {member.user.displayName} will lose access to this project and all
                                 associated data immediately.
                             </AlertDescription>
                         </Alert>
@@ -87,12 +91,16 @@ const RemoveMemberDialog = () => {
                 </div>
 
                 <DialogFooter className="flex gap-3">
-                    <Button variant="outline" onClick={handleCancel} disabled={isRemoving}>
+                    <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isPending}>
                         Cancel
                     </Button>
                     {!isOwner && (
-                        <Button variant="destructive" onClick={handleConfirmRemove} disabled={isRemoving}>
-                            {isRemoving ? (
+                        <Button 
+                        variant="destructive" 
+                        onClick={() => mutateAsync({ userId: member.user._id || "", projectId: projectId || "" })} 
+                        disabled={isPending}
+                        >
+                            {isPending ? (
                                 <>
                                     <LoadingSpinner />
                                 </>
@@ -105,7 +113,7 @@ const RemoveMemberDialog = () => {
                         </Button>
                     )}
                     {isOwner && (
-                        <Button variant="outline" onClick={handleCancel}>
+                        <Button variant="outline" onClick={() => setIsOpen(false)}>
                             <Crown className="w-4 h-4 mr-2" />
                             Transfer Ownership First
                         </Button>
