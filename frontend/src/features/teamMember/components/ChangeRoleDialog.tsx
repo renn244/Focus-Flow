@@ -1,34 +1,35 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import LoadingSpinner from "@/components/ui/loadingSpinner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId"
-import { format } from "date-fns"
-import { Calendar, UserCog } from "lucide-react"
-import { permissionColors, permissionIcons } from "../constants/permission"
-import { useGetMember } from "../hooks/useGetMember"
-import { useChangeRoleStore } from "../store/changeRoleStore"
+import { UserCog } from "lucide-react"
 import { useState } from "react"
+import { useChangeRoleMutation } from "../hooks/useChangeRoleMutation"
+import { useGetMember } from "../hooks/useGetMember"
+import { useChangeRoleDialog } from "../store/changeRoleStore"
 
 const ChangeRoleDialog = () => {
     const [newRole, setNewRole] = useState("");
     const [reason, setReason] = useState("");
 
-    const isOpen = useChangeRoleStore((state) => state.isOpen);
-    const setIsOpen = useChangeRoleStore((state) => state.setIsOpen);
-    const memberId = useChangeRoleStore((state) => state.memberId);
+    const isOpen = useChangeRoleDialog((state) => state.isOpen);
+    const setIsOpen = useChangeRoleDialog((state) => state.setIsOpen);
+    const memberId = useChangeRoleDialog((state) => state.memberId);
     const projectId = useProjectIdStore((state) => state.projectId);
 
     const { data: member } = useGetMember(projectId, memberId);
-    // const { mutateAsync, isPending } = use
+    const { mutateAsync, isPending } = useChangeRoleMutation(memberId || "");
 
     if(!member) return
 
-    const PermissionIcon = permissionIcons[member.role];
+    const handleConfirm = async () => {
+        if(newRole) await mutateAsync({ newRole: newRole as 'admin' | 'member' });
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -47,9 +48,9 @@ const ChangeRoleDialog = () => {
 
                 <div className="space-y-6 overflow-y-auto max-h-[calc(90vh-200px)]">
                     {/* Member Info */}
-                    <Card>
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-4">
+                    <Card className="py-0">
+                        <CardContent className="p-3 space-y-3">
+                            <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <Avatar className="w-16 h-16">
                                         <AvatarImage src={member.user.avatarUrl || "/placeholder.svg"} alt={member.user.displayName} />
@@ -58,41 +59,29 @@ const ChangeRoleDialog = () => {
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="font-semibold text-lg text-gray-900">{member.user.displayName}</h3>
-                                    <p className="text-gray-600">{member.user.email}</p>
-                                    <div className="flex items-center gap-3 mt-2">
-                                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                                            <Calendar className="w-4 h-4" />
-                                            Joined {format(member.joinedAt, "MMM yyyy")}
-                                        </div>
-                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    <Badge variant="outline" className={permissionColors[member.role]}>
-                                        <PermissionIcon />
-                                        {member.role}
-                                    </Badge>
+                                <div className="space-y-2">
+                                    <Label htmlFor="role">Select Role</Label>
+                                    <Select value={newRole} onValueChange={setNewRole}>
+                                        <SelectTrigger >
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="admin">Admin</SelectItem>
+                                            <SelectItem value="member">Member</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
 
-                    {/* Role Selection */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Role</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div>
-                                <Label htmlFor="role">Select Role</Label>
-                                <Select value={newRole} onValueChange={setNewRole}>
-                                    <SelectTrigger className="w-32">
-                                        <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="admin">Admin</SelectItem>
-                                        <SelectItem value="member">Member</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            <div className="space-y-2">
+                                <Label>Reason For Change (optional)</Label>
+                                <Textarea
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                                placeholder="Provide a reason for this role change..."
+                                className="min-h-[80px]"
+                                />
                             </div>
                         </CardContent>
                     </Card>
@@ -137,34 +126,25 @@ const ChangeRoleDialog = () => {
                             </CardContent>
                         </Card>
                     )} */}
-
-                    {/* Reason for Change */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Reason for Change (Optional)</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Textarea
-                            value={reason}
-                            onChange={(e) => setReason(e.target.value)}
-                            placeholder="Provide a reason for this role change..."
-                            className="min-h-[80px]"
-                            />
-                        </CardContent>
-                    </Card>
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t">
+                <div className="flex justify-end gap-3">
                     <Button variant="outline" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
                     <Button
-                    // onClick={handleConfirm}
-                    // disabled={!hasChanges || isSubmitting}
+                    onClick={handleConfirm}
+                    disabled={isPending}
                     // className={isDowngrade || isChangingToOwner ? "bg-orange-600 hover:bg-orange-700" : ""}
                     >
-                        <UserCog className="w-4 h-4 mr-2" />
-                        {isSubmitting ? "Updating..." : "Update Role"}
+                        {isPending ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <>
+                                <UserCog className="w-4 h-4 mr-2" />
+                                {isPending ? <LoadingSpinner /> : "Update Role"}
+                            </>
+                        )}
                     </Button>
                 </div>
             </DialogContent>

@@ -187,7 +187,9 @@ export class TeamService {
             throw new NotFoundException('Team member not found');
         }
 
-        return plainToInstance(TeamMemberType, updatedTeamMember, {
+        await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(updatedTeamMember.projectId)));
+
+        return plainToInstance(TeamMemberWithUser, updatedTeamMember, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         });

@@ -9,11 +9,13 @@ import { Calendar, Mail, MoreHorizontal, Settings, Trash2, User } from 'lucide-r
 import { permissionColors, permissionIcons } from '../constants/permission';
 import type { TeamMemberWithUser } from '../type';
 import { useRemoveMemberDialog } from '../store/removeMemberStore';
+import { useChangeRoleDialog } from '../store/changeRoleStore';
 
 const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: number }) => {
     const PermissionIcon = permissionIcons[member.role as keyof typeof permissionIcons];
 
-    const setMemberId = useRemoveMemberDialog(state => state.setMemberId);
+    const setRemoveMemberId = useRemoveMemberDialog(state => state.setMemberId);
+    const setChangeRoleMemberId = useChangeRoleDialog(state => state.setMemberId)
 
     return (
         <motion.div
@@ -65,13 +67,15 @@ const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: 
                                     <User className="w-4 h-4" />
                                     View Profile
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem
+                                onClick={() => setChangeRoleMemberId(member._id)}
+                                >
                                     <Settings className="w-4 h-4" />
                                     Change Role
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                onClick={() => setMemberId(member._id)}
+                                onClick={() => setRemoveMemberId(member._id)}
                                 className="text-red-600 focus:text-red-600"
                                 >
                                     <Trash2 className="w-4 h-4 text-red-600" />

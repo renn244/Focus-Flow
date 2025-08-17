@@ -7,7 +7,7 @@ type changeRoleStore = {
     setMemberId: (id: string | null | undefined) => void;
 }
 
-export const useChangeRoleStore = create<changeRoleStore>((set) => ({
+export const useChangeRoleDialog = create<changeRoleStore>((set) => ({
     isOpen: false,
     setIsOpen: (value) => {
         if(value === false) {
