@@ -17,7 +17,7 @@ const TeamManagement = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="max-w-7xl max-[90vh]">
+            <DialogContent className="sm:max-w-4xl max-h-[90vh]">
                 <DialogHeader className="pb-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -42,7 +42,7 @@ const TeamManagement = () => {
                 </DialogHeader>
 
                 <div className="flex-1 overflow-hidden">
-                    <div className="overflow-y-auto w-full  max-h-[calc(90vh-200px)]">
+                    <div className="overflow-y-auto w-full max-h-[calc(90vh-200px)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {teamMembers?.map((member, idx) => (
                                 <TeamMemberCard key={member._id} member={member} index={idx} />

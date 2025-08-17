@@ -63,6 +63,26 @@ export class TeamService {
         })
     }
 
+    async getUserInfo(userId: string, projectId: string) {
+        const user = await this.userService.findById(userId);
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const membersUserId = (await this.getMembers(new Types.ObjectId(projectId)))
+            .map(members => members.user._id.toString());
+
+        if(membersUserId.includes(user._id.toString())) {
+            throw new BadRequestException('User is already a member')
+        }
+
+        return plainToInstance(TeamMemberUser, user, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
+    }
+
     async searchUser(query: string, projectId: string, user: UserJwt) {
         const users = await this.userService.findManyByUsernameOrEmail(query);
 

@@ -1,20 +1,24 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import LoadingSpinner from "@/components/ui/loadingSpinner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId"
+import useDebounce from "@/lib/useDebounce"
 import { Dialog } from "@radix-ui/react-dialog"
+import { motion } from 'framer-motion'
 import { Search, UserPlus } from "lucide-react"
 import { useState } from "react"
+import { useAddMemberMutation } from "../hooks/useAddMemberMutation"
+import { useGetUserInfo } from "../hooks/useGetUserInfo"
 import { useSearchUser } from "../hooks/useSearchUser"
-import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId"
 import { useAddMemberDialog } from "../store/addMemberStore"
-import { motion } from 'framer-motion';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import useDebounce from "@/lib/useDebounce"
 
 const AddMemberDialog = () => {
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null); /// the error of this no resetting will be fix later once we make this a child
+  const [selectedRole, setSelectedRole] = useState<string | null>(null); /// the error of this no resetting will be fix later once we make this a child
 
   const { isOpen, setIsOpen } = useAddMemberDialog();
 
@@ -23,6 +27,9 @@ const AddMemberDialog = () => {
 
   const debounceSearchUser = useDebounce(searchUser, 300);
   const { data: users, isLoading } = useSearchUser(debounceSearchUser, projectId || "");
+  const { data: user, isLoading: userLoading } = useGetUserInfo(selectedUser || "", projectId || "")
+
+  const  { mutateAsync, isPending } = useAddMemberMutation();
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -61,20 +68,26 @@ const AddMemberDialog = () => {
                       placeholder="Search by username or email..." />
                     </div>
 
-                    {/* <div>
-                      <div className={`flex items-center justify-between p-2 rounded-md border transition-colors`}>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="w-10 h-10">
-                              <AvatarImage src={user.avatarUrl || "/placeholder.svg"} alt={user.displayName} />
-                              <AvatarFallback>{user.displayName.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium text-gray-900">{user.displayName}</p>
-                              <p className="text-sm text-gray-600">{user.email}</p>
-                            </div>
+                    {user && (
+                      <div>
+                        <div className={`flex items-center justify-between p-2 rounded-md border transition-colors`}>
+                            <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            onClick={() => setSelectedUser(null)}
+                            className="flex items-center gap-3">
+                              <Avatar className="w-10 h-10">
+                                <AvatarImage src={user.avatarUrl || "/placeholder.svg"} alt={user.displayName} />
+                                <AvatarFallback>{user.displayName.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium text-gray-900">{user.displayName}</p>
+                                <p className="text-sm text-gray-600">{user.email}</p>
+                              </div>
+                            </motion.div>
                           </div>
-                        </div>
-                    </div> */}
+                      </div>
+                    )}
 
                     <div>
                       <Select
@@ -90,7 +103,16 @@ const AddMemberDialog = () => {
                         </SelectContent>
                       </Select>
                     </div>
-
+                    
+                    <CardFooter className="px-0">
+                      <Button 
+                      className="w-full"
+                      onClick={() =>  mutateAsync({ userId: selectedUser || "", projectId: projectId || "", role: selectedRole as 'admin' | 'member' || "admin" })}
+                      disabled={isPending || !selectedUser || !selectedRole || userLoading}
+                      >
+                        {isPending ? <LoadingSpinner /> : 'Add User'}
+                      </Button>
+                    </CardFooter>
                   </div>
                 </CardContent>
               </Card>
@@ -102,7 +124,9 @@ const AddMemberDialog = () => {
                   </CardHeader>
                   <CardContent className="px-3">
                     <div className="space-y-3 max-h-96 overflow-y-auto">
-                      {users.map((user, index) => (
+                      {users
+                      .filter(user => user._id !== selectedUser)
+                      .map((user, index) => (
                         <motion.div
                         onClick={() => setSelectedUser(user._id)}
                         key={user._id}
@@ -124,7 +148,7 @@ const AddMemberDialog = () => {
                         </motion.div>
                       ))}
 
-                      {users && users.length === 0 && (
+                      {users && users.filter(user => user._id !== selectedUser).length === 0 && (
                         <div className="text-center py-8">
                           <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                           <p className="text-gray-600">No users found matching your search.</p>
@@ -137,6 +161,7 @@ const AddMemberDialog = () => {
             </div>
           </div>
         </div>
+        
       </DialogContent>
     </Dialog>
   )

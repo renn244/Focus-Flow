@@ -7,7 +7,7 @@ import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { RemoveMemberDto } from './dto/remove-member.dto';
-import { getMember, SearchUserDto } from './dto/search-user.dto';
+import { getMember, getUserInfo, SearchUserDto } from './dto/search-user.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Controller('team')
@@ -34,6 +34,14 @@ export class TeamController {
     @Get('search-user')
     async searchUser(@Query() query: SearchUserDto, @User() user: UserJwt) {
         return this.teamService.searchUser(query.query, query.projectId, user);
+    }
+
+    @ApiBearerAuth()
+    @ApiQuery({ name: 'userId', type: String, required: true, description: 'The ID of the user to get the info' })
+    @ApiQuery({ name: 'projectId', type: String, required: true, description: 'The ID of t he project to search users in' })
+    @Get('user-info')
+    async getUserInfo(@Query() query: getUserInfo, @User() user: UserJwt) {
+        return this.teamService.getUserInfo(query.userId, query.projectId);
     }
 
     @ApiBearerAuth()

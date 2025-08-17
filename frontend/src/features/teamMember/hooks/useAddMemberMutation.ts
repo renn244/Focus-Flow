@@ -8,7 +8,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 type addMemberSuccessResponse = TeamMemberWithUser;
 type addMemberResponse = AxiosResponse<addMemberSuccessResponse, ExceptionResponse>;
 
-const addMember = async (data: any): Promise<addMemberResponse['data']> => {
+type addMemberParams = {
+    userId: string;
+    projectId: string;
+    role: "admin" | "member";
+}
+
+const addMember = async (data: addMemberParams): Promise<addMemberResponse['data']> => {
     const response = await axiosInstance.post('/team/add-member', data);
 
     if(response.status === 400) {

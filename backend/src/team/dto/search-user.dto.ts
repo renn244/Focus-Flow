@@ -15,3 +15,11 @@ export class getMember {
   @IsString()
   memberId: string;
 }
+
+export class getUserInfo {
+  @IsString()
+  userId: string;
+
+  @IsString()
+  projectId: string;
+}
