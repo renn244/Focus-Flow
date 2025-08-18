@@ -94,21 +94,7 @@ const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: 
                             <Calendar className="w-4 h-4" />
                             Joined {format(member.joinedAt, "MMM dd, yyyy")}
                         </div>
-                        {/* <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Clock className="w-4 h-4" />
-                            {member.hoursLogged}h logged • {member.timezone}
-                        </div> */}
                     </div>
-
-                    {/* <div className="mt-4 space-y-2">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Task Progress</span>
-                            <span className="font-medium">
-                                {member.tasksCompleted}/{member.tasksAssigned}
-                            </span>
-                        </div>
-                        <Progress value={(member.tasksCompleted / member.tasksAssigned) * 100} className="h-2" />
-                    </div> */}
 
                 </CardContent>
             </Card>

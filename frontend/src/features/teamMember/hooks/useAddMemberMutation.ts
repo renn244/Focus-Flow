@@ -1,9 +1,9 @@
+import { ValidationError } from "@/lib/handleNestError";
+import axiosInstance from "@/lib/httpService";
+import type { ExceptionResponse } from "@/types/ExceptionResponse";
+import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 import type { TeamMemberWithUser } from "../type";
-import type { ExceptionResponse } from "@/types/ExceptionResponse";
-import axiosInstance from "@/lib/httpService";
-import { ValidationError } from "@/lib/handleNestError";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type addMemberSuccessResponse = TeamMemberWithUser;
 type addMemberResponse = AxiosResponse<addMemberSuccessResponse, ExceptionResponse>;
@@ -29,12 +29,7 @@ const addMember = async (data: addMemberParams): Promise<addMemberResponse['data
 }
 
 export const useAddMemberMutation = () => {
-    const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: addMember,
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['teamMembers', data.projectId] });
-        }
     })
 }

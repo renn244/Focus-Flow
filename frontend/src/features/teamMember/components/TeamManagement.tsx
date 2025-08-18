@@ -17,7 +17,7 @@ const TeamManagement = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="sm:max-w-4xl max-h-[90vh]">
+            <DialogContent className="sm:max-w-4xl max-h-[90vh] gap-0">
                 <DialogHeader className="pb-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -26,7 +26,7 @@ const TeamManagement = () => {
                             </div>
                             <div>
                                 <DialogTitle className="text-xl font-bold">Team Management</DialogTitle> 
-                                <p className="text-sm text-gray-600">6</p>
+                                <p className="text-sm text-gray-600">{teamMembers?.length}</p>
                             </div>
                         </div>
                         <Button 
