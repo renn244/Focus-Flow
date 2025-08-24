@@ -172,14 +172,13 @@ const ChangeRole = ({ member }: ChangeRoleProps) => {
                 <Button
                 onClick={handleConfirm}
                 disabled={isPending}
-                // className={isDowngrade || isChangingToOwner ? "bg-orange-600 hover:bg-orange-700" : ""}
                 >
                     {isPending ? (
                         <LoadingSpinner />
                     ) : (
                         <>
                             <UserCog className="w-4 h-4 mr-2" />
-                            {isPending ? <LoadingSpinner /> : "Update Role"}
+                            Update Role
                         </>
                     )}
                 </Button>

@@ -6,7 +6,7 @@ import type { AxiosResponse } from "axios";
 type getUserInfoSuccessResponse = any;
 type getUserInfoResponse = AxiosResponse<getUserInfoSuccessResponse, ExceptionResponse>;
 
-const getUserInfo = async (userId: string, projectId: string): Promise<getUserInfoResponse['data']> => {
+const getUserInfo = async (userId: string | null, projectId: string | null): Promise<getUserInfoResponse['data']> => {
     const response = await axiosInstance.get('/team/user-info', { params: { userId, projectId } })
 
     if(response.status === 404) {
@@ -21,8 +21,8 @@ const getUserInfo = async (userId: string, projectId: string): Promise<getUserIn
 }
 
 const getUserInfoQueryOptions = (
-    userId: string,
-    projectId: string,
+    userId: string | null,
+    projectId: string | null,
     options?: Omit<UseQueryOptions<Awaited<ReturnType<typeof getUserInfo>>>, 'queryKey' | 'queryFn' | 'gcTime'>
 ): UseQueryOptions<Awaited<ReturnType<typeof getUserInfo>>> => {
     return {
@@ -37,6 +37,6 @@ const getUserInfoQueryOptions = (
     }
 }
 
-export const useGetUserInfo = (userId: string, projectId: string) => {
+export const useGetUserInfo = (userId: string | null, projectId: string | null) => {
     return useQuery(getUserInfoQueryOptions(userId, projectId));
 }
