@@ -92,7 +92,7 @@ const AddMemberForm = ({
                                             <FormItem>
                                                 <FormLabel>Role</FormLabel>
                                                 <FormControl>
-                                                    <Select {...field}>
+                                                    <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
                                                         <SelectTrigger className="w-32">
                                                             <SelectValue placeholder="Select Role" />
                                                         </SelectTrigger>

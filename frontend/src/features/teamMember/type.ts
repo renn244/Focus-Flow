@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type { TEAM_MEMBER_ROLES } from "./constants/role";
 import type { addMemberFormSchema } from "./components/forms/AddMemberForm";
+import type { changeRoleFormSchema } from "./components/forms/ChangeRoleForm";
 
 export type TeamMember = {
     _id: string;
@@ -23,3 +24,4 @@ export type TeamMemberWithUser = Omit<TeamMember, 'userId'> & {
 }
 
 export type AddMemberSchema = z.infer<typeof addMemberFormSchema>;
+export type ChangeRoleSchema = z.infer<typeof changeRoleFormSchema>;

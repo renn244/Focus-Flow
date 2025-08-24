@@ -1,8 +1,7 @@
-import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
 import { ValidationError } from "@/lib/handleNestError";
 import axiosInstance from "@/lib/httpService";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 
 type changeRoleSuccessResponse = any;
@@ -23,14 +22,8 @@ const changeRole = async (memberId: string, newRole: 'admin' | 'member'): Promis
 }
 
 export const useChangeRoleMutation = (memberId: string) => {
-    const queryClient = useQueryClient();
-    const projectId = useProjectIdStore(state => state.projectId);
-
     return useMutation({
         mutationKey: ['teamMembers', 'changeRole', memberId],
         mutationFn: (args: { newRole: 'admin' | 'member' }) => changeRole(memberId, args.newRole),
-        onSuccess: async () => {
-            queryClient.invalidateQueries({ queryKey: ['teamMembers', projectId] })
-        },
     })
 }
