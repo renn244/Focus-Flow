@@ -1,18 +1,20 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ClientSession, Model, Types } from 'mongoose';
-import { Project, ProjectDocument } from 'src/schema/Project.schema';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UserJwt } from 'src/lib/Decorators/UserJwt';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { GetProjectQueryDto } from './dto/get-project-query.dto';
 import { plainToInstance } from 'class-transformer';
+import { ClientSession, Model, Types } from 'mongoose';
+import { UserJwt } from 'src/lib/Decorators/UserJwt';
+import { Project, ProjectDocument } from 'src/schema/Project.schema';
+import { TeamService } from 'src/team/team.service';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { GetProjectQueryDto } from './dto/get-project-query.dto';
 import { ProjectDto, ProjectWithOwnerDto } from './dto/response-dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectsService {
     constructor(
-        @InjectModel(Project.name) private projectModel: Model<ProjectDocument> 
+        @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
+        @Inject(forwardRef(() => TeamService)) private readonly teamService: TeamService
     ) {}
 
     async createProject(body: CreateProjectDto, user: UserJwt) {
@@ -26,10 +28,12 @@ export class ProjectsService {
     }
 
     async getProjects(user: UserJwt, query: GetProjectQueryDto) {
-        const ownerId = user.id;
+        const userId = user.id;
+        const projectIds = await this.teamService.getProjectIdsByMemberId(new Types.ObjectId(userId));
+
         const projects = await this.projectModel.find({ 
-            ownerId, 
-            ...(query.status && query.status !== 'all' ? { status: query .status } : {}),
+            $or: [ { _id: { $in: projectIds } }, { ownerId: userId } ],
+            ...(query.status && query.status !== 'all' ? { status: query.status } : {}),
             ...(query.priority && query.priority !== 'all' ? { priority: query.priority } : {})
         }).populate('ownerId', 'username email displayName avatarUrl')
     

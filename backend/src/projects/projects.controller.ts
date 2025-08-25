@@ -1,19 +1,20 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
-import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
-import { CreateProjectDto } from './dto/create-project.dto';
+import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
-import { Types } from 'mongoose';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
+import { CreateProjectDto } from './dto/create-project.dto';
 import { GetProjectQueryDto } from './dto/get-project-query.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
+import { ProjectsService } from './projects.service';
+import { TeamService } from 'src/team/team.service';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectsController {
     constructor(
-        private readonly projectsService: ProjectsService
+        private readonly projectsService: ProjectsService,
     ) {}
 
     @ApiBearerAuth()

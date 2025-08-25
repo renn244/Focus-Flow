@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { plainToInstance } from 'class-transformer';
@@ -17,12 +17,17 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 @Injectable()
 export class TeamService {
     constructor(
-        private readonly projectService: ProjectsService,
+        @Inject(forwardRef(() => ProjectsService)) private readonly projectService: ProjectsService,
         private readonly userService: UserService,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         @InjectModel(TeamMember.name) private readonly teamMemberModel: Model<TeamMemberDocument>,
         @InjectConnection() private readonly connection: Connection,
     ) {}
+
+    async getProjectIdsByMemberId(userId: Types.ObjectId) {
+        const teamMembers = await this.teamMemberModel.find({ userId: userId.toString() });
+        return teamMembers.map(member => member.projectId);
+    }
 
     async getMembers(projectId: Types.ObjectId) {
         let members = await this.cacheManager.get<any[]>(CACHE_KEYS.teamMemberProjects(projectId.toString()));
