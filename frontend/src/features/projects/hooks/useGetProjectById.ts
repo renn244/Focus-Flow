@@ -25,7 +25,7 @@ export const getProjectByIdQueryOptions = (id: string, type: 'query' | 'suspense
     return {
         queryKey: ['project', id],
         queryFn: () => getProjectById(id),
-        ...(type === 'suspense' ? { enabled: !!id } : {}),
+        ...(type === 'suspense' ? {} : { enabled: !!id }),
         gcTime: 0, // Disable garbage collection
         refetchOnWindowFocus: false, // Disable refetching on window focus
         retry: false, // Disable automatic retries

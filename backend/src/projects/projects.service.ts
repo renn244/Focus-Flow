@@ -44,8 +44,10 @@ export class ProjectsService {
     }
 
     async getRecentProjects(user: UserJwt) {
-        const ownerId = user.id;
-        const projects = await this.projectModel.find({ ownerId })
+        const userId = user.id;
+        const projectIds = await this.teamService.getProjectIdsByMemberId(new Types.ObjectId(userId));
+
+        const projects = await this.projectModel.find({ $or: [ { ownerId: userId }, { _id: { $in: projectIds } } ] })
             .sort({ lastSeen: -1 })
             .limit(5)
 
@@ -61,10 +63,6 @@ export class ProjectsService {
 
         if(!project) {
             throw new NotFoundException("Project not found");
-        }
-        
-        if(project.ownerId._id.toString() !== ownerId) {
-            throw new ForbiddenException("You do not have permission to access this project info");
         }
 
         return plainToInstance(ProjectWithOwnerDto, project, {

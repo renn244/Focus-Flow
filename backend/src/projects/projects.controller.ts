@@ -9,6 +9,7 @@ import { GetProjectQueryDto } from './dto/get-project-query.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
 import { TeamService } from 'src/team/team.service';
+import { ProjectAccessGuard } from 'src/lib/guards/ProjectAccessGuard';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
@@ -37,6 +38,7 @@ export class ProjectsController {
 
     @ApiParam({ name: 'id', type: String,  example: '60c72b2f9b1e8c001c8e4d3a', description: 'Project Id (ObjectId)' })
     @ApiBearerAuth()
+    @UseGuards(ProjectAccessGuard)
     @Get(':id')
     async getProjectById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
         return this.projectsService.getProjectById(id, user);

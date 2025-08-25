@@ -11,13 +11,15 @@ import { priorityColors, statusColors } from "../../constants/ProjectBadge"
 import { useGetProjectById } from "../../hooks/useGetProjectById"
 import useProjectDialogStore from "../../store/useProjectDialog"
 import type { ProjectWithOwner } from "../../type"
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog"
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog"
 
 const ViewProjectDialog = () => {
     const isViewOpen = useProjectDialogStore((state) => state.isViewOpen);
     const viewProjectId = useProjectDialogStore((state) => state.viewProjectId);
     const setViewOpen = useProjectDialogStore((state) => state.setViewOpen);
 
-    const { data:project, isLoading, error } = useGetProjectById(viewProjectId || "");
+    const { data: project, isLoading, error, refetch, isRefetching } = useGetProjectById(viewProjectId || "");
 
     return (
         <Dialog open={isViewOpen} onOpenChange={setViewOpen}>
@@ -28,10 +30,17 @@ const ViewProjectDialog = () => {
                     </div>
                 )}
                 {error && (
-                    <>Something went wrong</>
+                    <SomethingWentWrongDialog 
+                    onBack={() => setViewOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    />
                 )}
                 {(!project && !isLoading && !error) && (
-                    <>Not Found</>
+                    <NotFoundDialog 
+                    onBack={() => setViewOpen(false)}
+                    onRetry={refetch} retryLoading={isRefetching}
+                    title="Project Not Found"
+                    />
                 )}
                 {project && (
                     <ViewProject project={project} />
@@ -50,7 +59,7 @@ const ViewProject = ({ project } : { project: ProjectWithOwner }) => {
         setViewOpen(false);
         setEditProjectId(project._id);
     }
-
+    
     return (
         <>
             <DialogHeader>
