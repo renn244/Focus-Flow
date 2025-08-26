@@ -66,6 +66,7 @@ const ChangeRole = ({ member }: ChangeRoleProps) => {
             onSuccess: () => {
                 setIsOpen(false);
                 queryClient.invalidateQueries({ queryKey: ['teamMembers', projectId] });
+                queryClient.invalidateQueries({ queryKey: ['teamMember', projectId, memberId] })
             }
         })
     }
