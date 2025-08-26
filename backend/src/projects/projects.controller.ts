@@ -4,12 +4,12 @@ import { Types } from 'mongoose';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
+import { ProjectAccessGuard } from 'src/lib/guards/ProjectAccessGuard';
+import { ProjectAdminAccessGuard } from 'src/lib/guards/ProjectAdminAccessGuard';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { GetProjectQueryDto } from './dto/get-project-query.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
-import { TeamService } from 'src/team/team.service';
-import { ProjectAccessGuard } from 'src/lib/guards/ProjectAccessGuard';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
@@ -46,6 +46,7 @@ export class ProjectsController {
 
     @ApiParam({ name: 'id', type: String, description: 'Project Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @UseGuards(ProjectAdminAccessGuard)
     @Patch(':id')
     async updateProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateProjectDto, @User() user: UserJwt) {
         return this.projectsService.updateProject(id, body, user);
@@ -53,6 +54,7 @@ export class ProjectsController {
 
     @ApiParam({ name: 'id', type: String, description: 'Project Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @UseGuards(ProjectAdminAccessGuard)
     @Delete(':id')
     async deleteProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
         return this.projectsService.deleteProject(id, user);

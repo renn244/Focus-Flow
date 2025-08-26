@@ -20,7 +20,7 @@ export class ProjectAccessGuard implements CanActivate {
 
         const project = await this.projectModel.findById(projectId).select('ownerId')
             .populate<{ teamMembers: { userId: Types.ObjectId }[] }>('teamMembers', 'userId');
-        const memberIds = project?.teamMembers.map(member => member.userId.toString());
+        const memberIds = project?.teamMembers.map(member => member.userId.toString()) || [];
 
         if(!project) {
             throw new NotFoundException("Project not found");
@@ -28,7 +28,7 @@ export class ProjectAccessGuard implements CanActivate {
 
         // LATER check a role based access control in place
         // Check if the user is the owner of the project or a member
-        if(project.ownerId.toString() !== user.id && memberIds?.includes(user.id)) {
+        if(project.ownerId.toString() !== user.id && !memberIds?.includes(user.id)) {
             return false;
         }
 

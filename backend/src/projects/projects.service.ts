@@ -79,12 +79,8 @@ export class ProjectsService {
             throw new NotFoundException("Project not found");
         }
 
-        if(project.ownerId.toString() !== ownerId) {
-            throw new ForbiddenException("You do not have permission to update this project");
-        }
-
         const updatedProject = await this.projectModel.findOneAndUpdate(
-            { _id: id, ownerId }, body, { new: true }
+            { _id: id }, body, { new: true }
         ).populate('ownerId', 'username email displayName avatarUrl');
     
         return plainToInstance(ProjectWithOwnerDto, updatedProject, {
@@ -95,7 +91,7 @@ export class ProjectsService {
 
     async addMemberToProject(projectId: Types.ObjectId, memberId: Types.ObjectId, session?: ClientSession) {
         const updatedProject = await this.projectModel.findOneAndUpdate(
-            { _id: projectId }, { $push: { members: memberId } }, { new: true, session }
+            { _id: projectId }, { $push: { teamMembers: memberId } }, { new: true, session }
         ).populate('ownerId', 'username email displayName avatarUrl');
 
         if(!updatedProject) {
@@ -110,7 +106,7 @@ export class ProjectsService {
  
     async removeMemberFromProject(projectId: Types.ObjectId, memberId: Types.ObjectId, session?: ClientSession) {
         const updatedProject = await this.projectModel.findOneAndUpdate(
-            { _id: projectId }, { $pull: { members: memberId } }, { new: true, session }
+            { _id: projectId }, { $pull: { teamMembers: memberId } }, { new: true, session }
         ).populate('ownerId', 'username email displayName avatarUrl');
 
         if(!updatedProject) {
@@ -124,8 +120,7 @@ export class ProjectsService {
     }
 
     async deleteProject(id: Types.ObjectId, user: UserJwt) {
-        const ownerId = user.id;
-        const project = await this.projectModel.deleteOne({ _id: id, ownerId });
+        const project = await this.projectModel.deleteOne({ _id: id });
 
         if(project.deletedCount === 0) {
             throw new NotFoundException("Project not found or you do not have permission to delete this project");
