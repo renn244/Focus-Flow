@@ -5,6 +5,7 @@ import { TeamMember, teamMemberSchema } from 'src/schema/TeamMember.schema';
 import { UserModule } from 'src/user/user.module';
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
+import { TeamGateway } from './team.gateway';
 
 @Module({
   imports: [
@@ -17,8 +18,8 @@ import { TeamService } from './team.service';
     forwardRef(() => ProjectsModule), 
     UserModule
   ],
-  providers: [TeamService],
+  providers: [TeamService, TeamGateway],
   controllers: [TeamController],
-  exports: [TeamService]
+  exports: [TeamService, TeamGateway]
 })
 export class TeamModule {}

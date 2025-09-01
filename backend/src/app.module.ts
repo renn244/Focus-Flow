@@ -18,7 +18,10 @@ import { TeamModule } from './team/team.module';
   imports: [
     SentryModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    CacheModule.register({ isGlobal: true, ttl: 60 * 1000 }),
+    CacheModule.register({ 
+      isGlobal: true, 
+      ttl: 60 * 1000
+    }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
