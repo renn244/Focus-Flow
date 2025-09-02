@@ -2,6 +2,7 @@ import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectI
 import ProjectWorkspace from "@/pages/projects/ProjectWorkSpace/ProjectWorkspace";
 import { useEffect } from "react";
 import { redirect } from "@tanstack/react-router";
+import { ProjectSocketProvider } from "@/context/ProjectSocketContext";
 
 export const Route = createFileRoute({
   component: RouteComponent,
@@ -26,5 +27,9 @@ function RouteComponent() {
 
   if(!projectId) return null;
 
-  return <ProjectWorkspace />
+  return (
+    <ProjectSocketProvider projectId={projectId}>
+      <ProjectWorkspace />
+    </ProjectSocketProvider>
+  )
 }
