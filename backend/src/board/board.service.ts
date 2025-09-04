@@ -7,17 +7,26 @@ import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { plainToInstance } from 'class-transformer';
 import { BoardDto, BoardWithColumnsDto } from './dto/response-dto';
+import { TeamGateway } from 'src/team/team.gateway';
 
 @Injectable()
 export class BoardService {
     constructor(
         @InjectModel(Board.name) private boardModel: Model<BoardDocument>,
+        private readonly teamGateway: TeamGateway,
     ) {}
 
     async createBoard(body: CreateBoardDto, user: UserJwt) {
         const newBoard = await this.boardModel.create({
             ...body, projectId: body.projectId,
         });
+
+        this.teamGateway.io.to(body.projectId).emit('boardCreated', 
+            plainToInstance(BoardDto, newBoard, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        )
 
         return plainToInstance(BoardDto, newBoard, {
             excludeExtraneousValues: true,
@@ -58,6 +67,13 @@ export class BoardService {
             { _id: id }, body, { new: true }
         ).populate('columns');
 
+        this.teamGateway.io.to(board.projectId.toString()).emit('boardUpdated', 
+            plainToInstance(BoardWithColumnsDto, updatedBoard, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        )
+
         return plainToInstance(BoardWithColumnsDto, updatedBoard, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -65,11 +81,18 @@ export class BoardService {
     }
 
     async deleteBoard(id: Types.ObjectId, user: UserJwt) {
-        const board = await this.boardModel.deleteOne({ _id: id });
+        const board = await this.boardModel.findOneAndDelete({ _id: id });
 
-        if(board.deletedCount === 0) {
+        if(!board) {
             throw new NotFoundException("Board not found or you do not have permission to delete this board");
         }
+
+        this.teamGateway.io.to(board.projectId.toString()).emit('boardDeleted', 
+            plainToInstance(BoardDto, board, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        );
 
         return { message: "Board deleted successfully" };
     }

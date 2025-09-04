@@ -16,14 +16,6 @@ export const useTeamMemberSocket = (projectId: string | null) => {
             )
         })
 
-        socket.on('memberRemoved', async (deletedMember: TeamMemberWithUser) => {
-            await queryClient.setQueryData(['teamMembers', projectId], (oldData: TeamMemberWithUser[]) => {
-                if(!oldData) return oldData;
-
-                return oldData.filter(member => member._id !== deletedMember._id)
-            })
-        })
-
         socket.on('memberUpdated', async (updatedMember: TeamMemberWithUser) => {
             await queryClient.setQueryData(['teamMembers', projectId], (oldData: TeamMemberWithUser[]) => {
                 if(!oldData) return oldData;
@@ -32,10 +24,18 @@ export const useTeamMemberSocket = (projectId: string | null) => {
             })
         })
 
+        socket.on('memberRemoved', async (deletedMember: TeamMemberWithUser) => {
+            await queryClient.setQueryData(['teamMembers', projectId], (oldData: TeamMemberWithUser[]) => {
+                if(!oldData) return oldData;
+
+                return oldData.filter(member => member._id !== deletedMember._id)
+            })
+        })
+
         return () => {
             socket.off('memberAdded');
-            socket.off('memberRemoved');
             socket.off('memberUpdated');
+            socket.off('memberRemoved');
         }
     }, [socket, projectId])
 }

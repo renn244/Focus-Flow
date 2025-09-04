@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { TeamMember, teamMemberSchema } from 'src/schema/TeamMember.schema';
@@ -8,6 +8,7 @@ import { TeamService } from './team.service';
 import { TeamGateway } from './team.gateway';
 import { TeamSharedService } from './team.shared.service';
 
+@Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -21,6 +22,6 @@ import { TeamSharedService } from './team.shared.service';
   ],
   providers: [TeamSharedService, TeamService, TeamGateway],
   controllers: [TeamController],
-  exports: [TeamService, TeamGateway]
+  exports: [TeamSharedService, TeamService, TeamGateway]
 })
 export class TeamModule {}

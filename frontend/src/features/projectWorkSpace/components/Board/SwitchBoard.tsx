@@ -1,7 +1,9 @@
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import useSelectBoardStore from "../../store/useSelectBoard";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Calendar } from "lucide-react";
+import { useBoardSocket } from "../../hooks/Board/useBoardSocket";
+import { useProjectIdStore } from "../../store/useProjectId";
+import useSelectBoardStore from "../../store/useSelectBoard";
 import type { BoardWithColumns } from "../../type";
 
 type SwitchBoardProps = {
@@ -12,7 +14,10 @@ const SwitchBoard = ({
     boards = [],
 }: SwitchBoardProps) => {
     const { selectedBoardId, setSelectedBoardId } = useSelectBoardStore();
-    
+    const projectId = useProjectIdStore((state) => state.projectId);
+
+    useBoardSocket(projectId);
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
