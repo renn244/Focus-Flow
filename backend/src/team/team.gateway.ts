@@ -34,13 +34,14 @@ export class TeamGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const userId: string = client.handshake?.query?.userId;
         const projectId: string = client.handshake?.query?.projectId;
 
-        // consider ownerId also find a way
-        // const projectMembers = (await this.teamService.getMembers(new Types.ObjectId(projectId))).map(member => member.userId);
-
-        // if(!projectMembers.includes(userId)) {
-        //     this.logger.warn(`User ${userId} attempted to connect to project ${projectId} without being a member`);
-        //     throw new WsException('User is not a member of the project');
-        // }
+        const projectMembers = await this.teamService.getMembers(new Types.ObjectId(projectId));
+        console.log(projectMembers);
+        const projectMemberIds = projectMembers.map(member => member.user._id.toString());
+        console.log(projectMemberIds, userId);
+        if(!projectMemberIds.includes(userId)) {
+            this.logger.warn(`User ${userId} attempted to connect to project ${projectId} without being a member`);
+            throw new WsException('User is not a member of the project');
+        }
 
         this.userIdToSocketId[userId] = client.id;
         this.projectIdToUserId[userId] = projectId;

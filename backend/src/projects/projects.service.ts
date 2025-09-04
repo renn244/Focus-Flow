@@ -21,6 +21,12 @@ export class ProjectsService {
         const ownerId = user.id;
         const project = await this.projectModel.create({ ...body, ownerId })
 
+        await this.teamService.addMember(user, { 
+            projectId: project._id.toString(),
+            userId: ownerId,
+            role: 'owner'  
+        })
+
         return plainToInstance(ProjectDto, project, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true

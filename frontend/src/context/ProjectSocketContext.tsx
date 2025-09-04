@@ -48,7 +48,7 @@ export const ProjectSocketProvider = ({
         return () => {
             socket.close();
         }
-    }, [user])
+    }, [user, projectId])
 
     const value = { socket }
 

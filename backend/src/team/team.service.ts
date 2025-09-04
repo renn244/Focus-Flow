@@ -30,12 +30,12 @@ export class TeamService {
     }
 
     async getMembers(projectId: Types.ObjectId) {
-        let members = await this.cacheManager.get<any[]>(CACHE_KEYS.teamMemberProjects(projectId.toString()));
+        let members = await this.cacheManager.get<TeamMemberWithUser[]>(CACHE_KEYS.teamMemberProjects(projectId.toString()));
 
         if (!members) {
             const teamMembers = await this.teamMemberModel.find({ projectId: projectId.toString() })
                 .populate('userId', 'username email displayName avatarUrl');
-
+            
             members = plainToInstance(TeamMemberWithUser, teamMembers, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,

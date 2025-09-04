@@ -1,4 +1,6 @@
-import { Exclude, Expose, plainToInstance, Transform } from "class-transformer";
+import { OmitType } from "@nestjs/mapped-types";
+import { Expose, plainToInstance, Transform } from "class-transformer";
+import { TeamMemberRole } from "../constant/role";
 
 
 export class TeamMemberType {
@@ -12,7 +14,7 @@ export class TeamMemberType {
     projectId: string;
 
     @Expose()
-    role: 'admin' | 'member';
+    role: TeamMemberRole;
 
     @Expose()
     joinedAt: Date
@@ -35,14 +37,10 @@ export class TeamMemberUser {
     avatarUrl: string;
 }
 
-export class TeamMemberWithUser extends TeamMemberType {
+export class TeamMemberWithUser extends OmitType(TeamMemberType, ['userId'] as const) {
     @Transform(
-        ({ obj }) => plainToInstance(TeamMemberUser, obj.userId, { excludeExtraneousValues: true }) 
-        ? obj.userId : null
+        ({ obj }) => obj.userId ? obj.userId : null
     )
     @Expose()
     user: TeamMemberUser;
-
-    @Exclude()
-    userId: string;
 }
