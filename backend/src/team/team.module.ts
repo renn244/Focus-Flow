@@ -6,6 +6,7 @@ import { UserModule } from 'src/user/user.module';
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
 import { TeamGateway } from './team.gateway';
+import { TeamSharedService } from './team.shared.service';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { TeamGateway } from './team.gateway';
     forwardRef(() => ProjectsModule), 
     UserModule
   ],
-  providers: [TeamService, TeamGateway],
+  providers: [TeamSharedService, TeamService, TeamGateway],
   controllers: [TeamController],
   exports: [TeamService, TeamGateway]
 })

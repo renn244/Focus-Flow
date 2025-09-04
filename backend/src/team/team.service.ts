@@ -13,12 +13,16 @@ import { AddMemberDto } from './dto/add-member.dto';
 import { RemoveMemberDto } from './dto/remove-member.dto';
 import { TeamMemberType, TeamMemberUser, TeamMemberWithUser } from './dto/response-dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { TeamSharedService } from './team.shared.service';
+import { TeamGateway } from './team.gateway';
 
 @Injectable()
 export class TeamService {
     constructor(
         @Inject(forwardRef(() => ProjectsService)) private readonly projectService: ProjectsService,
         private readonly userService: UserService,
+        private readonly teamSharedService: TeamSharedService,
+        private readonly teamGateway: TeamGateway,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         @InjectModel(TeamMember.name) private readonly teamMemberModel: Model<TeamMemberDocument>,
         @InjectConnection() private readonly connection: Connection,
@@ -27,24 +31,6 @@ export class TeamService {
     async getProjectIdsByMemberId(userId: Types.ObjectId) {
         const teamMembers = await this.teamMemberModel.find({ userId: userId.toString() });
         return teamMembers.map(member => member.projectId);
-    }
-
-    async getMembers(projectId: Types.ObjectId) {
-        let members = await this.cacheManager.get<TeamMemberWithUser[]>(CACHE_KEYS.teamMemberProjects(projectId.toString()));
-
-        if (!members) {
-            const teamMembers = await this.teamMemberModel.find({ projectId: projectId.toString() })
-                .populate('userId', 'username email displayName avatarUrl');
-            
-            members = plainToInstance(TeamMemberWithUser, teamMembers, {
-                excludeExtraneousValues: true,
-                enableImplicitConversion: true,
-            });
-
-            await this.cacheManager.set(CACHE_KEYS.teamMemberProjects(projectId.toString()), members);
-        }
-
-        return members;
     }
 
     async getMember(projectId: string, memberId: string) {
@@ -56,7 +42,7 @@ export class TeamService {
             throw new NotFoundException('Team member not found');
         }
 
-        const projectMembers = await this.getMembers(new Types.ObjectId(projectId));
+        const projectMembers = await this.teamSharedService.getMembers(new Types.ObjectId(projectId));
 
         if(!projectMembers.find((member) => member._id.toString() === memberId.toString())) {
             throw new BadRequestException('Member not a member of the project');
@@ -68,6 +54,10 @@ export class TeamService {
         })
     }
 
+    async getMembers(projectId: Types.ObjectId) {
+        return this.teamSharedService.getMembers(projectId);
+    }
+
     async getUserInfo(userId: string, projectId: string) {
         const user = await this.userService.findById(userId);
 
@@ -75,7 +65,7 @@ export class TeamService {
             throw new NotFoundException('User not found');
         }
 
-        const membersUserId = (await this.getMembers(new Types.ObjectId(projectId)))
+        const membersUserId = (await this.teamSharedService.getMembers(new Types.ObjectId(projectId)))
             .map(members => members.user._id.toString());
 
         if(membersUserId.includes(user._id.toString())) {
@@ -91,7 +81,7 @@ export class TeamService {
     async searchUser(query: string, projectId: string, user: UserJwt) {
         const users = await this.userService.findManyByUsernameOrEmail(query);
 
-        const projectMembersId = (await this.getMembers(new Types.ObjectId(projectId)))
+        const projectMembersId = (await this.teamSharedService.getMembers(new Types.ObjectId(projectId)))
             .map(member => member.user._id.toString());
 
 
@@ -111,7 +101,7 @@ export class TeamService {
         session.startTransaction();
 
         try {
-            const projectMembersId = (await this.getMembers(new Types.ObjectId(body.projectId)))
+            const projectMembersId = (await this.teamSharedService.getMembers(new Types.ObjectId(body.projectId)))
                 .map(member => member.user._id.toString());
 
             if (projectMembersId.includes(body.userId)) {
@@ -123,6 +113,13 @@ export class TeamService {
             await this.projectService.addMemberToProject(new Types.ObjectId(body.projectId), teamMember[0]._id, session);
             await this.userService.addProjectToUser(new Types.ObjectId(body.userId), teamMember[0]._id, session);
             const teamMemberWithUser = await teamMember[0].populate('userId', 'username email displayName avatarUrl');
+
+            this.teamGateway.io.to(body.projectId).emit('memberAdded',
+                plainToInstance(TeamMemberWithUser, teamMemberWithUser, {
+                    excludeExtraneousValues: true,
+                    enableImplicitConversion: true,
+                }),
+            )
 
             await session.commitTransaction();
 
@@ -147,7 +144,7 @@ export class TeamService {
         session.startTransaction();
 
         try {
-            const projectMembersId = (await this.getMembers(new Types.ObjectId(body.projectId)))
+            const projectMembersId = (await this.teamSharedService.getMembers(new Types.ObjectId(body.projectId)))
                 .map(member => member.user._id.toString());
             
             if (!projectMembersId.includes(body.userId)) {
@@ -164,7 +161,14 @@ export class TeamService {
 
             await this.projectService.removeMemberFromProject(new Types.ObjectId(body.projectId), teamMember._id, session);
             await this.userService.removeProjectFromUser(new Types.ObjectId(body.userId), teamMember._id, session);
-       
+
+            this.teamGateway.io.to(body.projectId).emit('memberRemoved', 
+                plainToInstance(TeamMemberWithUser, teamMember, {
+                    excludeExtraneousValues: true,
+                    enableImplicitConversion: true,
+                }),
+            );
+
             await session.commitTransaction();
 
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
@@ -192,6 +196,12 @@ export class TeamService {
             throw new NotFoundException('Team member not found');
         }
 
+        this.teamGateway.io.to(updatedTeamMember.projectId.toString()).emit('memberUpdated',
+            plainToInstance(TeamMemberWithUser, updatedTeamMember, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            }),
+        );
         await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(updatedTeamMember.projectId)));
 
         return plainToInstance(TeamMemberWithUser, updatedTeamMember, {

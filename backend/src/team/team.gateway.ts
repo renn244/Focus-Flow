@@ -3,13 +3,14 @@ import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketSe
 import { Server, Socket } from 'socket.io';
 import { TeamService } from './team.service';
 import { Types } from 'mongoose';
+import { TeamSharedService } from './team.shared.service';
 
 @WebSocketGateway()
 export class TeamGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private logger = new Logger(TeamGateway.name);
 
     constructor(
-        private readonly teamService: TeamService,
+        private readonly teamSharedService: TeamSharedService,
     ) {}
 
     @WebSocketServer() io: Server
@@ -34,13 +35,12 @@ export class TeamGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const userId: string = client.handshake?.query?.userId;
         const projectId: string = client.handshake?.query?.projectId;
 
-        const projectMembers = await this.teamService.getMembers(new Types.ObjectId(projectId));
-        console.log(projectMembers);
+        const projectMembers = await this.teamSharedService.getMembers(new Types.ObjectId(projectId));
         const projectMemberIds = projectMembers.map(member => member.user._id.toString());
-        console.log(projectMemberIds, userId);
+
         if(!projectMemberIds.includes(userId)) {
             this.logger.warn(`User ${userId} attempted to connect to project ${projectId} without being a member`);
-            throw new WsException('User is not a member of the project');
+            return;
         }
 
         this.userIdToSocketId[userId] = client.id;

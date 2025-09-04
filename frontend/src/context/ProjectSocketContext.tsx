@@ -25,7 +25,7 @@ export const ProjectSocketProvider = ({
     const { user } = useAuthContext();
 
     useEffect(() => {
-        if(!user) return;
+        if(!user || !projectId) return;
 
         const socket = io('http://localhost:5000', {
             autoConnect: true,
@@ -41,9 +41,9 @@ export const ProjectSocketProvider = ({
             console.log('Socket connected');
         })
 
-        socket.on('disconnect', () => {
-            toast.error('offline!');
-        })
+        // socket.on('disconnect', () => {
+        //     toast.error('offline!');
+        // })
 
         return () => {
             socket.close();

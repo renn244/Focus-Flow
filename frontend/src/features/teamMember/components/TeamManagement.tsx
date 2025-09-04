@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId"
 import { UserPlus, Users } from "lucide-react"
 import { useGetMembers } from "../hooks/useGetMembers"
-import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId"
-import TeamMemberCard from "./TeamMemberCard"
+import { useTeamMemberSocket } from "../hooks/useTeamMemberSocket"
 import { useTeamManagementStore } from "../store/TeamManagementStore"
 import { useAddMemberDialog } from "../store/addMemberStore"
+import TeamMemberCard from "./TeamMemberCard"
 
 const TeamManagement = () => { 
     const isOpen = useTeamManagementStore((state) => state.isOpen);
@@ -14,6 +15,8 @@ const TeamManagement = () => {
 
     const projectId = useProjectIdStore((state) => state.projectId); 
     const { data: teamMembers } = useGetMembers(projectId || "");
+
+    useTeamMemberSocket(projectId);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>

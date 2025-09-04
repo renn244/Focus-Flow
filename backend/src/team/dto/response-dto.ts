@@ -1,10 +1,13 @@
 import { OmitType } from "@nestjs/mapped-types";
-import { Expose, plainToInstance, Transform } from "class-transformer";
+import { Expose, Transform } from "class-transformer";
 import { TeamMemberRole } from "../constant/role";
 
 
 export class TeamMemberType {
     @Expose()
+    // this is applied because mongoose ObjectId is being changed to another id 
+    // reference: https://github.com/typestack/class-transformer/issues/991#issuecomment-1028303186
+    @Transform((value) => value.obj._id.toString())
     _id: string;
 
     @Expose()
