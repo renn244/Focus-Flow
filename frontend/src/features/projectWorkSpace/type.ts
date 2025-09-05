@@ -27,6 +27,10 @@ export type Column = {
     updatedAt: string;
 }
 
+export type ColumnWithBoardId = {
+    boardId: string;
+} & Column
+
 export type ColumnWithTasks = {
     tasks: TaskWithBoardAndColumn[];
 } & Omit<Column, 'tasks'>

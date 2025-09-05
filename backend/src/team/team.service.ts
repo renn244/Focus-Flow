@@ -114,14 +114,14 @@ export class TeamService {
             await this.userService.addProjectToUser(new Types.ObjectId(body.userId), teamMember[0]._id, session);
             const teamMemberWithUser = await teamMember[0].populate('userId', 'username email displayName avatarUrl');
 
+            await session.commitTransaction();
+            
             this.teamGateway.io.to(body.projectId).emit('memberAdded',
                 plainToInstance(TeamMemberWithUser, teamMemberWithUser, {
                     excludeExtraneousValues: true,
                     enableImplicitConversion: true,
                 }),
             )
-
-            await session.commitTransaction();
 
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 
@@ -162,14 +162,14 @@ export class TeamService {
             await this.projectService.removeMemberFromProject(new Types.ObjectId(body.projectId), teamMember._id, session);
             await this.userService.removeProjectFromUser(new Types.ObjectId(body.userId), teamMember._id, session);
 
+            await session.commitTransaction();
+
             this.teamGateway.io.to(body.projectId).emit('memberRemoved', 
                 plainToInstance(TeamMemberWithUser, teamMember, {
                     excludeExtraneousValues: true,
                     enableImplicitConversion: true,
                 }),
             );
-
-            await session.commitTransaction();
 
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 

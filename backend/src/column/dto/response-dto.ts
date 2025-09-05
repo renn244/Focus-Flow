@@ -26,6 +26,11 @@ export class ColumnDto {
     updatedAt: Date;
 }
 
+export class ColumnWithBoardIdDto extends ColumnDto {
+    @Expose()
+    boardId: string;
+}
+
 export class ColumnWithTasksDto {
     @Expose()
     _id: string;

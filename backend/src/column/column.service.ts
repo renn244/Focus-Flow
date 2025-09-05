@@ -6,13 +6,15 @@ import { BoardService } from 'src/board/board.service';
 import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { Column, ColumnDocument } from 'src/schema/Column.schema';
 import { CreateColumnDto } from './dto/create-column.dto';
-import { ColumnDto, ColumnWithTasksDto } from './dto/response-dto';
+import { ColumnDto, ColumnWithBoardIdDto, ColumnWithTasksDto } from './dto/response-dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
+import { TeamGateway } from 'src/team/team.gateway';
 
 @Injectable()
 export class ColumnService {
     constructor(
         private readonly boardService: BoardService,
+        private readonly teamGateway: TeamGateway,
         @InjectModel(Column.name) private columnModel: Model<ColumnDocument>,
         @InjectConnection() private readonly connection: Connection
     ) {}
@@ -23,10 +25,17 @@ export class ColumnService {
 
         try {
             const newColumn = await this.columnModel.create([{...body, order: 99}], { session });
-            await this.boardService.addColumnToBoard(body.boardId, newColumn[0]._id, session);
+            const board = await this.boardService.addColumnToBoard(body.boardId, newColumn[0]._id, session);
         
             await session.commitTransaction();
-        
+
+            this.teamGateway.io.to(board.projectId.toString()).emit('columnCreated', 
+                plainToInstance(ColumnWithBoardIdDto, {...newColumn[0], boardId: board._id}, {
+                    excludeExtraneousValues: true,
+                    enableImplicitConversion: true,
+                })
+            )
+
             return plainToInstance(ColumnDto, newColumn[0], {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,
@@ -62,8 +71,8 @@ export class ColumnService {
                     }
                 }
             ]);
+            
             await this.boardService.addColumnToBoard(boardId.toString(), newColumn[0]._id, session);
-        
             await session.commitTransaction();
         
             const columns = await this.getColumnsByBoardId(boardId); // Refresh the columns after creation
@@ -123,7 +132,7 @@ export class ColumnService {
         });
     }
 
-    async updateColumn(id: Types.ObjectId, body: UpdateColumnDto) {
+    async updateColumn(id: Types.ObjectId, body: UpdateColumnDto, user: UserJwt) {
         const column = await this.columnModel.findById(id);
 
         if (!column) {
@@ -134,6 +143,14 @@ export class ColumnService {
             { _id: id }, body, { new: true }
         );
 
+        const projectId = await this.teamGateway.getProjectIdByUserId(user.id);
+        this.teamGateway.io.to(projectId).emit('columnUpdated', 
+            plainToInstance(ColumnWithBoardIdDto, {...updatedColumn, boardId: body.boardId }, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        )
+
         return plainToInstance(ColumnDto, updatedColumn, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -142,7 +159,8 @@ export class ColumnService {
 
     async updateOrderColumns(
         boardId: Types.ObjectId, 
-        body: { columns: { _id: Types.ObjectId, order: number }[] }
+        body: { columns: { _id: Types.ObjectId, order: number }[] },
+        user: UserJwt
     ) {
         const session = await this.connection.startSession();
         session.startTransaction();
@@ -161,8 +179,13 @@ export class ColumnService {
                     } satisfies UpdateOneModel<ColumnDocument>
                 }))
             )
-
+            
             await session.commitTransaction();
+
+            // SHOULD GIVE THE COLUMNS??
+            const projectId = this.teamGateway.getProjectIdByUserId(user.id);
+            this.teamGateway.io.to(projectId).emit('columnsReordered', { boardId, columns: body.columns });
+
             return { message: "Columns reordered successfully", updatedCount: updatedColumns.modifiedCount };
         } catch (error) {
             console.log(error);
@@ -173,14 +196,22 @@ export class ColumnService {
         }
     }
 
-    async deleteColumn(id: Types.ObjectId) {
-        const column = await this.columnModel.deleteOne({ _id: id });
+    async deleteColumn(id: Types.ObjectId, user: UserJwt) {
+        const column = await this.columnModel.findOneAndDelete({ _id: id });
         // find away to get the board id from the column
         // make sure to remove the column from the board as well so that it does not leave a orphan reference
         // await this.boardService.removeColumnFromBoard(id);
-        if(column.deletedCount === 0) {
+        if(!column) {
             throw new NotFoundException("Column not found or you do not have permission to delete this column")
         }
+
+        const projectId = this.teamGateway.getProjectIdByUserId(user.id);
+        this.teamGateway.io.to(projectId).emit('columnDeleted', 
+            plainToInstance(ColumnDto, column, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        )
 
         return { message: "Column deleted successfully" };
     }
