@@ -45,7 +45,7 @@ const EditTaskDialog = () => {
                         message="The task you are trying to edit does not exist or has been deleted."
                         onBack={() => setEditOpen(false)}
                         onRetry={refetch}
-                    retryLoading={isRefetching}
+                        retryLoading={isRefetching}
                     />
                 )}
                 {data && (

@@ -1,22 +1,21 @@
+import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog"
+import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import LoadingSpinner from "@/components/ui/loadingSpinner"
 import { Textarea } from "@/components/ui/textarea"
+import { format } from "date-fns"
 import { AlertTriangle, Calendar, Clock, Flag, Tag, Trash2, User } from "lucide-react"
-import useTaskDialogStore from "../../store/useTaskDialog"
-import { useGetTaskById } from "../../hooks/Task/useGetTaskById"
-import type { Task, TaskWithBoardAndColumn } from "../../type"
 import { useState } from "react"
 import { priorityColors } from "../../constant/priorityColors"
-import LoadingSpinner from "@/components/ui/loadingSpinner"
-import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog"
-import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog"
-import { format } from "date-fns"
-import { Button } from "@/components/ui/button"
 import { useDeleteTaskMutation } from "../../hooks/Task/useDeleteTaskMutation"
+import { useGetTaskById } from "../../hooks/Task/useGetTaskById"
+import useTaskDialogStore from "../../store/useTaskDialog"
+import type { TaskWithBoardAndColumn } from "../../type"
 
 const RemoveTaskDialog = () => {
     const isRemoveOpen = useTaskDialogStore((state) => state.isRemoveOpen);
@@ -43,7 +42,7 @@ const RemoveTaskDialog = () => {
                     onRetry={refetch} retryLoading={isRefetching}
                     />
                 )}
-                {(!task || isLoading || error) && (
+                {(!task && !isLoading && error) && (
                     <NotFoundDialog 
                     onBack={() => setRemoveOpen(false)}
                     onRetry={refetch} retryLoading={isRefetching}
