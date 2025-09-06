@@ -1,14 +1,13 @@
 import Sortable from "@/components/common/DndKit/Sortable";
-import { useProjectSocketContext } from "@/context/ProjectSocketContext";
 import { arrayMove, horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { useGetColumnByBoardId } from "../../hooks/Column/useGetColumnByBoardId";
 import { useReorderColumnMutation } from "../../hooks/Column/useReorderColumnMutation";
+import { useSortableColumnViewSocket } from "../../hooks/Column/useSortableColumnViewSocket";
 import { useTaskMovedMutation } from "../../hooks/Task/useTaskMovedMutation";
-import type { Column, ColumnWithBoardId, ColumnWithTasks, TaskWithBoardAndColumn } from "../../type";
+import type { ColumnWithTasks, TaskWithBoardAndColumn } from "../../type";
 import transformReorderColumn from "../../utils/transformReorderColumn";
 import ColumnCard from "./ColumnCard";
+import { useTaskSocket } from "../../hooks/Task/useTaskSocket";
 
 type SortableColumnViewProps = {
     boardId: string | null | undefined;
@@ -20,50 +19,9 @@ const SortableColumnView = ({
     const { data: columns } = useGetColumnByBoardId(boardId || "");
     const { mutateAsync: reorderColumn } = useReorderColumnMutation(boardId || "");
     const { mutateAsync: moveTask } = useTaskMovedMutation();
-    const { socket } = useProjectSocketContext();
-    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        if(!socket) return;
-
-        socket.on('columnCreated', (newColumn: ColumnWithBoardId) => {
-            // cannot use setQueryData because we already invalidate it if it was the one who creted it
-            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', newColumn.boardId] })
-        })
-
-        socket.on('columnUpdated', (updatedColumn: ColumnWithBoardId) => {
-            const { boardId: updatedBoardId, ...columnUpdatedData } = updatedColumn;
-
-            queryClient.setQueryData(['columns', 'byboard', updatedBoardId], (oldData: ColumnWithTasks[]) => {
-                if(!oldData) return oldData;
-
-                return oldData.map(column => column._id === updatedColumn._id ? columnUpdatedData : column);
-            })
-        })
-
-        socket.on('columnDeleted', (deletedColumn: Column) => {
-            // can use the normal boardId because every column id is unique 
-            // so even if wrong boardId, it won't delete anything
-            queryClient.setQueryData(['columns', 'byboard', boardId], (oldData: ColumnWithTasks[]) => {
-                return oldData.filter(column => column._id !== deletedColumn._id);
-            })
-        })
-
-        socket.on('columnsReordered', (data: { boardId: string, columns: { _id: string, order: number }[] }) => {
-            queryClient.setQueryData(['columns', 'byboard', boardId], (oldData: ColumnWithTasks[]) => {
-                if(!oldData) return oldData;
-
-                // put in map to achieve O(1) lookup time instead of double loop O(n^2)
-                const orderMap = new Map(data.columns.map(col => [col._id, col.order]));
-                const newData = oldData.map(column => ({
-                    ...column, order: orderMap.get(column._id) ?? column.order
-                }));
-
-                return newData.sort((a, b) => a.order - b.order);
-            })
-        })
-
-    }, [socket])
+    useSortableColumnViewSocket(boardId);
+    useTaskSocket(boardId);
 
     return (
         <Sortable<ColumnWithTasks>
