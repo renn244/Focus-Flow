@@ -9,16 +9,18 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { plainToInstance } from 'class-transformer';
 import { TaskDto, TaskWithBoardAndColumnDto } from './dto/response-dto';
 import { MoveTaskDto } from './dto/move-task.dto';
+import { TeamGateway } from 'src/team/team.gateway';
 
 @Injectable()
 export class TaskService {
     constructor(
         @InjectModel(Task.name) private readonly taskModel: Model<TaskDocument>,
         @InjectConnection() private readonly connection: Connection,
+        private readonly teamGateway: TeamGateway,
         private readonly columnService: ColumnService,
     ) {}
 
-    async createTask(body: CreateTaskDto) {
+    async createTask(body: CreateTaskDto, user: UserJwt) {
         const session = await this.connection.startSession();
         session.startTransaction();
         
@@ -27,6 +29,19 @@ export class TaskService {
             await this.columnService.addTaskToColumn(body.columnId, newTask[0]._id, session)
             
             await session.commitTransaction();
+
+            const populatedData = await newTask[0].populate([
+                { path: 'columnId', select: 'title color _id' },
+                { path: 'boardId', select: 'name _id' }
+            ]);
+
+            const projectId = this.teamGateway.getProjectIdByUserId(user.id);
+            this.teamGateway.io.to(projectId).emit('taskCreated', 
+                plainToInstance(TaskWithBoardAndColumnDto, populatedData, {
+                    excludeExtraneousValues: true,
+                    enableImplicitConversion: true,
+                })
+            );
 
             return plainToInstance(TaskDto, newTask[0], {
                 excludeExtraneousValues: true,
@@ -68,24 +83,7 @@ export class TaskService {
         })
     }
 
-    async updateTask(id: Types.ObjectId, body: UpdateTaskDto, user: UserJwt) {
-        const task = await this.taskModel.findById(id);
-
-        if(!task) {
-            throw new NotFoundException('Task not found');
-        }
-
-        const updatedTask = await this.taskModel.findOneAndUpdate(
-            { _id: id }, body, { new: true }
-        )
-
-        return plainToInstance(TaskDto, updatedTask, {
-            excludeExtraneousValues: true,
-            enableImplicitConversion: true,
-        });
-    }
-
-    async updateMovedTask(taskId: Types.ObjectId, body: MoveTaskDto) {
+    async updateMovedTask(taskId: Types.ObjectId, body: MoveTaskDto, user: UserJwt) {
         const session = await this.connection.startSession();
         session.startTransaction();
 
@@ -102,6 +100,23 @@ export class TaskService {
             await this.columnService.addTaskToColumn(body.taskFutureColumnId.toString(), taskId, session);
 
             await session.commitTransaction();
+            
+            const populatedData = await updatedTask.populate([
+                { path: 'columnId', select: 'title color _id' },
+                { path: 'boardId', select: 'name _id' }
+            ])
+
+            const projectId = this.teamGateway.getProjectIdByUserId(user.id);
+            this.teamGateway.io.to(projectId).emit('taskMoved',
+                { 
+                    ...body, 
+                    updatorUserId: user.id,
+                    task: plainToInstance(TaskWithBoardAndColumnDto, populatedData, { 
+                        excludeExtraneousValues: true, enableImplicitConversion: true 
+                    }) 
+                }
+            );
+
             return { message: "Task moved successfully" };
         } catch (error) {
             console.log(error);
@@ -112,7 +127,35 @@ export class TaskService {
         }
     }
 
-    async deleteTask(id: Types.ObjectId) {
+    async updateTask(id: Types.ObjectId, body: UpdateTaskDto, user: UserJwt) {
+        const updatedTask = await this.taskModel.findOneAndUpdate(
+            { _id: id }, body, { new: true }
+        )
+
+        if(!updatedTask) {
+            throw new NotFoundException('Task not found');
+        }
+
+        const populatedData = await updatedTask.populate([
+            { path: 'columnId', select: 'title color _id' },
+            { path: 'boardId', select: 'name _id' }
+        ]);
+
+        const projectId = this.teamGateway.getProjectIdByUserId(user.id);
+        this.teamGateway.io.to(projectId).emit('taskUpdated', 
+            plainToInstance(TaskWithBoardAndColumnDto, populatedData, {
+                excludeExtraneousValues: true,
+                enableImplicitConversion: true,
+            })
+        );
+
+        return plainToInstance(TaskDto, updatedTask, {
+            excludeExtraneousValues: true,
+            enableImplicitConversion: true,
+        });
+    }
+
+    async deleteTask(id: Types.ObjectId, user: UserJwt) {
         const session = await this.connection.startSession();
         session.startTransaction();
 
@@ -126,6 +169,10 @@ export class TaskService {
             await this.columnService.removeTaskFromColumn(deletedTask.columnId.toString(), deletedTask._id, session);
        
             await session.commitTransaction();
+
+            const projectId = this.teamGateway.getProjectIdByUserId(user.id);
+            this.teamGateway.io.to(projectId).emit('taskDeleted', { taskId: id, colId: deletedTask.columnId.toString() });
+
             return { message: "Task deleted successfully" };
         } catch (error) {
             await session.abortTransaction();

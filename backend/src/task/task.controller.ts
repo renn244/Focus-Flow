@@ -18,8 +18,8 @@ export class TaskController {
 
     @ApiBearerAuth()
     @Post()
-    async createTask(@Body() body: CreateTaskDto) {
-        return this.taskService.createTask(body);
+    async createTask(@Body() body: CreateTaskDto, @User() user: UserJwt) {
+        return this.taskService.createTask(body, user);
     }
 
     @ApiParam({ name: 'columnId', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
@@ -39,8 +39,8 @@ export class TaskController {
     @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Patch('moved/:id')
-    async moveTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @Body() body: MoveTaskDto) {
-        return this.taskService.updateMovedTask(taskId, body);
+    async moveTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @Body() body: MoveTaskDto, @User() user: UserJwt) {
+        return this.taskService.updateMovedTask(taskId, body, user);
     }
 
     @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
@@ -53,7 +53,7 @@ export class TaskController {
     @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Delete(':id')
-    async deleteTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId) {
-        return this.taskService.deleteTask(taskId);
+    async deleteTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @User() user: UserJwt) {
+        return this.taskService.deleteTask(taskId, user);
     }
 }

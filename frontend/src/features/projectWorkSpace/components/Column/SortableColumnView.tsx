@@ -4,10 +4,10 @@ import { useGetColumnByBoardId } from "../../hooks/Column/useGetColumnByBoardId"
 import { useReorderColumnMutation } from "../../hooks/Column/useReorderColumnMutation";
 import { useSortableColumnViewSocket } from "../../hooks/Column/useSortableColumnViewSocket";
 import { useTaskMovedMutation } from "../../hooks/Task/useTaskMovedMutation";
+import { useTaskSocket } from "../../hooks/Task/useTaskSocket";
 import type { ColumnWithTasks, TaskWithBoardAndColumn } from "../../type";
 import transformReorderColumn from "../../utils/transformReorderColumn";
 import ColumnCard from "./ColumnCard";
-import { useTaskSocket } from "../../hooks/Task/useTaskSocket";
 
 type SortableColumnViewProps = {
     boardId: string | null | undefined;
