@@ -45,6 +45,12 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @Get('active-members/:projectId')
+    async getActiveMembers(@Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId) {
+        return this.teamService.getActiveMembers(projectId);
+    }
+
+    @ApiBearerAuth()
     @ApiParam({ name: 'projectId', type: String, required: true, description: 'The ID of the project to get members for' })
     @Get(':projectId')
     async getMembers(@Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId) {

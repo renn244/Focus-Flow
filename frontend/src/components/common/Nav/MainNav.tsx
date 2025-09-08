@@ -1,18 +1,19 @@
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useAuthContext } from '@/context/authContext'
 import { Link } from '@tanstack/react-router'
-import { Bell, Search, Settings } from 'lucide-react'
-import { useState, type PropsWithChildren } from 'react'
+import { Bell, Settings } from 'lucide-react'
+import { type ComponentProps, type PropsWithChildren } from 'react'
 import UserDropDown from './UserDropDown'
+import { cn } from '@/lib/utils'
 
-type MainNavProps = {} & PropsWithChildren
+type MainNavProps = {
+    className?: string
+} & PropsWithChildren & ComponentProps<'div'>
 
 const MainNav = ({
-    children
+    children, className, ...props
 }: MainNavProps) => {
     const { user } = useAuthContext();
-    const [searchQuery, setSearchQuery] = useState("");
 
     return (
         <div className="bg-white border-b border-slate-200 px-6 py-4">
@@ -21,21 +22,12 @@ const MainNav = ({
                     <Link to='/projects' className="text-2xl font-bold text-slate-900">
                         Project Dashboard
                     </Link> 
-                    <div className="flex items-center gap-2">
+                    <div {...props} className={cn("flex items-center gap-2", className)}>
                         {children}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-                        <Input
-                        placeholder="Search tasks..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 w-64"
-                        />
-                    </div>
                     <Button variant="ghost" size="sm">
                         <Bell className="w-4 h-4" />
                     </Button>

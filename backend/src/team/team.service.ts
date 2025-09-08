@@ -58,6 +58,17 @@ export class TeamService {
         return this.teamSharedService.getMembers(projectId);
     }
 
+    async getActiveMembers(projectId: Types.ObjectId) {
+        const members = await this.teamSharedService.getMembers(projectId);
+        const activeMembersIds = this.teamGateway.getUserIdsInProject(projectId.toString())
+
+        const activeMembers = members
+            .filter(member => activeMembersIds.includes(member.user._id.toString()))
+            .map(member => member.user);
+
+        return activeMembers
+    }
+
     async getUserInfo(userId: string, projectId: string) {
         const user = await this.userService.findById(userId);
 

@@ -3,6 +3,7 @@ import KanbanBoard from "../../../features/projectWorkSpace/components/Board/Kan
 import { Calendar, Clipboard, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTeamManagementStore } from "@/features/teamMember/store/TeamManagementStore";
+import ActiveMembersDisplay from "@/features/teamMember/components/ActiveMembersDisplay";
 
 type ProjectWorkspaceProps = {
 }
@@ -15,17 +16,19 @@ const ProjectWorkspace = ({
         <div className="min-h-screen max-w-screen bg-gradient-to-br from-slate-50 to-slate-100">
             <MainNav>
                 <Button variant="ghost" size="sm" className="text-slate-600">
-                    <Clipboard className="w-4 h-4 mr-2" />
+                    <Clipboard className="w-4 h-4" />
                     Board
                 </Button>
                 <Button onClick={() => setIsOpen(true)} variant="ghost" size="sm" className="text-slate-600">
-                    <Users className="w-4 h-4 mr-2" />
+                    <Users className="w-4 h-4" />
                     Team
                 </Button>
                 <Button variant="ghost" size="sm" className="text-slate-600">
-                    <Calendar className="w-4 h-4 mr-2" />
+                    <Calendar className="w-4 h-4" />
                     Calendar
                 </Button>
+
+                <ActiveMembersDisplay />
             </MainNav>
 
             <KanbanBoard />
