@@ -21,7 +21,9 @@ export const useSortableColumnViewSocket = (boardId: string | null | undefined) 
             queryClient.setQueryData(['columns', 'byboard', updatedBoardId], (oldData: ColumnWithTasks[]) => {
                 if(!oldData) return oldData;
 
-                return oldData.map(column => column._id === updatedColumn._id ? columnUpdatedData : column);
+                return oldData.map(column => column._id === updatedColumn._id ? 
+                    { ...columnUpdatedData, tasks: column.tasks } : column
+                );
             })
         })
 

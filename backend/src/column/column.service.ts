@@ -140,16 +140,20 @@ export class ColumnService {
         }
 
         const updatedColumn = await this.columnModel.findOneAndUpdate(
-            { _id: id }, body, { new: true }
+            { _id: id }, body, { new: true, lean: true }
         );
 
-        const projectId = await this.teamGateway.getProjectIdByUserId(user.id);
+        if(!updatedColumn) {
+            throw new NotFoundException("Column not found or you do not have permission to update this column")
+        }
+
+        const projectId = this.teamGateway.getProjectIdByUserId(user.id);
         this.teamGateway.io.to(projectId).emit('columnUpdated', 
-            plainToInstance(ColumnWithBoardIdDto, {...updatedColumn, boardId: body.boardId }, {
+            plainToInstance(ColumnWithBoardIdDto, {...updatedColumn, boardId: body.boardId}, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,
             })
-        )
+        );
 
         return plainToInstance(ColumnDto, updatedColumn, {
             excludeExtraneousValues: true,

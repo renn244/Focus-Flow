@@ -27,6 +27,7 @@ export class ColumnDto {
 }
 
 export class ColumnWithBoardIdDto extends ColumnDto {
+    @Transform((value) => value.obj.boardId.toString())
     @Expose()
     boardId: string;
 }
