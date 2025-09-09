@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Model, Types } from 'mongoose';
 import { User, UserDocument } from 'src/schema/User.schema';
-import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class UserService {
@@ -9,7 +9,7 @@ export class UserService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async create(createUserDto: User) {
+  async create(createUserDto: Omit<User, 'projects'>) {
     const newUser = new this.userModel(createUserDto);
     await newUser.save()
 
@@ -52,6 +52,14 @@ export class UserService {
     return user || null;
   }
 
+  async findManyByUsernameOrEmail(query: string) {
+    const users = await this.userModel.find({ 
+      $or: [ { username: { $regex: query, $options: 'i' } }, { email: { $regex: query, $options: 'i' } } ] 
+    });
+
+    return users || [];
+  }
+
   async update(id: Types.ObjectId, updateUserDto: Partial<UserDocument>) {
     const user = await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
 
@@ -65,5 +73,29 @@ export class UserService {
   async updatePasswordByEmail(email: string, newPassword: string) {
     const user = await this.userModel.findOneAndUpdate({ email }, { password: newPassword }, { new: true });
     return user
+  }
+
+  async addProjectToUser(userId: Types.ObjectId, projectId: Types.ObjectId, session?: ClientSession) {
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { _id: userId }, { $push: { projects: projectId } }, { new: true, session }
+    );
+
+    if(!updatedUser) {
+      throw new NotFoundException("User not found");
+    }
+
+    return updatedUser;
+  }
+
+  async removeProjectFromUser(userId: Types.ObjectId, projectId: Types.ObjectId, session?: ClientSession) {
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { _id: userId }, { $pull: { projects: projectId } }, { new: true, session }
+    );
+
+    if(!updatedUser) {
+      throw new NotFoundException("User not found");
+    }
+
+    return updatedUser;
   }
 }

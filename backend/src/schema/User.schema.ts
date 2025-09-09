@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 import { REGEX } from "src/lib/constants/REGEX";
 
 @Schema()
@@ -30,6 +30,9 @@ export class User {
 
     @Prop({ default: false })
     isOauthUser?: boolean;
+
+    @Prop({ type: [Types.ObjectId], ref: 'TeamMember', default: [] })
+    projects: Types.ObjectId[];
 
     @Prop()
     OauthId?: string

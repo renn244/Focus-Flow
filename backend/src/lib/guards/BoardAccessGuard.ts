@@ -19,8 +19,16 @@ export class BoardAccessGuard implements CanActivate {
         if(!user) throw new UnauthorizedException("User not authenticated");
 
         const board = await this.boardModel.findById(boardId)
-            .populate<{ projectId: { projectId: Types.ObjectId, ownerId: Types.ObjectId } }>('projectId', 'projectId ownerId')
-
+            .populate<{ 
+                projectId: { 
+                    projectId: Types.ObjectId, ownerId: Types.ObjectId,
+                    teamMembers: { userId: Types.ObjectId, role: 'admin' | 'member' }[]
+                } 
+            }>({
+                path: 'projectId', select: 'ownerId',
+                populate: [ { path: 'teamMembers', select: 'userId role' } ],
+            })
+        const teamMembers = board?.projectId?.teamMembers.map(member => member.userId.toString()) || [];
 
         if(!board || !board.projectId) {
             throw new NotFoundException("Board or Project not found")
@@ -29,7 +37,7 @@ export class BoardAccessGuard implements CanActivate {
         // later on also add if the user is a member of the project
         // or if there is a role based access control in place
         // isOwner 
-        if(board?.projectId.ownerId.toString() !== user.id.toString()) {
+        if(board?.projectId.ownerId.toString() !== user.id && !teamMembers.includes(user.id)) {
             return false
         }
 

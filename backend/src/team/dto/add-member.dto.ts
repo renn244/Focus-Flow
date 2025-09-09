@@ -1,0 +1,22 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { IsEnum, IsString } from "class-validator";
+import { IsObjectId } from "src/lib/customValidator/isObjectId";
+import { TEAM_MEMBER_ROLES_ARRAY, TeamMemberRole } from "../constant/role";
+
+
+export class AddMemberDto {
+    @ApiProperty({ example: '60c72b2f9b1e8b001c8e4d3a', description: 'Project ID' })
+    @IsString()
+    @IsObjectId()
+    projectId: string;
+
+    @ApiProperty({ example: '60c72b2f9b1e8b001c8e4d3b', description: 'User ID to be added' })
+    @IsString()
+    @IsObjectId()
+    userId: string;
+
+    @ApiProperty({ example: 'member', description: 'Role of the user in the project' })
+    @IsString()
+    @IsEnum(TEAM_MEMBER_ROLES_ARRAY)
+    role: TeamMemberRole;
+}

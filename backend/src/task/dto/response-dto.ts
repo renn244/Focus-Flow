@@ -39,6 +39,7 @@ export class TaskDto {
 }
 
 class ColumnDto {
+    @Transform((value) => value.obj._id.toString())
     @Expose()
     _id: string;
 
@@ -50,6 +51,7 @@ class ColumnDto {
 }
 
 class BoardDto {
+    @Transform((value) => value.obj._id.toString())
     @Expose()
     _id: string;
 

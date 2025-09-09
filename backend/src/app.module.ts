@@ -12,12 +12,16 @@ import { ProjectsModule } from './projects/projects.module';
 import { BoardModule } from './board/board.module';
 import { ColumnModule } from './column/column.module';
 import { TaskModule } from './task/task.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
     SentryModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
-    CacheModule.register({ isGlobal: true, ttl: 60 * 1000 }),
+    CacheModule.register({ 
+      isGlobal: true, 
+      ttl: 60 * 1000
+    }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
@@ -32,7 +36,8 @@ import { TaskModule } from './task/task.module';
     ProjectsModule,
     BoardModule,
     ColumnModule,
-    TaskModule
+    TaskModule,
+    TeamModule
   ],
   controllers: [],
   providers: [],

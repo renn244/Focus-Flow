@@ -53,7 +53,7 @@ const ViewFullProject = ({ project }: ViewFullProjectProps) => {
                     </TabsContent>
 
                     <TabsContent value="team">
-                        <Team />
+                        <Team projectId={project._id} />
                     </TabsContent>
 
                     <TabsContent value="activity">

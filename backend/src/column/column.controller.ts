@@ -38,21 +38,21 @@ export class ColumnController {
     @ApiParam({ name: 'boardId', type: String, description: 'Board Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Patch('reorder/:boardId')
-    async reorderColumns(@Param('boardId', ParseObjectIdPipe) boardId: Types.ObjectId, @Body() body: { columns: { _id: Types.ObjectId, order: number }[] }) {
-        return this.columnService.updateOrderColumns(boardId, body);
+    async reorderColumns(@Param('boardId', ParseObjectIdPipe) boardId: Types.ObjectId, @Body() body: { columns: { _id: Types.ObjectId, order: number }[] }, @User() user: UserJwt) {
+        return this.columnService.updateOrderColumns(boardId, body, user);
     }
 
     @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Patch(':id')
-    async updateColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateColumnDto) {
-        return this.columnService.updateColumn(id, body);
+    async updateColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateColumnDto, @User() user: UserJwt) {
+        return this.columnService.updateColumn(id, body, user);
     }
 
     @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @Delete(':id')
-    async deleteColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-        return this.columnService.deleteColumn(id);
+    async deleteColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
+        return this.columnService.deleteColumn(id, user);
     }
 }
