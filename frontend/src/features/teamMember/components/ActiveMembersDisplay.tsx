@@ -4,6 +4,7 @@ import { useAuthContext } from "@/context/authContext"
 import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId"
 import { useGetActiveMembers } from "../hooks/useGetActiveMember"
 import { useActiveMemberSocket } from "../hooks/useActiveMemberSocket"
+import ViewAllActiveMembers from "./ViewAllActiveMembers"
 
 const ActiveMembersDisplay = () => {
     const projectId = useProjectIdStore((state) => state.projectId);
@@ -40,13 +41,8 @@ const ActiveMembersDisplay = () => {
                 </DropdownMenu>
             ))}
 
-            {/* If there is any extra we should put one empty avatar with + number of extra active user. make this clickable to view all within the list (make it like drop down menu not dialog it's annoying) */}
             {members && members.length > 3 && (
-                <Avatar className="cursor-pointer">
-                    <AvatarFallback className="text-sm font-semibold text-muted-foreground select-none">
-                        +{members.length - 3}
-                    </AvatarFallback>
-                </Avatar>
+                <ViewAllActiveMembers members={members} />
             )}
         </div>
     )
