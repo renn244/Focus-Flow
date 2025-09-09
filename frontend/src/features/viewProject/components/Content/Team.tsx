@@ -66,32 +66,6 @@ const TeamMemberCard = ({ member, index }: TeamMemberCardProps) => {
                                 <p className="text-xs text-gray-500">{member.user.email}</p>
                             </div>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                    <MoreHorizontal className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <Edit className="w-4 h-4" />
-                                    Edit Member
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <MessageSquare className="w-4 h-4" />
-                                    Send Message
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <Settings className="w-4 h-4" />
-                                    Change Role
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-red-600 focus:text-red-600">
-                                    <Trash2 className="w-4 h-4 text-red-600" />
-                                    Remove Member
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </div>
                     
                 </CardContent>
