@@ -7,6 +7,7 @@ import { TeamMember, TeamMemberDocument } from "src/schema/TeamMember.schema";
 import { TeamMemberWithUser } from "./dto/response-dto";
 import { CACHE_KEYS } from "src/lib/constants/CACHE_KEYS";
 import { plainToInstance } from "class-transformer";
+import { TEAM_ROLES } from "src/lib/constants/TEAM_ROLES";
 
 @Injectable()
 export class TeamSharedService {
@@ -33,4 +34,17 @@ export class TeamSharedService {
         return members;
     }
     
+    async isUserMemberInProject(projectId: Types.ObjectId, userId: string) {
+        const members = await this.getMembers(projectId);
+
+        return members.some(member => member.user._id.toString() === userId);
+    }
+
+    async isUserAdminOrOwnerInProject(projectId: Types.ObjectId, userId: string) {
+        const members = await this.getMembers(projectId);
+        
+        return members.some(member => 
+            member.user._id.toString() === userId && (member.role === TEAM_ROLES.ADMIN || member.role === TEAM_ROLES.OWNER)
+        );
+    }
 }

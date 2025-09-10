@@ -4,6 +4,8 @@ import { ColumnController } from './column.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Column, columnSchema } from 'src/schema/Column.schema';
 import { BoardModule } from 'src/board/board.module';
+import { ColumnAccessGuard } from './guards/ColumnAccessGuard';
+import { ColumnAdminAccessGuard } from './guards/ColumnAdminAccessGuard';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { BoardModule } from 'src/board/board.module';
     ]),
     BoardModule
   ],
-  providers: [ColumnService],
+  providers: [ColumnService, ColumnAccessGuard, ColumnAdminAccessGuard],
   controllers: [ColumnController],
   exports: [ColumnService]
 })

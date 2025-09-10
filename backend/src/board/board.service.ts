@@ -107,6 +107,11 @@ export class BoardService {
         return board.columns.map(column => column.toString());
     }
 
+    async validateColumnInProject(columnId: Types.ObjectId, projectId: Types.ObjectId) {
+        const board = this.boardModel.exists({ columns: { $some: [columnId] }, projectId: projectId });
+        return !!board;
+    }
+
     // maybe use rabit MQ in here??
     async addColumnToBoard(boardId: string, columnId: Types.ObjectId, session?: ClientSession) {
         // might wanna add permission to check if the board belongs to the user
