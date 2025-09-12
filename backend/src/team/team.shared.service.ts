@@ -19,7 +19,7 @@ export class TeamSharedService {
     async getMembers(projectId: Types.ObjectId) {
         let members = await this.cacheManager.get<TeamMemberWithUser[]>(CACHE_KEYS.teamMemberProjects(projectId.toString()));
 
-        if (!members) {
+        if (!members || members?.length === 0) {
             const teamMembers = await this.teamMemberModel.find({ projectId: projectId.toString() })
                 .populate('userId', '_id username email displayName avatarUrl');
 
