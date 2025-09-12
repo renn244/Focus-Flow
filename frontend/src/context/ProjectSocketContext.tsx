@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuthContext } from './authContext';
-import { toast } from 'sonner';
 
 export type ProjectSocketContextType = { socket: Socket | undefined; }
 
@@ -22,6 +21,7 @@ export const ProjectSocketProvider = ({
     projectId
 }: ProjectSocketProviderType) => {
     const [socket, setSocket] = useState<Socket | undefined>(undefined);
+    const [connected, setConnected] = useState(false);
     const { user } = useAuthContext();
 
     useEffect(() => {
@@ -38,12 +38,14 @@ export const ProjectSocketProvider = ({
         setSocket(socket);
 
         socket.on('connect', () => {
+            setConnected(true);
             console.log('Socket connected');
         })
 
-        // socket.on('disconnect', () => {
-        //     toast.error('offline!');
-        // })
+        socket.on('disconnect', () => {
+            setConnected(false);
+            // toast.error('offline!');
+        })
 
         return () => {
             socket.close();
@@ -51,6 +53,11 @@ export const ProjectSocketProvider = ({
     }, [user, projectId])
 
     const value = { socket }
+
+    // if it still not connected we should return null
+    // because the guard are reliant on socket connection specially for the projectIdToUserId Mapping.
+    // it will lead to issues if the socket is not yet connected and we are already requesting.
+    if(!connected) return null;
 
     return (
         <SocketContext.Provider value={value}>
