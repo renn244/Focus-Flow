@@ -106,6 +106,11 @@ export class TeamService {
         })
     }
 
+    async validateTeamMemberInProject(teamMemberId: string, projectId: Types.ObjectId) {
+        const teamMember = await this.teamMemberModel.exists({ _id: teamMemberId, projectId: projectId.toString() });
+        return !!teamMember;
+    }
+ 
     // check if the user has the permission to add the member in guard maybe
     async addMember(user: UserJwt, body: AddMemberDto) {
         const session = await this.connection.startSession();

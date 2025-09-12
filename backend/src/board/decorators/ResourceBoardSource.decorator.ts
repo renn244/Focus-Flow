@@ -7,7 +7,7 @@ export type ResourceBoardSource = 'params' | 'body' | 'query' | 'header';
 
 export type ResourceBoardSourceOption = {
     source: ResourceBoardSource;
-    key: string; // the key in the source to get the column id
+    key: string; // the key in the source to get the board id
 }
 
 export const CheckResourceBoardSource = (option: ResourceBoardSourceOption) =>
