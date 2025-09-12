@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Board, boardSchema } from 'src/schema/Board.schema';
 import { BoardAdminAccessGuard } from './guards/BoardAdminAccessGuard';
 import { BoardAccessGuard } from './guards/BoardAccessGuard';
+import { ProjectsModule } from 'src/projects/projects.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { BoardAccessGuard } from './guards/BoardAccessGuard';
         name: Board.name,
         schema: boardSchema
       }
-    ])
+    ]),
+    ProjectsModule
   ],
   providers: [BoardService, BoardAccessGuard, BoardAdminAccessGuard],
   controllers: [BoardController],

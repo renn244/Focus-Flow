@@ -10,6 +10,9 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { BoardAdminAccessGuard } from './guards/BoardAdminAccessGuard';
 import { BoardAccessGuard } from './guards/BoardAccessGuard';
 import { CheckResourceBoardSource } from './decorators/ResourceBoardSource.decorator';
+import { ProjectAccessGuard } from 'src/projects/guards/ProjectAccessGuard';
+import { CheckResourceProjectSource } from 'src/projects/decorators/ResourceProjectSource.decorator';
+import { ProjectAdminAccessGuard } from 'src/projects/guards/ProjectAdminAccessGuard';
 
 @Controller('board')
 @UseGuards(JwtAuthGuard)
@@ -18,18 +21,18 @@ export class BoardController {
         private readonly boardService: BoardService,
     ) {}
 
-    // use ProjectGuard here to ensure the user has access to the project
     @ApiBearerAuth()
-    // should use a project admin access guard in here
+    @CheckResourceProjectSource({ source: 'body', key: 'projectId' })
+    @UseGuards(ProjectAdminAccessGuard)
     @Post()
     async createBoard(@Body() body: CreateBoardDto, @User() user: UserJwt) {
         return this.boardService.createBoard(body, user);
     }
 
-    // use ProjectGuard here to ensure the user has access to the project
     @ApiParam({ name: 'projectId', type: String, description: 'Project Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
-    // should use a project access guard in here
+    @CheckResourceProjectSource({ source: 'params', key: 'projectId' })
+    @UseGuards(ProjectAccessGuard)
     @Get('byProject/:projectId')
     async getBoards(@Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId, @User() user: UserJwt) {
         return this.boardService.getBoards(projectId, user);
