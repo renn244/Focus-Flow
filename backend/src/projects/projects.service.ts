@@ -38,7 +38,7 @@ export class ProjectsService {
         const projectIds = await this.teamService.getProjectIdsByMemberId(new Types.ObjectId(userId));
 
         const projects = await this.projectModel.find({ 
-            $or: [ { _id: { $in: projectIds } }, { ownerId: userId } ],
+            _id: { $in: projectIds },
             ...(query.status && query.status !== 'all' ? { status: query.status } : {}),
             ...(query.priority && query.priority !== 'all' ? { priority: query.priority } : {})
         }).populate('ownerId', 'username email displayName avatarUrl')
@@ -53,7 +53,7 @@ export class ProjectsService {
         const userId = user.id;
         const projectIds = await this.teamService.getProjectIdsByMemberId(new Types.ObjectId(userId));
 
-        const projects = await this.projectModel.find({ $or: [ { ownerId: userId }, { _id: { $in: projectIds } } ] })
+        const projects = await this.projectModel.find({ _id: { $in: projectIds } })
             .sort({ lastSeen: -1 })
             .limit(5)
 
@@ -63,8 +63,7 @@ export class ProjectsService {
         });
     }
 
-    async getProjectById(id: Types.ObjectId, user: UserJwt) {
-        const ownerId = user.id;
+    async getProjectById(id: Types.ObjectId) {
         const project = await this.projectModel.findById(id).populate('ownerId', 'username email displayName avatarUrl');
 
         if(!project) {
@@ -77,8 +76,7 @@ export class ProjectsService {
         });
     }    
 
-    async updateProject(id: Types.ObjectId, body: UpdateProjectDto, user: UserJwt) {
-        const ownerId = user.id;
+    async updateProject(id: Types.ObjectId, body: UpdateProjectDto) {
         const project = await this.projectModel.findById(id);
 
         if(!project) {
@@ -94,7 +92,7 @@ export class ProjectsService {
             enableImplicitConversion: true
         });
     }
-
+    
     async addMemberToProject(projectId: Types.ObjectId, memberId: Types.ObjectId, session?: ClientSession) {
         const updatedProject = await this.projectModel.findOneAndUpdate(
             { _id: projectId }, { $push: { teamMembers: memberId } }, { new: true, session }
@@ -125,7 +123,7 @@ export class ProjectsService {
         });
     }
 
-    async deleteProject(id: Types.ObjectId, user: UserJwt) {
+    async deleteProject(id: Types.ObjectId) {
         const project = await this.projectModel.deleteOne({ _id: id });
 
         if(project.deletedCount === 0) {
