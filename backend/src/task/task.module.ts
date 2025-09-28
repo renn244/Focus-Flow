@@ -4,6 +4,9 @@ import { TaskController } from './task.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Task, taskSchema } from 'src/schema/Task.schema';
 import { ColumnModule } from 'src/column/column.module';
+import { TaskAccessGuard } from './guards/TaskAccessGuard';
+import { TaskAdminAccessGuard } from './guards/TaskAdminAccessGuard';
+import { BoardModule } from 'src/board/board.module';
 
 @Module({
   imports: [
@@ -13,9 +16,9 @@ import { ColumnModule } from 'src/column/column.module';
         schema: taskSchema
       }
     ]),
-    ColumnModule
+    ColumnModule, BoardModule
   ],
-  providers: [TaskService],
+  providers: [TaskService, TaskAccessGuard, TaskAdminAccessGuard],
   controllers: [TaskController]
 })
 export class TaskModule {}

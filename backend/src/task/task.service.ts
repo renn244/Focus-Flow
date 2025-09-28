@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
 import { Task, TaskDocument } from 'src/schema/Task.schema';
@@ -81,6 +81,21 @@ export class TaskService {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         })
+    }
+
+    async validateTaskInProject(taskId: Types.ObjectId, projectId: Types.ObjectId) {
+        const task = await this.taskModel.findOne({ _id: taskId })
+            .populate<{ boardId: { projectId: Types.ObjectId } }>('boardId', 'projectId')
+
+        if(!task) {
+            throw new NotFoundException('Task not found');
+        }
+
+        if(task.boardId.projectId.toString() !== projectId.toString()) {
+            return false;
+        }
+
+        return true;
     }
 
     async updateMovedTask(taskId: Types.ObjectId, body: MoveTaskDto, user: UserJwt) {

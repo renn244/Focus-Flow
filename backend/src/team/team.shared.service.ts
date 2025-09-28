@@ -7,6 +7,7 @@ import { TeamMember, TeamMemberDocument } from "src/schema/TeamMember.schema";
 import { TeamMemberWithUser } from "./dto/response-dto";
 import { CACHE_KEYS } from "src/lib/constants/CACHE_KEYS";
 import { plainToInstance } from "class-transformer";
+import { TEAM_ROLES } from "src/lib/constants/TEAM_ROLES";
 
 @Injectable()
 export class TeamSharedService {
@@ -18,7 +19,7 @@ export class TeamSharedService {
     async getMembers(projectId: Types.ObjectId) {
         let members = await this.cacheManager.get<TeamMemberWithUser[]>(CACHE_KEYS.teamMemberProjects(projectId.toString()));
 
-        if (!members) {
+        if (!members || members?.length === 0) {
             const teamMembers = await this.teamMemberModel.find({ projectId: projectId.toString() })
                 .populate('userId', '_id username email displayName avatarUrl');
 
@@ -33,4 +34,17 @@ export class TeamSharedService {
         return members;
     }
     
+    async isUserMemberInProject(projectId: Types.ObjectId, userId: string) {
+        const members = await this.getMembers(projectId);
+
+        return members.some(member => member.user._id.toString() === userId);
+    }
+
+    async isUserAdminOrOwnerInProject(projectId: Types.ObjectId, userId: string) {
+        const members = await this.getMembers(projectId);
+        
+        return members.some(member => 
+            member.user._id.toString() === userId && (member.role === TEAM_ROLES.ADMIN || member.role === TEAM_ROLES.OWNER)
+        );
+    }
 }

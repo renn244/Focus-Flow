@@ -7,6 +7,12 @@ import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
+import { ColumnAccessGuard } from './guards/ColumnAccessGuard';
+import { ColumnAdminAccessGuard } from './guards/ColumnAdminAccessGuard';
+import { CheckResourceColumnSource } from './decorators/ResourceColumnSource.decorator';
+import { CheckResourceBoardSource } from 'src/board/decorators/ResourceBoardSource.decorator';
+import { BoardAdminAccessGuard } from 'src/board/guards/BoardAdminAccessGuard';
+import { BoardAccessGuard } from 'src/board/guards/BoardAccessGuard';
 
 @Controller('column')
 @UseGuards(JwtAuthGuard)
@@ -16,6 +22,8 @@ export class ColumnController {
     ) {}
 
     @ApiBearerAuth()
+    @CheckResourceBoardSource({ source: 'body', key: 'boardId' })
+    @UseGuards(BoardAdminAccessGuard)
     @Post()
     async createColumn(@Body() body: CreateColumnDto, @User() user: UserJwt) {
         return this.columnService.createColumn(body, user);
@@ -23,6 +31,8 @@ export class ColumnController {
 
     @ApiParam({ name: 'boardId', type: String, description: 'Board Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @CheckResourceBoardSource({ source: 'params', key: 'boardId' })
+    @UseGuards(BoardAccessGuard)
     @Get('byBoard/:boardId')
     async getColumnsByBoardId(@Param('boardId', ParseObjectIdPipe) boardId: Types.ObjectId) {
         return this.columnService.getColumnsByBoardId(boardId);
@@ -30,6 +40,8 @@ export class ColumnController {
 
     @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @CheckResourceColumnSource({ source: 'params', key: 'id' })
+    @UseGuards(ColumnAccessGuard)
     @Get(':id')
     async getColumnById(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
         return this.columnService.getColumnById(id);
@@ -37,6 +49,8 @@ export class ColumnController {
 
     @ApiParam({ name: 'boardId', type: String, description: 'Board Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @CheckResourceBoardSource({ source: 'params', key: 'boardId' })
+    @UseGuards(BoardAdminAccessGuard)
     @Patch('reorder/:boardId')
     async reorderColumns(@Param('boardId', ParseObjectIdPipe) boardId: Types.ObjectId, @Body() body: { columns: { _id: Types.ObjectId, order: number }[] }, @User() user: UserJwt) {
         return this.columnService.updateOrderColumns(boardId, body, user);
@@ -44,6 +58,8 @@ export class ColumnController {
 
     @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @CheckResourceColumnSource({ source: 'params', key: 'id' })
+    @UseGuards(ColumnAdminAccessGuard)
     @Patch(':id')
     async updateColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateColumnDto, @User() user: UserJwt) {
         return this.columnService.updateColumn(id, body, user);
@@ -51,6 +67,8 @@ export class ColumnController {
 
     @ApiParam({ name: 'id', type: String, description: 'Column Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @CheckResourceColumnSource({ source: 'params', key: 'id' })
+    @UseGuards(ColumnAdminAccessGuard)
     @Delete(':id')
     async deleteColumn(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
         return this.columnService.deleteColumn(id, user);
