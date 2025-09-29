@@ -34,7 +34,7 @@
     "@nestjs/platform-socket.io": "^11.1.6",
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/websockets": "^11.1.6",
-    "@sentry/cli": "^2.46.0",
+    "@sentry/cli": "^2.55.0",
     "@sentry/nestjs": "^9.31.0",
     "@sentry/profiling-node": "^9.31.0",
     "bcrypt": "^6.0.0",
