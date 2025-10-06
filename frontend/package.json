@@ -46,7 +46,7 @@
     "socket.io-client": "^4.8.1",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.8",
+    "tailwindcss": "^4.1.14",
     "zod": "^3.25.64",
     "zustand": "^5.0.6"
   },
