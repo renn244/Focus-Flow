@@ -1,23 +1,13 @@
 import './instrument';
 
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionFilter } from './AllExceptionFilter';
 import { AppModule } from './app.module';
 import { CustomValidationPipe } from './CustomValidationPipe';
-import { AllExceptionFilter } from './AllExceptionFilter';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  // microservice consumer
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: ['amqp://guest:guest@localhost:5672'],
-      queue: 'task_queue',
-    }
-  })
 
   app.useGlobalPipes(new CustomValidationPipe())
   app.useGlobalFilters(new AllExceptionFilter());

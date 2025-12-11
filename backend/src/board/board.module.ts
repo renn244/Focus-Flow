@@ -4,6 +4,7 @@ import { BoardController } from './board.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Board, boardSchema } from 'src/schema/Board.schema';
 import { BoardAccessGuard } from 'src/lib/guards/BoardAccessGuard';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { BoardAccessGuard } from 'src/lib/guards/BoardAccessGuard';
         name: Board.name,
         schema: boardSchema
       }
-    ])
+    ]),
+    BullModule.registerQueue({ name: 'audit-log-queue' })
   ],
   providers: [BoardService, BoardAccessGuard],
   controllers: [BoardController],

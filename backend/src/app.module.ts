@@ -1,17 +1,19 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { CacheModule } from '@nestjs/cache-manager';
 import { SentryModule } from '@sentry/nestjs/setup';
-import { EmailModule } from './email/email.module';
-import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.module';
-import { ForgetPasswordTokenModule } from './forget-password-token/forget-password-token.module';
-import { ProjectsModule } from './projects/projects.module';
+import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { ColumnModule } from './column/column.module';
+import { EmailModule } from './email/email.module';
+import { ForgetPasswordTokenModule } from './forget-password-token/forget-password-token.module';
+import { ProjectsModule } from './projects/projects.module';
 import { TaskModule } from './task/task.module';
+import { UserModule } from './user/user.module';
+import { VerifyEmailTokenModule } from './verify-email-token/verify-email-token.module';
+import { BullModule } from '@nestjs/bullmq';
+import { AuditQueueModule } from './audit-queue/audit-queue.module';
 
 @Module({
   imports: [
@@ -24,6 +26,19 @@ import { TaskModule } from './task/task.module';
         uri: config.get<string>('MONGODB_URI'),
       })
     }),
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          url: configService.get<string>('REDIS_URL'),
+        },
+        defaultJobOptions: {
+          removeOnComplete: true,
+          removeOnFail: 3000,
+          attempts: 3,
+        }
+      }),
+    }),
     UserModule,
     AuthModule,
     EmailModule,
@@ -32,7 +47,8 @@ import { TaskModule } from './task/task.module';
     ProjectsModule,
     BoardModule,
     ColumnModule,
-    TaskModule
+    TaskModule,
+    AuditQueueModule
   ],
   controllers: [],
   providers: [],

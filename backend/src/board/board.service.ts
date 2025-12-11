@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model, Types } from 'mongoose';
 import { Board, BoardDocument } from 'src/schema/Board.schema';
@@ -7,17 +7,25 @@ import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { plainToInstance } from 'class-transformer';
 import { BoardDto, BoardWithColumnsDto } from './dto/response-dto';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
+import ACTION from 'src/audit-queue/constants/action.constants';
 
 @Injectable()
 export class BoardService {
     constructor(
         @InjectModel(Board.name) private boardModel: Model<BoardDocument>,
+        @InjectQueue('audit-log-queue') private auditLogQueue: Queue,
+        private readonly auditQueueService: AuditQueueService,
     ) {}
 
     async createBoard(body: CreateBoardDto, user: UserJwt) {
         const newBoard = await this.boardModel.create({
             ...body, projectId: body.projectId,
         });
+
+        this.auditQueueService.boardAudit(user, ACTION.POST, newBoard.name, newBoard._id.toString());
 
         return plainToInstance(BoardDto, newBoard, {
             excludeExtraneousValues: true,
@@ -58,6 +66,12 @@ export class BoardService {
             { _id: id }, body, { new: true }
         ).populate('columns');
 
+        if(!updatedBoard) {
+            throw new NotFoundException('Board not found or you do not have permission to update this board');
+        };
+
+        this.auditQueueService.boardAudit(user, ACTION.EDIT, updatedBoard.name, updatedBoard._id.toString());
+
         return plainToInstance(BoardWithColumnsDto, updatedBoard, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -71,6 +85,8 @@ export class BoardService {
             throw new NotFoundException("Board not found or you do not have permission to delete this board");
         }
 
+        this.auditQueueService.boardAudit(user, ACTION.DELETE, id.toString(), id.toString());
+        
         return { message: "Board deleted successfully" };
     }
 
