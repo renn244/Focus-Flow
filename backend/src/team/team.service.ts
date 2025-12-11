@@ -15,6 +15,8 @@ import { TeamMemberType, TeamMemberUser, TeamMemberWithUser } from './dto/respon
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { TeamSharedService } from './team.shared.service';
 import { TeamGateway } from './team.gateway';
+import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
+import ACTION from 'src/audit-queue/constant/action.constant';
 
 @Injectable()
 export class TeamService {
@@ -23,6 +25,7 @@ export class TeamService {
         private readonly userService: UserService,
         private readonly teamSharedService: TeamSharedService,
         private readonly teamGateway: TeamGateway,
+        private readonly auditQueueService: AuditQueueService,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         @InjectModel(TeamMember.name) private readonly teamMemberModel: Model<TeamMemberDocument>,
         @InjectConnection() private readonly connection: Connection,
@@ -128,7 +131,7 @@ export class TeamService {
 
             await this.projectService.addMemberToProject(new Types.ObjectId(body.projectId), teamMember[0]._id, session);
             await this.userService.addProjectToUser(new Types.ObjectId(body.userId), teamMember[0]._id, session);
-            const teamMemberWithUser = await teamMember[0].populate('userId', 'username email displayName avatarUrl');
+            const teamMemberWithUser = await teamMember[0].populate<{ userId: { username: string, email: string, displayName: string, avatarUrl: string } }>('userId', 'username email displayName avatarUrl');
 
             await session.commitTransaction();
             
@@ -138,6 +141,7 @@ export class TeamService {
                     enableImplicitConversion: true,
                 }),
             )
+            this.auditQueueService.teamAudit(user, body.projectId, ACTION.CREATE, teamMemberWithUser.userId.displayName, teamMemberWithUser._id.toString());
 
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 
@@ -169,7 +173,9 @@ export class TeamService {
 
             const teamMember = await this.teamMemberModel.findOneAndDelete(
                 { projectId: body.projectId, userId: body.userId}, { session }
-            );
+            ).populate<{ userId: { 
+                username: string, email: string, displayName: string, avatarUrl: string 
+            } }>('userId', 'username email displayName avatarUrl');
 
             if(!teamMember) {
                 throw new NotFoundException('Team member not found');
@@ -186,6 +192,7 @@ export class TeamService {
                     enableImplicitConversion: true,
                 }),
             );
+            this.auditQueueService.teamAudit(user, body.projectId, ACTION.DELETE, teamMember.userId.displayName, teamMember._id.toString());
 
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 
@@ -206,7 +213,7 @@ export class TeamService {
     async updateRole(user: UserJwt, memberId: Types.ObjectId, body: UpdateRoleDto) {
         const updatedTeamMember = await this.teamMemberModel.findOneAndUpdate(
             { _id: memberId }, { role: body.newRole }, { new: true }
-        ).populate('userId', 'username email displayName avatarUrl');
+        ).populate<{ userId: { username: string, email: string, displayName: string, avatarUrl: string } }>('userId', 'username email displayName avatarUrl');
 
         if(!updatedTeamMember) {
             throw new NotFoundException('Team member not found');
@@ -219,6 +226,7 @@ export class TeamService {
             }),
         );
         await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(updatedTeamMember.projectId)));
+        this.auditQueueService.teamAudit(user, updatedTeamMember.projectId.toString(), ACTION.UPDATE, updatedTeamMember.userId.displayName, updatedTeamMember._id.toString());
 
         return plainToInstance(TeamMemberWithUser, updatedTeamMember, {
             excludeExtraneousValues: true,

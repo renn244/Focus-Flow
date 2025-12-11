@@ -51,8 +51,8 @@ export class ProjectsController {
     @CheckResourceProjectSource({ source: 'params', key: 'id' })
     @UseGuards(ProjectAdminAccessGuard)
     @Patch(':id')
-    async updateProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateProjectDto) {
-        return this.projectsService.updateProject(id, body);
+    async updateProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateProjectDto, @User() user: UserJwt) {
+        return this.projectsService.updateProject(id, body, user);
     }
 
     @ApiParam({ name: 'id', type: String, description: 'Project Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
@@ -60,7 +60,7 @@ export class ProjectsController {
     @CheckResourceProjectSource({ source: 'params', key: 'id' })
     @UseGuards(ProjectAdminAccessGuard)
     @Delete(':id')
-    async deleteProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
-        return this.projectsService.deleteProject(id);
+    async deleteProject(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @User() user: UserJwt) {
+        return this.projectsService.deleteProject(id, user);
     }
 }

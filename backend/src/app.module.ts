@@ -13,6 +13,8 @@ import { BoardModule } from './board/board.module';
 import { ColumnModule } from './column/column.module';
 import { TaskModule } from './task/task.module';
 import { TeamModule } from './team/team.module';
+import { AuditQueueModule } from './audit-queue/audit-queue.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -28,6 +30,19 @@ import { TeamModule } from './team/team.module';
         uri: config.get<string>('MONGODB_URI'),
       })
     }),
+    BullModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        connection: {
+          url: config.get<string>('REDIS_URL'),
+        },
+        defaultJobOptions: {
+          removeOnComplete: true,
+          removeOnFail: 3000,
+          attempts: 3,
+        }
+      })
+    }),
     UserModule,
     AuthModule,
     EmailModule,
@@ -37,7 +52,8 @@ import { TeamModule } from './team/team.module';
     BoardModule,
     ColumnModule,
     TaskModule,
-    TeamModule
+    TeamModule,
+    AuditQueueModule
   ],
   controllers: [],
   providers: [],

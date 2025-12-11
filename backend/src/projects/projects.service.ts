@@ -9,12 +9,15 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { GetProjectQueryDto } from './dto/get-project-query.dto';
 import { ProjectDto, ProjectWithOwnerDto } from './dto/response-dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
+import ACTION from 'src/audit-queue/constant/action.constant';
 
 @Injectable()
 export class ProjectsService {
     constructor(
         @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
-        @Inject(forwardRef(() => TeamService)) private readonly teamService: TeamService
+        @Inject(forwardRef(() => TeamService)) private readonly teamService: TeamService,
+        private readonly auditQueueService: AuditQueueService,
     ) {}
 
     async createProject(body: CreateProjectDto, user: UserJwt) {
@@ -26,6 +29,8 @@ export class ProjectsService {
             userId: ownerId,
             role: 'owner'  
         })
+
+        this.auditQueueService.projectAudit(user, ACTION.CREATE, project.name, project._id.toString());
 
         return plainToInstance(ProjectDto, project, {
             excludeExtraneousValues: true,
@@ -76,17 +81,17 @@ export class ProjectsService {
         });
     }    
 
-    async updateProject(id: Types.ObjectId, body: UpdateProjectDto) {
-        const project = await this.projectModel.findById(id);
-
-        if(!project) {
-            throw new NotFoundException("Project not found");
-        }
-
+    async updateProject(id: Types.ObjectId, body: UpdateProjectDto, user: UserJwt) {
         const updatedProject = await this.projectModel.findOneAndUpdate(
             { _id: id }, body, { new: true }
         ).populate('ownerId', 'username email displayName avatarUrl');
     
+        if(!updatedProject) {
+            throw new NotFoundException("Project not found or you do not have permission to update this project");
+        }
+
+        this.auditQueueService.projectAudit(user, ACTION.UPDATE, updatedProject.name, updatedProject._id.toString());
+
         return plainToInstance(ProjectWithOwnerDto, updatedProject, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true
@@ -123,12 +128,14 @@ export class ProjectsService {
         });
     }
 
-    async deleteProject(id: Types.ObjectId) {
-        const project = await this.projectModel.deleteOne({ _id: id });
+    async deleteProject(id: Types.ObjectId, user: UserJwt) {
+        const project = await this.projectModel.findOneAndDelete({ _id: id });
 
-        if(project.deletedCount === 0) {
+        if(!project) {
             throw new NotFoundException("Project not found or you do not have permission to delete this project");
         }
+  
+        this.auditQueueService.projectAudit(user, ACTION.DELETE, project.name, project._id.toString());
         
         return {
             message: "Project deleted successfully"

@@ -10,6 +10,8 @@ import { plainToInstance } from 'class-transformer';
 import { TaskDto, TaskWithBoardAndColumnDto } from './dto/response-dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { TeamGateway } from 'src/team/team.gateway';
+import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
+import ACTION from 'src/audit-queue/constant/action.constant';
 
 @Injectable()
 export class TaskService {
@@ -18,6 +20,7 @@ export class TaskService {
         @InjectConnection() private readonly connection: Connection,
         private readonly teamGateway: TeamGateway,
         private readonly columnService: ColumnService,
+        private readonly auditQueueService: AuditQueueService,
     ) {}
 
     async createTask(body: CreateTaskDto, user: UserJwt) {
@@ -42,6 +45,8 @@ export class TaskService {
                     enableImplicitConversion: true,
                 })
             );
+
+            this.auditQueueService.taskAudit(user, projectId, ACTION.CREATE, newTask[0].title, newTask[0]._id.toString());
 
             return plainToInstance(TaskDto, newTask[0], {
                 excludeExtraneousValues: true,
@@ -164,6 +169,8 @@ export class TaskService {
             })
         );
 
+        this.auditQueueService.taskAudit(user, projectId, ACTION.UPDATE, updatedTask.title, updatedTask._id.toString());
+
         return plainToInstance(TaskDto, updatedTask, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -187,6 +194,8 @@ export class TaskService {
 
             const projectId = this.teamGateway.getProjectIdByUserId(user.id);
             this.teamGateway.io.to(projectId).emit('taskDeleted', { taskId: id, colId: deletedTask.columnId.toString() });
+
+            this.auditQueueService.taskAudit(user, projectId, ACTION.DELETE, deletedTask.title, deletedTask._id.toString());
 
             return { message: "Task deleted successfully" };
         } catch (error) {
