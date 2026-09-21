@@ -19,7 +19,7 @@ const deleteTask = async (taskId: string): Promise<deleteTaskResponse['data']> =
     return response.data;
 }
 
-export const useDeleteTaskMutation = (taskId: string, columnId: string) => {
+export const useDeleteTaskMutation = (taskId: string) => {
     const queryClient = useQueryClient();
     const setRemoveOpen = useTaskDialogStore((state) => state.setRemoveOpen);
     const selectedBoardId = useSelectBoardStore((state) => state.selectedBoardId);

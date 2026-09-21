@@ -15,8 +15,6 @@ import { TeamMemberType, TeamMemberUser, TeamMemberWithUser } from './dto/respon
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { TeamSharedService } from './team.shared.service';
 import { TeamGateway } from './team.gateway';
-import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
-import ACTION from 'src/audit-queue/constant/action.constant';
 
 @Injectable()
 export class TeamService {
@@ -25,7 +23,6 @@ export class TeamService {
         private readonly userService: UserService,
         private readonly teamSharedService: TeamSharedService,
         private readonly teamGateway: TeamGateway,
-        private readonly auditQueueService: AuditQueueService,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         @InjectModel(TeamMember.name) private readonly teamMemberModel: Model<TeamMemberDocument>,
         @InjectConnection() private readonly connection: Connection,
@@ -141,8 +138,6 @@ export class TeamService {
                     enableImplicitConversion: true,
                 }),
             )
-            this.auditQueueService.teamAudit(user, body.projectId, ACTION.CREATE, teamMemberWithUser.userId.displayName, teamMemberWithUser._id.toString());
-
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 
             return plainToInstance(TeamMemberWithUser, teamMemberWithUser, {
@@ -192,8 +187,6 @@ export class TeamService {
                     enableImplicitConversion: true,
                 }),
             );
-            this.auditQueueService.teamAudit(user, body.projectId, ACTION.DELETE, teamMember.userId.displayName, teamMember._id.toString());
-
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 
             return plainToInstance(TeamMemberType, teamMember, {
@@ -226,8 +219,6 @@ export class TeamService {
             }),
         );
         await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(updatedTeamMember.projectId)));
-        this.auditQueueService.teamAudit(user, updatedTeamMember.projectId.toString(), ACTION.UPDATE, updatedTeamMember.userId.displayName, updatedTeamMember._id.toString());
-
         return plainToInstance(TeamMemberWithUser, updatedTeamMember, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,

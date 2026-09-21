@@ -9,15 +9,12 @@ import { CreateColumnDto } from './dto/create-column.dto';
 import { ColumnDto, ColumnWithBoardIdDto, ColumnWithTasksDto } from './dto/response-dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
 import { TeamGateway } from 'src/team/team.gateway';
-import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
-import ACTION from 'src/audit-queue/constant/action.constant';
 
 @Injectable()
 export class ColumnService {
     constructor(
         private readonly boardService: BoardService,
         private readonly teamGateway: TeamGateway,
-        private readonly auditQueueService: AuditQueueService,
         @InjectModel(Column.name) private columnModel: Model<ColumnDocument>,
         @InjectConnection() private readonly connection: Connection
     ) {}
@@ -38,8 +35,6 @@ export class ColumnService {
                     enableImplicitConversion: true,
                 })
             )
-
-            this.auditQueueService.columnAudit(user, board.projectId.toString(), ACTION.CREATE, newColumn[0].title, newColumn[0]._id.toString());
 
             return plainToInstance(ColumnDto, newColumn[0], {
                 excludeExtraneousValues: true,
@@ -160,8 +155,6 @@ export class ColumnService {
             })
         );
 
-        this.auditQueueService.columnAudit(user, projectId, ACTION.UPDATE, updatedColumn.title, updatedColumn._id.toString());
-
         return plainToInstance(ColumnDto, updatedColumn, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -223,8 +216,6 @@ export class ColumnService {
                 enableImplicitConversion: true,
             })
         );
-
-        this.auditQueueService.columnAudit(user, projectId, ACTION.DELETE, column.title, column._id.toString());
 
         return { message: "Column deleted successfully" };
     }

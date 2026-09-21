@@ -8,14 +8,11 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { plainToInstance } from 'class-transformer';
 import { BoardDto, BoardWithColumnsDto } from './dto/response-dto';
 import { TeamGateway } from 'src/team/team.gateway';
-import { AuditQueueService } from 'src/audit-queue/audit-queue.service';
-import ACTION from 'src/audit-queue/constant/action.constant';
 
 @Injectable()
 export class BoardService {
     constructor(
         @InjectModel(Board.name) private boardModel: Model<BoardDocument>,
-        private readonly auditQueueService: AuditQueueService,
         private readonly teamGateway: TeamGateway,
     ) {}
 
@@ -30,8 +27,6 @@ export class BoardService {
                 enableImplicitConversion: true,
             })
         )
-
-        this.auditQueueService.boardAudit(user, body.projectId, ACTION.CREATE, newBoard.name, newBoard._id.toString());
 
         return plainToInstance(BoardDto, newBoard, {
             excludeExtraneousValues: true,
@@ -77,8 +72,6 @@ export class BoardService {
             })
         )
 
-        this.auditQueueService.boardAudit(user, updatedBoard.projectId.toString(), ACTION.UPDATE, updatedBoard.name, updatedBoard._id.toString());
-
         return plainToInstance(BoardWithColumnsDto, updatedBoard, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -98,8 +91,6 @@ export class BoardService {
                 enableImplicitConversion: true,
             })
         );
-
-        this.auditQueueService.boardAudit(user, board.projectId.toString(), ACTION.DELETE, board.name, board._id.toString());
 
         return { message: "Board deleted successfully" };
     }

@@ -96,8 +96,8 @@ const Activity = () => {
                 <Card className="bg-white/80 backdrop-blur-sm border-gray-200">
                     <CardContent className="">
                         <div className="space-y-4">
-                            {mockActivities.map((activity, index) => (
-                                <ActivityCard key={index} activity={activity} index={index} />
+                            {mockActivities.map((activity) => (
+                                <ActivityCard key={activity.title} activity={activity} />
                             ))}
                         </div>
                     </CardContent>
@@ -109,10 +109,9 @@ const Activity = () => {
 
 type ActivityCardProps = {
     activity: any;
-    index: number;
 }
 
-const ActivityCard = ({ activity, index }: ActivityCardProps) => {
+const ActivityCard = ({ activity }: ActivityCardProps) => {
     const IconComponent = activityIcons[activity.type as keyof typeof activityIcons];
 
     return (

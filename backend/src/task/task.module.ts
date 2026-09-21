@@ -7,6 +7,7 @@ import { ColumnModule } from 'src/column/column.module';
 import { TaskAccessGuard } from './guards/TaskAccessGuard';
 import { TaskAdminAccessGuard } from './guards/TaskAdminAccessGuard';
 import { BoardModule } from 'src/board/board.module';
+import { Board, boardSchema } from 'src/schema/Board.schema';
 
 @Module({
   imports: [
@@ -14,11 +15,16 @@ import { BoardModule } from 'src/board/board.module';
       {
         name: Task.name,
         schema: taskSchema
+      },
+      {
+        name: Board.name,
+        schema: boardSchema
       }
     ]),
     ColumnModule, BoardModule
   ],
   providers: [TaskService, TaskAccessGuard, TaskAdminAccessGuard],
-  controllers: [TaskController]
+  controllers: [TaskController],
+  exports: [TaskService]
 })
 export class TaskModule {}

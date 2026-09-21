@@ -42,6 +42,7 @@ export type Task = {
     priority: "low" | "medium" | "high";
     boardId: string;
     columnId: string;
+    assignee?: string;
 
     dueDate?: string;
     tags?: string[];

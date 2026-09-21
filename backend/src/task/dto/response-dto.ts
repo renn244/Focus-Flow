@@ -26,7 +26,8 @@ export class TaskDto {
     tags?: string[];
 
     @Expose()
-    assigneeId?: string;
+    @Transform(({ value }) => value?.toString())
+    assignee?: string;
 
     @Expose()
     order?: number;

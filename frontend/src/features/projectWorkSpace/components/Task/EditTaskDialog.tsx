@@ -56,7 +56,8 @@ const EditTaskDialog = () => {
                         description: data.description,
                         dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
                         priority: data.priority,
-                        tags: data.tags
+                        tags: data.tags,
+                        assignee: data.assignee,
                     }}
                     onsubmit={mutateAsync as any}
                     isLoading={isPending}

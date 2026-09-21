@@ -1,85 +1,20 @@
 import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog";
 import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Settings } from "lucide-react";
-import { useState } from "react";
+import { lazy, Suspense } from "react";
 import { priorityBadgeVariant } from "../../constant/priorityColors";
 import { useGetTaskById } from "../../hooks/Task/useGetTaskById";
 import useTaskDialogStore from "../../store/useTaskDialog";
 import type { TaskWithBoardAndColumn } from "../../type";
 
-const mockComments = [
-    {
-        id: "comment-1",
-        author: {
-        name: "Sarah Johnson",
-        initials: "SJ",
-        },
-        content: "I've started working on the login functionality. The basic structure is in place.",
-        createdAt: new Date("2025-01-22T09:15:00"),
-    },
-    {
-        id: "comment-2",
-        author: {
-        name: "Mike Chen",
-        initials: "MC",
-        },
-        content: "Great! Make sure to implement proper password hashing and validation.",
-        createdAt: new Date("2025-01-22T11:30:00"),
-    },
-]
+const TaskComments = lazy(() => import("./comments/TaskComments"));
 
-const mockActivityLog = [
-    {
-        id: "activity-1",
-        type: "created",
-        author: { name: "Mike Chen", initials: "MC" },
-        description: "created this task",
-        timestamp: new Date("2025-01-20T10:30:00"),
-    },
-    {
-        id: "activity-2",
-        type: "assigned",
-        author: { name: "Mike Chen", initials: "MC" },
-        description: "assigned to Sarah Johnson",
-        timestamp: new Date("2025-01-20T10:32:00"),
-    },
-    {
-        id: "activity-3",
-        type: "moved",
-        author: { name: "Sarah Johnson", initials: "SJ" },
-        description: "moved from To Do to In Progress",
-        timestamp: new Date("2025-01-22T09:00:00"),
-    },
-    {
-        id: "activity-4",
-        type: "commented",
-        author: { name: "Sarah Johnson", initials: "SJ" },
-        description: "added a comment",
-        timestamp: new Date("2025-01-22T09:15:00"),
-    },
-]
-
-
-const getStatusColor = (status: string) => {
-    switch (status) {
-        case "done":
-            return "bg-green-100 text-green-800"
-        case "in-progress":
-            return "bg-blue-100 text-blue-800"
-        case "todo":
-            return "bg-gray-100 text-gray-800"
-        default:
-            return "bg-gray-100 text-gray-800"
-    }
-}
 
 const ViewTaskDialog = () => {
     const isViewOpen = useTaskDialogStore((state) => state.isViewOpen);
@@ -122,8 +57,6 @@ type ViewTaskProps = {
 }
 
 const ViewTask = ({ task }: ViewTaskProps) => {
-    const [activeTab, setActiveTab] = useState("all");
-
     return (
         <div className="flex h-full">
 
@@ -168,90 +101,9 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                         </div>
                     )}
 
-                    {/* All Mock Data for now */}
-                    <div className="mt-2">
-                        <h3 className="font-medium mb-1">Activity</h3>
-                        <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="grid w-full grid-cols-4">
-                                <TabsTrigger value="all">All</TabsTrigger>
-                                <TabsTrigger value="comments">Comments</TabsTrigger>
-                                <TabsTrigger value="history">History</TabsTrigger>
-                                <TabsTrigger value="work-log">Work Log</TabsTrigger>
-                            </TabsList>
-
-                            <TabsContent value="all" className="mt-4 space-y-4 min-h-[344px]">
-                                {[
-                                    ...mockActivityLog,
-                                    ...mockComments.map((comment) => ({
-                                        id: comment.id,
-                                        type: "commented" as const,
-                                        author: comment.author,
-                                        description: comment.content,
-                                        timestamp: comment.createdAt,
-                                    })),
-                                ]
-                                .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
-                                .map((item) => (
-                                    <div key={item.id} className="flex gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarFallback className="text-xs">{item.author.initials}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="font-medium text-sm">{item.author.name}</span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {item.timestamp.toLocaleDateString()} at {item.timestamp.toLocaleTimeString()}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground">{item.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </TabsContent>
-
-                            <TabsContent value="comments" className="mt-4 space-y-4 min-h-[344px]">
-                                {mockComments.map((comment) => (
-                                    <div key={comment.id} className="flex gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarFallback className="text-xs">{comment.author.initials}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="font-medium text-sm">{comment.author.name}</span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {comment.createdAt.toLocaleDateString()} at {comment.createdAt.toLocaleTimeString()}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm">{comment.content}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </TabsContent>
-
-                            <TabsContent value="history" className="mt-4 space-y-4 min-h-[344px]">
-                                {mockActivityLog.map((activity) => (
-                                    <div key={activity.id} className="flex gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarFallback className="text-xs">{activity.author.initials}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="font-medium text-sm">{activity.author.name}</span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {activity.timestamp.toLocaleDateString()} at {activity.timestamp.toLocaleTimeString()}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground">{activity.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </TabsContent>
-
-                            <TabsContent value="work-log" className="mt-4 min-h-[344px]">
-                                <p className="text-sm text-muted-foreground">No work logged yet.</p>
-                            </TabsContent>
-                        </Tabs>
-                    </div>
+                    <Suspense fallback={<p className="mt-6 border-t pt-5 text-sm text-muted-foreground">Loading activity…</p>}>
+                        <TaskComments taskId={task._id} />
+                    </Suspense>
                 </div>
             </div>
 

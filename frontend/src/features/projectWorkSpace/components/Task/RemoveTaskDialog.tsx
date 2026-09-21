@@ -73,7 +73,7 @@ const RemoveTask = ({
     const isOverdue = task.dueDate ? new Date(task.dueDate) < new Date() : false;
     const hasHighImpact = task.priority === "high"; // add other things that make it high impact later on
 
-    const { mutateAsync: removeTask, isPending: isRemoving } = useDeleteTaskMutation(task._id, task.column._id);
+    const { mutateAsync: removeTask, isPending: isRemoving } = useDeleteTaskMutation(task._id);
 
     return (
         <>

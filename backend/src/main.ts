@@ -30,8 +30,13 @@ async function bootstrap() {
   });
   SwaggerModule.setup('docs', app, documentFactory);
 
+  const allowedOrigins = (process.env.CLIENT_BASE_URL ?? 'http://localhost:4173,http://127.0.0.1:4173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: process.env.CLIENT_BASE_URL ?? 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
   })
 

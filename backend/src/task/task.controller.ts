@@ -38,6 +38,12 @@ export class TaskController {
         return this.taskService.getTaskByColumnId(columnId);
     }
 
+    @ApiBearerAuth()
+    @Get('mine')
+    async getMyTasks(@User() user: UserJwt) {
+        return this.taskService.getMyTasks(user);
+    }
+
     @ApiParam({ name: 'id', type: String, description: 'Task Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
     @CheckResourceTaskSource({ source: 'params', key: 'id' })

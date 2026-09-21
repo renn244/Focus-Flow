@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -14,10 +15,13 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import useTaskDialogStore from "../../store/useTaskDialog";
+import { useGetMembers } from "@/features/teamMember/hooks/useGetMembers";
+import { useProjectIdStore } from "../../store/useProjectId";
 import type { Task, TaskSchema } from "../../type";
 
 // later add assignee as well as 
@@ -31,6 +35,7 @@ export const TaskFormSchema = z.object({
     priority: z.enum(["low", "medium", "high"]).default("medium"),
     columnId: z.string().optional(),
     boardId: z.string().optional(),
+    assignee: z.string().optional(),
     tags: z.array(z.string()).optional(),
 })
 
@@ -52,6 +57,8 @@ const TaskForm = ({
     columnId, boardId,
 }: TaskFormProps) => {
     const setCreateOpen = useTaskDialogStore((state) => state.setCreateOpen);
+    const projectId = useProjectIdStore((state) => state.projectId);
+    const { data: members = [] } = useGetMembers(projectId || "");
     const form = useForm({
         resolver: zodResolver(TaskFormSchema),
         defaultValues: {
@@ -61,6 +68,7 @@ const TaskForm = ({
             priority: initialData?.priority || "medium", 
             columnId: columnId || initialData?.columnId || undefined,
             boardId: boardId || initialData?.boardId || undefined, 
+            assignee: initialData?.assignee || undefined,
             tags: initialData?.tags || [],
         }
     })
@@ -209,6 +217,52 @@ const TaskForm = ({
                         )}
                     />
                 </div>
+
+                <FormField
+                control={form.control}
+                name="assignee"
+                render={({ field }) => {
+                    const assignee = members.find((member) => member.user._id === field.value);
+
+                    return (
+                        <FormItem>
+                            <FormLabel>Assignee</FormLabel>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <FormControl>
+                                        <Button variant="outline" role="combobox" className="w-full justify-between font-normal">
+                                            {assignee ? (assignee.user.displayName || assignee.user.username) : "Unassigned"}
+                                            <ChevronsUpDown data-icon="inline-end" />
+                                        </Button>
+                                    </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                                    <Command>
+                                        <CommandInput placeholder="Search team members..." />
+                                        <CommandList>
+                                            <CommandEmpty>No team member found.</CommandEmpty>
+                                            <CommandGroup>
+                                                <CommandItem value="Unassigned" onSelect={() => field.onChange(undefined)}>
+                                                    <Check className={cn("size-4", !field.value ? "opacity-100" : "opacity-0")} />
+                                                    Unassigned
+                                                </CommandItem>
+                                                {members.map((member) => (
+                                                    <CommandItem key={member._id} value={`${member.user.displayName} ${member.user.username} ${member.user.email}`} onSelect={() => field.onChange(member.user._id)}>
+                                                        <Check className={cn("size-4", field.value === member.user._id ? "opacity-100" : "opacity-0")} />
+                                                        <span>{member.user.displayName || member.user.username}</span>
+                                                        <span className="ml-auto text-xs text-muted-foreground">{member.user.email}</span>
+                                                    </CommandItem>
+                                                ))}
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                        </FormItem>
+                    )
+                }}
+                />
 
                 <FormField 
                 control={form.control}

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDateString, IsEnum, IsString, MaxLength, MinLength } from "class-validator";
+import { IsArray, IsDateString, IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 import { IsObjectId } from "src/lib/customValidator/isObjectId";
 
 export class CreateTaskDto {
@@ -27,6 +27,12 @@ export class CreateTaskDto {
     @IsString()
     @IsObjectId({ message: 'Invalid column Id.' })
     columnId: string;
+
+    @ApiProperty({ description: 'Id of the project member assigned to this task', example: '60c72b2f9b1e8d3f4c8b4569', required: false })
+    @IsOptional()
+    @IsString()
+    @IsObjectId({ message: 'Invalid assignee Id.' })
+    assignee?: string;
 
     @ApiProperty({ description: 'Date where the task is due', example: '2025-08-15' })
     @IsDateString()

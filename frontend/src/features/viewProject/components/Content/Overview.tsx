@@ -1,14 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Separator } from "@/components/ui/separator"
 import { format } from "date-fns"
-import { Activity, Calendar, CheckCircle2, Clock, FileText, Flag, GitBranch, Target, TrendingUp, Users } from "lucide-react"
+import { Calendar, CheckCircle2, Clock, FileText, Flag, Target, TrendingUp, Users } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { priorityColors, statusColors } from "@/features/projects/constants/ProjectBadge"
 import type { ProjectWithOwner } from "@/features/projects/type"
-import CardRecentActivity from "../CardRecentActivity"
 
 type OverviewProps = {
     project: ProjectWithOwner;

@@ -1,11 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useGetMembers } from "@/features/teamMember/hooks/useGetMembers"
 import type { TeamMemberWithUser } from "@/features/teamMember/type"
 import { motion } from "framer-motion"
-import { Edit, MessageSquare, MoreHorizontal, Settings, Trash2 } from "lucide-react"
 import TeamMemberCardSkeleton from "../Skeleton/TeamMemberCardSkeleton"
 
 type TeamProps = {
