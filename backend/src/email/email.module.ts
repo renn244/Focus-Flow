@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { EmailService } from './email.service';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
+import { EmailService } from './email.service';
 
 @Module({
   imports: [
@@ -23,6 +23,7 @@ import * as path from 'path';
         defaults: {
           from: configService.get<string>('SMTP_FROM') || "",
         },
+
         // Template settings configure for handlebars
         template: {
           dir: path.join(__dirname, 'templates'),
