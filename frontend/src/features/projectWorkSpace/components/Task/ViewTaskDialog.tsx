@@ -14,6 +14,7 @@ import useTaskDialogStore from "../../store/useTaskDialog";
 import type { TaskWithBoardAndColumn } from "../../type";
 
 const TaskComments = lazy(() => import("./comments/TaskComments"));
+const TaskAttachments = lazy(() => import("./attachments/TaskAttachments"));
 
 
 const ViewTaskDialog = () => {
@@ -79,29 +80,32 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                     <DialogTitle className="text-xl font-semibold text-left">{task.title}</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex-1 overflow-auto px-6 py-4">
+                <div className="min-h-0 flex-1 overflow-auto px-6 py-4">
+                    <Suspense fallback={<p className="text-sm text-muted-foreground">Loading attachments…</p>}>
+                        <TaskAttachments taskId={task._id} standalone />
+                    </Suspense>
 
-                    <div className="mb-3">
+                    <section className="mt-6 border-t pt-5">
                         <h3 className="font-medium">Description</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                             {task.description || "No description provided."}
                         </p>
-                    </div>
 
-                    {(task.tags && task.tags.length > 0) && (
-                        <div className="mb-3">
-                            <h3 className="font-medium">Tags</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {task.tags.map((tag, index) => (
-                                    <Badge key={index} variant="outline" className="text-xs">
-                                        {tag}
-                                    </Badge>
-                                ))}
+                        {(task.tags && task.tags.length > 0) && (
+                            <div className="mt-4">
+                                <h3 className="font-medium">Tags</h3>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    {task.tags.map((tag, index) => (
+                                        <Badge key={index} variant="outline" className="text-xs">
+                                            {tag}
+                                        </Badge>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </section>
 
-                    <Suspense fallback={<p className="mt-6 border-t pt-5 text-sm text-muted-foreground">Loading activity…</p>}>
+                    <Suspense fallback={<p className="mt-6 text-sm text-muted-foreground">Loading activity…</p>}>
                         <TaskComments taskId={task._id} />
                     </Suspense>
                 </div>

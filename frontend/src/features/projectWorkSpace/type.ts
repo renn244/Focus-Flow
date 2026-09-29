@@ -56,7 +56,7 @@ export type Task = {
 }
 
 export type TaskWithBoardAndColumn = {
-    board: Omit<Board, 'description' | 'projectId' | 'columns' | 'createdAt' | 'updatedAt'>;
+    board: Pick<Board, '_id' | 'name' | 'projectId'>;
     column: Omit<Column, 'order' | 'tasks' | 'createdAt' | 'updatedAt'>;
 } & Omit<Task, 'boardId' | 'columnId'>;
 

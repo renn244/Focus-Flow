@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 
 const CommentContent = ({ content }: { content: JSONContent }) => {
   const editor = useEditor({
-    extensions: [StarterKit, Link.configure({ openOnClick: true })],
+    extensions: [StarterKit.configure({ link: false }), Link.configure({ openOnClick: true })],
     content,
     editable: false,
     editorProps: {

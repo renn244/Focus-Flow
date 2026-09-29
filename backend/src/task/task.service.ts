@@ -80,7 +80,7 @@ export class TaskService {
             .find({ assignee: new Types.ObjectId(user.id) })
             .populate([
                 { path: 'columnId', select: 'title color _id' },
-                { path: 'boardId', select: 'name _id' },
+                { path: 'boardId', select: 'name projectId _id' },
             ])
             .sort({ dueDate: 1, createdAt: -1 });
 

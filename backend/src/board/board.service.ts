@@ -105,6 +105,26 @@ export class BoardService {
         return board.columns.map(column => column.toString());
     }
 
+    async getProjectIdByBoardId(boardId: Types.ObjectId | string) {
+        const board = await this.boardModel.findById(boardId).select('projectId');
+
+        if (!board) {
+            throw new NotFoundException('Board not found');
+        }
+
+        return board.projectId;
+    }
+
+    async getProjectIdByColumnId(columnId: Types.ObjectId | string) {
+        const board = await this.boardModel.findOne({ columns: columnId }).select('projectId');
+
+        if (!board) {
+            throw new NotFoundException('Column not found');
+        }
+
+        return board.projectId;
+    }
+
     async validateColumnInProject(columnId: Types.ObjectId, projectId: Types.ObjectId) {
         const board = this.boardModel.exists({ columns: { $some: [columnId] }, projectId: projectId });
         return !!board;

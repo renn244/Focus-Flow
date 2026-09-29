@@ -18,7 +18,7 @@ type RichTextEditorProps = {
 const RichTextEditor = ({ initialContent, placeholder, onChange, className }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({ link: false }),
       Link.configure({ openOnClick: false, autolink: true }),
       Placeholder.configure({ placeholder }),
     ],

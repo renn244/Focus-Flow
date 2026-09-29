@@ -23,7 +23,7 @@ const initials = (name: string) =>
     .slice(0, 2)
     .toUpperCase();
 
-const TaskComments = ({ taskId }: { taskId: string }) => {
+const TaskComments = ({ taskId, standalone = false }: { taskId: string; standalone?: boolean }) => {
   const { data: comments = [], isLoading, isError } = useComments(taskId);
   const createComment = useCreateComment(taskId);
   const [draft, setDraft] = useState<CommentPayload>(emptyComment);
@@ -40,7 +40,7 @@ const TaskComments = ({ taskId }: { taskId: string }) => {
   };
 
   return (
-    <section className="mt-6 border-t pt-5">
+    <section className={standalone ? undefined : "mt-6 border-t pt-5"}>
       <div className="mb-4">
         <h3 className="font-medium">Activity</h3>
       </div>

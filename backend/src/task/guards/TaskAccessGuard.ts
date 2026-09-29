@@ -1,16 +1,13 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { TeamGateway } from "src/team/team.gateway";
 import { TeamSharedService } from "src/team/team.shared.service";
 import { getSourceAndKey } from "../decorators/ResourceTaskSource.decorator";
 import { TaskService } from "../task.service";
-import { Types } from "mongoose";
 
 @Injectable()
 export class TaskAccessGuard implements CanActivate {
     constructor(
         private readonly teamSharedService: TeamSharedService,
-        private readonly teamGateway: TeamGateway,
         private readonly taskService: TaskService,
         private readonly reflector: Reflector,
     ) {}
@@ -23,18 +20,8 @@ export class TaskAccessGuard implements CanActivate {
         const { source, key } = getSourceAndKey(this.reflector, context);
         const taskId = request[source][key];
 
-        // Active project from the gateway (current socket session)
-        const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-
-        // Check: (1) task belong to this project, (2) user is a project member
-        const [isTaskInProject, isMember] = await Promise.all([
-            this.taskService.validateTaskInProject(taskId, new Types.ObjectId(projectId)),
-            this.teamSharedService.isUserMemberInProject(new Types.ObjectId(projectId), user.id)
-        ])
-
-        if(!isTaskInProject) {
-            throw new ForbiddenException('Task is not in the project');
-        }
+        const projectId = await this.taskService.getProjectIdByTaskId(taskId);
+        const isMember = await this.teamSharedService.isUserMemberInProject(projectId, user.id);
 
         if(!isMember) {
             throw new ForbiddenException('User is not a member of the project');

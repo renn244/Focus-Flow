@@ -58,6 +58,10 @@ class BoardDto {
 
     @Expose()
     name: string;
+
+    @Expose()
+    @Transform(({ value }) => value?.toString())
+    projectId: string;
 }
 
 export class TaskWithBoardAndColumnDto extends TaskDto {

@@ -56,9 +56,12 @@ see the small, honest landing page; authenticated users go to `/projects`.
 ### Gaps to close
 
 - The dashboard has a real assigned-task endpoint, an assignee picker backed
-  by the project team, and a Shadcn Calendar date filter. The remaining
-  dashboard work is grouping and task navigation.
-- Comments and attachments are currently not implemented.
+  by the project team, a Shadcn Calendar date agenda, due-date groups, compact
+  counts, and task navigation into the correct board.
+- Comments are implemented with guarded create, read, update, and delete APIs
+  and a Tiptap task-detail UI. Attachments have guarded local storage,
+  metadata, download/delete endpoints, a task-detail UI, unit coverage, and a
+  real JWT-protected integration check for upload, list, download, and delete.
 - The main app has no audit trail after intentionally removing the queue-based
   audit integration.
 - Swagger exists, but endpoint descriptions, tags, request examples, and
@@ -80,7 +83,7 @@ see the small, honest landing page; authenticated users go to `/projects`.
 **Done when:** a team member can create and update an assigned, dated task and
 the assignment is displayed correctly after refresh.
 
-### 2. Build the real personal dashboard — in progress
+### 2. Build the real personal dashboard — complete
 
 Default dashboard scope is **tasks assigned to the signed-in user**.
 
@@ -90,11 +93,11 @@ Default dashboard scope is **tasks assigned to the signed-in user**.
   assignee, status, and due date.
 - [x] Replace the fake `WorkSummaryPanel` with real data and useful empty/loading/
   error states.
-- [ ] Show three actionable groups: **Overdue**, **Today**, and **Upcoming**.
-- [ ] Add compact counts for overdue, due today, and due in the next seven days.
+- [x] Show three actionable groups: **Overdue**, **Today**, and **Upcoming**.
+- [x] Add compact counts for overdue, due today, and due in the next seven days.
 - [x] Put a compact Shadcn monthly calendar on the side. Selecting a date filters the
   agenda; it is context for work, not a separate scheduling product.
-- Keep recent projects below the personal agenda.
+- [x] Keep recent projects below the personal agenda.
 
 **Done when:** a signed-in user can open the dashboard and immediately see
 their current work, choose a calendar date, and open the relevant task.
@@ -103,28 +106,28 @@ their current work, choose a calendar date, and open the relevant task.
 
 Build this as one task-detail activity area, not two disconnected features.
 
-#### Comments
+#### Comments — implemented
 
-- Create a `Comment` Mongoose model with `taskId`, `projectId`, `authorId`,
-  `body`, and timestamps. Keep comments editable/deletable only by their
-  author; project members can read them.
-- Provide a small, direct API: list by task, create, update, and delete.
+- [x] Create a `Comment` Mongoose model with task, author, Tiptap content,
+  derived plain text, and timestamps. Keep comments editable/deletable only by
+  their author; project members can read them.
+- [x] Provide a small, direct API: list by task, create, update, and delete.
 - Resolve the task's board/project server-side for every write; never trust a
   client-supplied project id for access checks.
 - In the task detail dialog, show newest comments at the bottom, include an
   author/time label, and provide a compact composer.
 
-#### Attachments
+#### Attachments â€” implemented and verified
 
-- For this student-project demo, store uploaded files under a server-managed
+- [x] For this student-project demo, store uploaded files under a server-managed
   local uploads directory and save only metadata in MongoDB: `taskId`,
   `projectId`, `uploaderId`, original filename, stored filename, MIME type,
   size, and timestamps.
-- Limit uploads to a small allowlist of safe document/image types and a clear
+- [x] Limit uploads to a small allowlist of safe document/image types and a clear
   maximum size. Reject invalid files before writing them to disk.
-- Serve/download files only after task/project membership is checked. An
+- [x] Serve/download files only after task/project membership is checked. An
   uploader can remove their own attachment; project admins may remove any.
-- In the same task-detail activity area, show attachment filename, size,
+- [x] In the same task-detail activity area, show attachment filename, size,
   uploader, download action, and a safe remove action.
 
 #### Delivery order
@@ -177,7 +180,7 @@ any dependency on `audit-backend`.
 - [ ] Auth and application visuals use one FocusFlow design system.
 - [ ] Task assignment and due dates work end-to-end.
 - [ ] Dashboard uses real assigned-task data and a functional side calendar.
-- [ ] Comments and attachments work with access controls.
+- [x] Comments and attachments work with access controls.
 - [ ] Audit trail is local to the main backend and visible to project members.
 - [ ] Swagger accurately documents the finished API.
 - [ ] Builds, meaningful tests, and the core browser journey pass.

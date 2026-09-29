@@ -14,6 +14,7 @@ import { ColumnModule } from './column/column.module';
 import { TaskModule } from './task/task.module';
 import { TeamModule } from './team/team.module';
 import { CommentModule } from './comment/comment.module';
+import { AttachmentModule } from './attachment/attachment.module';
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { CommentModule } from './comment/comment.module';
     ColumnModule,
     TaskModule,
     TeamModule,
-    CommentModule
+    CommentModule,
+    AttachmentModule
   ],
   controllers: [],
   providers: [],
