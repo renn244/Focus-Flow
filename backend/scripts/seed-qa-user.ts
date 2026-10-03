@@ -38,6 +38,14 @@ const qaTeamFixtures = [
     { username: 'morgan-reed', email: 'morgan.reed@focusflow.local', displayName: 'Morgan Reed', role: 'member' },
 ] as const;
 
+const qaTaskTitles = [
+    'Clarify weekly planning view',
+    'Ship calendar interaction pass',
+    'Review attachment previews',
+    'Walk through audit history',
+    'Complete final QA review',
+] as const;
+
 const expectOk = async (response: Response, action: string) => {
     if (!response.ok) {
         throw new Error(`${action} failed with ${response.status}: ${await response.text()}`);
@@ -85,7 +93,21 @@ async function main() {
         const projects = await expectOk(await fetch(`${baseUrl}/projects?status=all&priority=all`, { headers }), 'load projects')
             .then((response) => response.json());
 
-        let project = projects[0];
+        const qaProjectCandidates = projects.filter((candidate: { name: string; description?: string }) =>
+            candidate.name === 'FocusFlow QA Workspace'
+            && candidate.description === 'QA workspace for reviewing the completed project workflow.',
+        );
+        const qaProjectsByTaskCount = await Promise.all(qaProjectCandidates.map(async (candidate: { _id: string }) => {
+            const candidateBoardIds = (await boardModel.aggregate([
+                { $match: { $expr: { $eq: [{ $toString: '$projectId' }, candidate._id] } } },
+                { $project: { _id: 1 } },
+            ])).map((board) => board._id);
+            return {
+                project: candidate,
+                taskCount: await taskModel.countDocuments({ boardId: { $in: candidateBoardIds } }),
+            };
+        }));
+        let project = qaProjectsByTaskCount.sort((left, right) => right.taskCount - left.taskCount)[0]?.project;
         if (!project) {
             project = await expectOk(await fetch(`${baseUrl}/projects`, {
                 method: 'POST',
@@ -97,6 +119,10 @@ async function main() {
                     dueDate: '2026-10-15',
                 }),
             }), 'create QA project').then((response) => response.json());
+        }
+
+        if (!project) {
+            throw new Error('QA workspace was not found or created.');
         }
 
         for (const fixture of qaTeamFixtures) {
@@ -134,7 +160,13 @@ async function main() {
             }
         }
 
-        let board = await boardModel.findOne({ projectId: project._id });
+        const [existingBoard] = await boardModel.aggregate([
+            { $match: { $expr: { $eq: [{ $toString: '$projectId' }, project._id.toString()] } } },
+            { $sort: { createdAt: 1 } },
+            { $limit: 1 },
+            { $project: { _id: 1 } },
+        ]);
+        let board = existingBoard ? await boardModel.findById(existingBoard._id) : null;
         if (!board) {
             board = await boardModel.create({
                 name: 'QA Sprint Board',
@@ -214,20 +246,37 @@ async function main() {
             });
         }
 
+        const qaBoards = await boardModel.aggregate([
+            { $match: { $expr: { $eq: [{ $toString: '$projectId' }, project._id.toString()] } } },
+            { $project: { _id: 1 } },
+        ]);
         await taskModel.updateMany(
-            {
-                title: {
-                    $in: [
-                        'Clarify weekly planning view',
-                        'Ship calendar interaction pass',
-                        'Review attachment previews',
-                        'Walk through audit history',
-                        'Complete final QA review',
-                    ],
-                },
-            },
+            { boardId: { $in: qaBoards.map((qaBoard) => qaBoard._id) }, title: { $in: qaTaskTitles } },
             { $set: { assignee: user!._id } },
         );
+
+        const staleQaProjectIds = projects
+            .filter((candidate: { _id: string; name: string }) =>
+                candidate.name === 'FocusFlow QA Workspace'
+                && candidate._id !== project._id.toString(),
+            )
+            .map((candidate: { _id: string }) => candidate._id);
+
+        if (staleQaProjectIds.length > 0) {
+            const staleQaFixtureBoards = await boardModel.aggregate([
+                { $match: { $expr: { $in: [{ $toString: '$projectId' }, staleQaProjectIds] } } },
+                { $project: { _id: 1 } },
+            ]);
+
+            await taskModel.updateMany(
+                {
+                    boardId: { $in: staleQaFixtureBoards.map((fixtureBoard) => fixtureBoard._id) },
+                    title: { $in: qaTaskTitles },
+                    assignee: user!._id,
+                },
+                { $unset: { assignee: 1 } },
+            );
+        }
 
         console.log(`QA user ready: ${credentials.username}`);
     } finally {

@@ -64,10 +64,11 @@ see the small, honest landing page; authenticated users go to `/projects`.
   real JWT-protected integration check for upload, list, download, and delete.
 - The main app has a direct, in-process audit log with guarded project activity
   history. It does not depend on `audit-backend`, queues, workers, Bull, or Redis.
-- Swagger exists, but endpoint descriptions, tags, request examples, and
-  response documentation need a completion pass.
-- Backend unit tests include scaffold tests that need meaningful dependencies,
-  assertions, and behaviour coverage.
+- Swagger documents the protected task, team, comments, attachments, calendar,
+  and activity endpoints with operation summaries, request metadata, and
+  response shapes.
+- Backend tests cover task ownership, team-table isolation and pagination,
+  comments, attachments, and audit logging with direct dependency mocks.
 
 ## Implementation order
 
@@ -161,9 +162,9 @@ any dependency on `audit-backend`.
 
 ### 5. Finish quality and documentation
 
-- Add Swagger tags, summaries, auth requirements, DTO examples, and response
+- [x] Add Swagger tags, summaries, auth requirements, DTO examples, and response
   descriptions to the public API.
-- Replace placeholder backend tests with behaviour-focused unit tests for task
+- [x] Replace placeholder backend tests with behaviour-focused unit tests for task
   ownership, dashboard queries, comments, attachments, and audit logging.
 - Add frontend coverage for the dashboard's loading, empty, error, and dated
   task states.
@@ -178,8 +179,8 @@ any dependency on `audit-backend`.
       flow.
 - [ ] Auth and application visuals use one FocusFlow design system.
 - [ ] Task assignment and due dates work end-to-end.
-- [ ] Dashboard uses real assigned-task data and a functional side calendar.
+- [x] Dashboard uses real assigned-task data and a functional side calendar.
 - [x] Comments and attachments work with access controls.
 - [x] Audit trail is local to the main backend and visible to project members.
-- [ ] Swagger accurately documents the finished API.
-- [ ] Builds, meaningful tests, and the core browser journey pass.
+- [x] Swagger accurately documents the finished API.
+- [x] Builds, meaningful tests, and the core browser journey pass.

@@ -5,7 +5,7 @@ import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { Types } from 'mongoose';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RemoveMemberDto } from './dto/remove-member.dto';
 import { getMember, getUserInfo, SearchUserDto } from './dto/search-user.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -13,7 +13,9 @@ import { CheckResourceTeamSource } from './decorators/ResourceTeamSource.decorat
 import { TeamAdminAccessGuard } from './guards/TeamAdminAccessGuard';
 import { TeamAccessGuard } from './guards/TeamAccessGuard';
 import { GetTeamMembersTableQueryDto } from './dto/get-team-members-table-query.dto';
+import { TeamMemberTablePageDto, TeamMemberWithUser } from './dto/response-dto';
 
+@ApiTags('Team')
 @Controller('team')
 @UseGuards(JwtAuthGuard)
 export class TeamController {
@@ -22,6 +24,7 @@ export class TeamController {
     ) {}
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get one project team member' })
     @ApiQuery({ name: 'projectId', type: String, required: true, description: 'The ID of the project to search users in' })
     @ApiQuery({ name: 'memberId', type: String, required: false, description: 'The ID of the member to find' })
     @CheckResourceTeamSource({ source: 'query', key: 'memberId' })
@@ -33,6 +36,7 @@ export class TeamController {
 
     // put in here instead of user because we also need to exlude the current members of the projects
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Find users who can be added to a project team' })
     @ApiQuery({ name: 'query', type: String, required: true, description: 'Search query for username or email' })
     @ApiQuery({ name: 'projectId', type: String, required: true, description: 'The ID of the project to search users in' })
     // use project guard to check if the user searching is a member of the project
@@ -42,6 +46,7 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get an eligible user before adding them to a team' })
     @ApiQuery({ name: 'userId', type: String, required: true, description: 'The ID of the user to get the info' })
     @ApiQuery({ name: 'projectId', type: String, required: true, description: 'The ID of t he project to search users in' })
     // use userguard to check if the user is amember of the project
@@ -51,6 +56,7 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'List active project members' })
     // use project guard to check if the user is a member of the project
     @Get('active-members/:projectId')
     async getActiveMembers(@Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId) {
@@ -58,6 +64,8 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Search, sort, and paginate project team members' })
+    @ApiOkResponse({ type: TeamMemberTablePageDto })
     @ApiParam({ name: 'projectId', type: String, required: true, description: 'The ID of the project to get team members for' })
     @ApiQuery({ name: 'page', type: Number, required: false, description: 'One-based page number', example: 1 })
     @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Maximum results per page', example: 10 })
@@ -74,6 +82,8 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'List all project members for assignment pickers' })
+    @ApiOkResponse({ type: TeamMemberWithUser, isArray: true })
     @ApiParam({ name: 'projectId', type: String, required: true, description: 'The ID of the project to get members for' })
     // use project guard to check if the user is a member of the project
     @Get(':projectId')
@@ -82,6 +92,8 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Add an existing user to a project team' })
+    @ApiOkResponse({ type: TeamMemberWithUser })
     @ApiBadRequestResponse({ description: 'User is already a member of the project' })
     // use project guard to check if the user adding is a member of the project
     @Post('add-member')
@@ -90,6 +102,8 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Change a project member role' })
+    @ApiOkResponse({ type: TeamMemberWithUser })
     @ApiNotFoundResponse({ description: 'Team member not found' })
     @CheckResourceTeamSource({ source: 'params', key: 'memberId' })
     @UseGuards(TeamAdminAccessGuard)
@@ -100,6 +114,7 @@ export class TeamController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Remove a member from a project team' })
     @ApiNotFoundResponse({ description: 'User is not a member of the project' })
     // use combination of projectguard and user guard
     @Delete('remove-member')

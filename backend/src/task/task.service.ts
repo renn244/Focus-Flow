@@ -10,6 +10,7 @@ import { plainToInstance } from 'class-transformer';
 import { TaskDto, TaskWithBoardAndColumnDto } from './dto/response-dto';
 import { MoveTaskDto } from './dto/move-task.dto';
 import { TeamGateway } from 'src/team/team.gateway';
+import { TeamService } from 'src/team/team.service';
 import { Board, BoardDocument } from 'src/schema/Board.schema';
 import { Column, ColumnDocument } from 'src/schema/Column.schema';
 import { User, UserDocument } from 'src/schema/User.schema';
@@ -27,6 +28,7 @@ export class TaskService {
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
         @InjectConnection() private readonly connection: Connection,
         private readonly teamGateway: TeamGateway,
+        private readonly teamService: TeamService,
         private readonly columnService: ColumnService,
         private readonly teamSharedService: TeamSharedService,
         private readonly auditLogService: AuditLogService,
@@ -122,8 +124,23 @@ export class TaskService {
     }
 
     async getMyTasks(user: UserJwt) {
+        const projectIds = await this.teamService.getProjectIdsByMemberId(new Types.ObjectId(user.id));
+
+        if (projectIds.length === 0) {
+            return [];
+        }
+
+        const boards = await this.boardModel.find({
+            projectId: { $in: projectIds.map((projectId) => projectId.toString()) },
+        }).select('_id');
+        const boardIds = boards.map((board) => board._id);
+
+        if (boardIds.length === 0) {
+            return [];
+        }
+
         const tasks = await this.taskModel
-            .find({ assignee: new Types.ObjectId(user.id) })
+            .find({ assignee: new Types.ObjectId(user.id), boardId: { $in: boardIds } })
             .populate([
                 { path: 'columnId', select: 'title color _id' },
                 { path: 'boardId', select: 'name projectId _id' },

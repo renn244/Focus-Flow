@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
@@ -10,6 +10,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentAuthorAccessGuard } from './guards/CommentAuthorAccessGuard';
 import { CommentTaskAccessGuard } from './guards/CommentTaskAccessGuard';
+import { CommentDto } from './dto/response.dto';
 
 @ApiTags('Comments')
 @ApiBearerAuth()
@@ -19,6 +20,7 @@ export class CommentController {
     constructor(private readonly commentService: CommentService) {}
 
     @ApiOperation({ summary: 'List comments for a task' })
+    @ApiOkResponse({ type: CommentDto, isArray: true })
     @ApiParam({ name: 'taskId', type: String })
     @CheckResourceTaskSource({ source: 'params', key: 'taskId' })
     @UseGuards(CommentTaskAccessGuard)
@@ -28,6 +30,7 @@ export class CommentController {
     }
 
     @ApiOperation({ summary: 'Create a task comment' })
+    @ApiCreatedResponse({ type: CommentDto })
     @CheckResourceTaskSource({ source: 'body', key: 'taskId' })
     @UseGuards(CommentTaskAccessGuard)
     @Post()
@@ -40,6 +43,7 @@ export class CommentController {
     }
 
     @ApiOperation({ summary: 'Update your own comment' })
+    @ApiOkResponse({ type: CommentDto })
     @ApiParam({ name: 'commentId', type: String })
     @UseGuards(CommentAuthorAccessGuard)
     @Patch(':commentId')
@@ -53,6 +57,7 @@ export class CommentController {
     }
 
     @ApiOperation({ summary: 'Delete your own comment' })
+    @ApiOkResponse({ description: 'Comment deleted successfully' })
     @ApiParam({ name: 'commentId', type: String })
     @UseGuards(CommentAuthorAccessGuard)
     @Delete(':commentId')

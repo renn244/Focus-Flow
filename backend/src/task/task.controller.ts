@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
@@ -17,7 +17,7 @@ import { GetProjectActivityQueryDto } from 'src/audit-log/dto/get-project-activi
 import { ProjectActivityPageDto } from 'src/audit-log/dto/response.dto';
 import { CheckResourceProjectSource } from 'src/projects/decorators/ResourceProjectSource.decorator';
 import { ProjectAccessGuard } from 'src/projects/guards/ProjectAccessGuard';
-import { TaskWithBoardAndColumnDto } from './dto/response-dto';
+import { TaskDto, TaskWithBoardAndColumnDto } from './dto/response-dto';
 
 @ApiTags('Tasks')
 @Controller('task')
@@ -28,6 +28,8 @@ export class TaskController {
     ) {}
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Create a task in a board column' })
+    @ApiCreatedResponse({ type: TaskDto })
     @CheckResourceColumnSource({ source: 'body', key: 'columnId' })
     @UseGuards(ColumnAdminAccessGuard)
     @Post()
@@ -39,6 +41,8 @@ export class TaskController {
     @ApiBearerAuth()
     @CheckResourceColumnSource({ source: 'params', key: 'columnId' })
     @UseGuards(ColumnAdminAccessGuard)
+    @ApiOperation({ summary: 'List tasks in a board column' })
+    @ApiOkResponse({ type: TaskDto, isArray: true })
     @Get('byColumn/:columnId')
     async getTaskByColumnId(@Param('columnId', ParseObjectIdPipe) columnId: Types.ObjectId) {
         return this.taskService.getTaskByColumnId(columnId);
@@ -56,6 +60,8 @@ export class TaskController {
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'List the signed-in user’s assigned tasks, due-date first' })
+    @ApiOkResponse({ type: TaskWithBoardAndColumnDto, isArray: true })
     @Get('mine')
     async getMyTasks(@User() user: UserJwt) {
         return this.taskService.getMyTasks(user);
@@ -79,6 +85,8 @@ export class TaskController {
     @ApiBearerAuth()
     @CheckResourceTaskSource({ source: 'params', key: 'id' })
     @UseGuards(TaskAccessGuard)
+    @ApiOperation({ summary: 'Get a task with its board, column, and assignee' })
+    @ApiOkResponse({ type: TaskWithBoardAndColumnDto })
     @Get(':id')
     async getTask(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
         return this.taskService.getTask(id);
@@ -88,6 +96,7 @@ export class TaskController {
     @ApiBearerAuth()
     @CheckResourceTaskSource({ source: 'params', key: 'id' })
     @UseGuards(TaskAdminAccessGuard)
+    @ApiOperation({ summary: 'Move a task between columns' })
     @Patch('moved/:id')
     async moveTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @Body() body: MoveTaskDto, @User() user: UserJwt) {
         return this.taskService.updateMovedTask(taskId, body, user);
@@ -97,6 +106,8 @@ export class TaskController {
     @ApiBearerAuth()
     @CheckResourceTaskSource({ source: 'params', key: 'id' })
     @UseGuards(TaskAdminAccessGuard)
+    @ApiOperation({ summary: 'Update task details, including assignment and due date' })
+    @ApiOkResponse({ type: TaskDto })
     @Patch(':id')
     async updateTask(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: UpdateTaskDto, @User() user: UserJwt) {
         return this.taskService.updateTask(id, body, user);
@@ -106,6 +117,7 @@ export class TaskController {
     @ApiBearerAuth()
     @CheckResourceTaskSource({ source: 'params', key: 'id' })
     @UseGuards(TaskAdminAccessGuard)
+    @ApiOperation({ summary: 'Delete a task' })
     @Delete(':id')
     async deleteTask(@Param('id', ParseObjectIdPipe) taskId: Types.ObjectId, @User() user: UserJwt) {
         return this.taskService.deleteTask(taskId, user);

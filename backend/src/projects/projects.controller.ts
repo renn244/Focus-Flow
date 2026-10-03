@@ -23,18 +23,21 @@ export class ProjectsController {
     ) {}
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Create a project' })
     @Post()
     async createProject(@Body() body: CreateProjectDto, @User() user: UserJwt) {
         return this.projectsService.createProject(body, user);
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'List the signed-in user’s projects' })
     @Get()
     async getProjects(@User() user: UserJwt, @Query() query: GetProjectQueryDto) {
         return this.projectsService.getProjects(user, query);
     }
 
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'List recently accessed projects' })
     @Get('recent')
     async getRecentProjects(@User() user: UserJwt) {
         return this.projectsService.getRecentProjects(user);
@@ -56,6 +59,7 @@ export class ProjectsController {
 
     @ApiParam({ name: 'id', type: String,  example: '60c72b2f9b1e8c001c8e4d3a', description: 'Project Id (ObjectId)' })
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get one project' })
     @CheckResourceProjectSource({ source: 'params', key: 'id' })
     @UseGuards(ProjectAccessGuard)
     @Get(':id')
@@ -65,6 +69,7 @@ export class ProjectsController {
 
     @ApiParam({ name: 'id', type: String, description: 'Project Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Update project details' })
     @CheckResourceProjectSource({ source: 'params', key: 'id' })
     @UseGuards(ProjectAdminAccessGuard)
     @Patch(':id')
@@ -74,6 +79,7 @@ export class ProjectsController {
 
     @ApiParam({ name: 'id', type: String, description: 'Project Id (ObjectId)', example: '60c72b2f9b1e8c001c8e4d3a' })
     @ApiBearerAuth()
+    @ApiOperation({ summary: 'Delete a project' })
     @CheckResourceProjectSource({ source: 'params', key: 'id' })
     @UseGuards(ProjectAdminAccessGuard)
     @Delete(':id')
