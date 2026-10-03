@@ -58,6 +58,12 @@ export type Task = {
 export type TaskWithBoardAndColumn = {
     board: Pick<Board, '_id' | 'name' | 'projectId'>;
     column: Omit<Column, 'order' | 'tasks' | 'createdAt' | 'updatedAt'>;
+    assigneeUser?: {
+        _id: string;
+        displayName: string;
+        username: string;
+        avatarUrl?: string;
+    };
 } & Omit<Task, 'boardId' | 'columnId'>;
 
 export type BoardSchema = z.infer<typeof BoardFormSchema>;

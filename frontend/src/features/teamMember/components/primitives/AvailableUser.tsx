@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { motion } from 'framer-motion'
 import { Search } from "lucide-react"
 import { useSearchUser } from "../../hooks/useSearchUser"
@@ -22,12 +21,9 @@ const AvailableUser = ({
 
     return (
         (users && !isLoading) && (
-            <Card className="gap-0 py-3">
-                <CardHeader className="px-3">
-                    <CardTitle className="text-lg">Available Users</CardTitle>
-                </CardHeader>
-                <CardContent className="px-3">
-                    <div className="space-y-3 max-h-96 overflow-y-auto">
+            <section className="flex flex-col gap-3">
+                <h3 className="text-sm font-medium text-muted-foreground">Available users</h3>
+                <div className="flex max-h-96 flex-col gap-2 overflow-y-auto">
                         {users
                         .filter(user => user._id !== selectedUser)
                         .map((user, index) => (
@@ -37,7 +33,7 @@ const AvailableUser = ({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className={`flex items-center justify-between p-2 rounded-md border transition-colors`}
+                            className="flex cursor-pointer items-center justify-between rounded-md border p-2 transition-colors hover:bg-muted/50"
                             >
                                 <div className="flex items-center gap-3">
                                     <Avatar className="w-10 h-10">
@@ -53,14 +49,13 @@ const AvailableUser = ({
                         ))}
 
                         {users && users.filter(user => user._id !== selectedUser).length === 0 && (
-                            <div className="text-center py-8">
-                                <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                            <div className="py-8 text-center">
+                                <Search className="mx-auto mb-4 size-12 text-muted-foreground" />
                                 <p className="text-gray-600">No users found matching your search.</p>
                             </div>
                         )}
-                    </div>
-                </CardContent>
-            </Card>
+                </div>
+            </section>
         )
     )
 }

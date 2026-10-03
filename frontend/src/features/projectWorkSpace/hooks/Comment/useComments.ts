@@ -8,6 +8,7 @@ type CommentsResponse = AxiosResponse<TaskComment[], ExceptionResponse>;
 type CommentResponse = AxiosResponse<TaskComment, ExceptionResponse>;
 
 const commentsKey = (taskId: string) => ["comments", taskId] as const;
+const taskActivityKey = (taskId: string) => ["task-activity", taskId] as const;
 
 const getComments = async (taskId: string): Promise<CommentsResponse["data"]> => {
   const response = await axiosInstance.get(`/comment/task/${taskId}`);
@@ -41,7 +42,10 @@ export const useCreateComment = (taskId: string) => {
 
       return response.data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: commentsKey(taskId) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: commentsKey(taskId) });
+      queryClient.invalidateQueries({ queryKey: taskActivityKey(taskId) });
+    },
   });
 };
 
@@ -59,7 +63,10 @@ export const useUpdateComment = (taskId: string) => {
 
       return response.data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: commentsKey(taskId) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: commentsKey(taskId) });
+      queryClient.invalidateQueries({ queryKey: taskActivityKey(taskId) });
+    },
   });
 };
 
@@ -74,6 +81,9 @@ export const useDeleteComment = (taskId: string) => {
         throw new Error((response.data as ExceptionResponse).message || "Unable to delete comment");
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: commentsKey(taskId) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: commentsKey(taskId) });
+      queryClient.invalidateQueries({ queryKey: taskActivityKey(taskId) });
+    },
   });
 };

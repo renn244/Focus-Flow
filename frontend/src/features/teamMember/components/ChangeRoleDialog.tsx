@@ -21,7 +21,10 @@ const ChangeRoleDialog = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
+            <DialogContent
+                className="max-h-[90vh] max-w-2xl overflow-hidden"
+                onOpenAutoFocus={(event) => event.preventDefault()}
+            >
                 {isLoading && (
                     <div className="flex items-center justify-center h-64">
                         <LoadingSpinner />
@@ -66,6 +69,7 @@ const ChangeRole = ({ member }: ChangeRoleProps) => {
             onSuccess: () => {
                 setIsOpen(false);
                 queryClient.invalidateQueries({ queryKey: ['teamMembers', projectId] });
+                queryClient.invalidateQueries({ queryKey: ['teamMembersTable', projectId] });
                 queryClient.invalidateQueries({ queryKey: ['teamMember', projectId, memberId] })
             }
         })

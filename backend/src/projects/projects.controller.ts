@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { ParseObjectIdPipe } from 'src/lib/customPipes/ParseObjectIdPipe';
@@ -11,7 +11,10 @@ import { ProjectsService } from './projects.service';
 import { CheckResourceProjectSource } from './decorators/ResourceProjectSource.decorator';
 import { ProjectAccessGuard } from './guards/ProjectAccessGuard';
 import { ProjectAdminAccessGuard } from './guards/ProjectAdminAccessGuard';
+import { GetProjectActivityQueryDto } from 'src/audit-log/dto/get-project-activity-query.dto';
+import { ProjectActivityPageDto } from 'src/audit-log/dto/response.dto';
 
+@ApiTags('Projects')
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectsController {
@@ -35,6 +38,20 @@ export class ProjectsController {
     @Get('recent')
     async getRecentProjects(@User() user: UserJwt) {
         return this.projectsService.getRecentProjects(user);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get project activity history' })
+    @ApiOkResponse({ type: ProjectActivityPageDto })
+    @ApiParam({ name: 'id', type: String, description: 'Project Id (ObjectId)' })
+    @CheckResourceProjectSource({ source: 'params', key: 'id' })
+    @UseGuards(ProjectAccessGuard)
+    @Get(':id/activity')
+    async getProjectActivity(
+        @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+        @Query() query: GetProjectActivityQueryDto,
+    ) {
+        return this.projectsService.getProjectActivity(id, query);
     }
 
     @ApiParam({ name: 'id', type: String,  example: '60c72b2f9b1e8c001c8e4d3a', description: 'Project Id (ObjectId)' })

@@ -30,6 +30,7 @@ export const useCreateTaskMutation = () => {
         mutationFn: createTask,
         onSuccess: (_, variable) => {
             queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', variable.boardId] });
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'by-project'] });
             setCreateOpen(false);
         }
     })

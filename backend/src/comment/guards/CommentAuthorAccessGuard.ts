@@ -34,6 +34,7 @@ export class CommentAuthorAccessGuard implements CanActivate {
         }
 
         request.comment = comment;
+        request.commentProjectId = projectId;
         return true;
     }
 }

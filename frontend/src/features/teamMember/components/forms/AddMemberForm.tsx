@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import LoadingSpinner from "@/components/ui/loadingSpinner"
@@ -56,19 +55,16 @@ const AddMemberForm = ({
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4", className)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-4", className)}>
                 <div className="flex-1 overflow-hidden">
                     <div className="overflow-y-auto max-h-[calc(90vh-200px)]">
-                        <div className="space-y-3">
-                            <Card className="gap-0 py-3">
-                                <CardHeader className="px-3">
-                                    <CardTitle className="text-lg flex items-center gap-2">
-                                        <Search className="w-5 h-5 text-blue-600" />
-                                        Find Existing User
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="px-3">
-                                    <div className="space-y-2">
+                        <div className="flex flex-col gap-5">
+                            <section className="flex flex-col gap-3">
+                                <div className="flex items-center gap-2">
+                                    <Search className="size-5 text-primary" />
+                                    <h3 className="text-lg font-semibold">Find existing user</h3>
+                                </div>
+                                <div className="flex flex-col gap-2">
                                     
                                         <div className="relative">
                                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -107,26 +103,14 @@ const AddMemberForm = ({
                                         )}
                                         />  
                                     
-                                        <CardFooter className="px-0">
-                                            <Button type="submit"
-                                            className="w-full"
-                                            disabled={isLoading || !userId || !role}
-                                            >
-                                                {isLoading ? (
-                                                    <>
-                                                        <LoadingSpinner />
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <UserRoundPlus />
-                                                        Add User
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </CardFooter>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    <Button type="submit"
+                                    className="w-full"
+                                    disabled={isLoading || !userId || !role}
+                                    >
+                                        {isLoading ? <LoadingSpinner /> : <><UserRoundPlus />Add User</>}
+                                    </Button>
+                                </div>
+                            </section>
 
                            <AvailableUser 
                            searchUser={searchUser}

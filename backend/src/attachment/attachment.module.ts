@@ -7,9 +7,10 @@ import { AttachmentService } from './attachment.service';
 import { AttachmentAccessGuard } from './guards/AttachmentAccessGuard';
 import { AttachmentDeleteGuard } from './guards/AttachmentDeleteGuard';
 import { AttachmentTaskAccessGuard } from './guards/AttachmentTaskAccessGuard';
+import { AuditLogModule } from 'src/audit-log/audit-log.module';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Attachment.name, schema: attachmentSchema }]), TaskModule],
+    imports: [MongooseModule.forFeature([{ name: Attachment.name, schema: attachmentSchema }]), TaskModule, AuditLogModule],
     controllers: [AttachmentController],
     providers: [AttachmentService, AttachmentTaskAccessGuard, AttachmentAccessGuard, AttachmentDeleteGuard],
 })

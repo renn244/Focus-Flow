@@ -29,6 +29,7 @@ export const useDeleteTaskMutation = (taskId: string) => {
         onSuccess: () => {
             setRemoveOpen(false);
             queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', selectedBoardId] })
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'by-project'] });
         },
     })
 }

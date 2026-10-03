@@ -9,9 +9,13 @@ import { Separator } from "@/components/ui/separator";
 import { Calendar, Settings } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { priorityBadgeVariant } from "../../constant/priorityColors";
+import { useGetMembers } from "@/features/teamMember/hooks/useGetMembers";
+import { useProjectIdStore } from "../../store/useProjectId";
+import { useEditTaskMutation } from "../../hooks/Task/useEditTaskMutation";
 import { useGetTaskById } from "../../hooks/Task/useGetTaskById";
 import useTaskDialogStore from "../../store/useTaskDialog";
 import type { TaskWithBoardAndColumn } from "../../type";
+import TaskAssigneeCombobox from "./TaskAssigneeCombobox";
 
 const TaskComments = lazy(() => import("./comments/TaskComments"));
 const TaskAttachments = lazy(() => import("./attachments/TaskAttachments"));
@@ -26,7 +30,7 @@ const ViewTaskDialog = () => {
 
     return (
         <Dialog open={isViewOpen} onOpenChange={setViewOpen}>
-            <DialogContent className="md:max-w-6xl max-h-[90vh] overflow-hidden p-0">
+            <DialogContent className="h-[90vh] grid-rows-[minmax(0,1fr)] md:max-w-6xl overflow-hidden p-0">
                 {isLoading && (
                     <div className="flex items-center justify-center h-64">
                         <LoadingSpinner />
@@ -58,8 +62,15 @@ type ViewTaskProps = {
 }
 
 const ViewTask = ({ task }: ViewTaskProps) => {
+    const projectId = useProjectIdStore((state) => state.projectId);
+    const { data: members = [] } = useGetMembers(projectId || "");
+    const { mutate: updateTask, isPending: isUpdatingAssignee } = useEditTaskMutation(task._id);
+    const changeAssignee = (value?: string) => {
+        updateTask({ assignee: value ?? null });
+    };
+
     return (
-        <div className="flex h-full">
+        <div className="flex h-full min-h-0">
 
             <div className="flex-1 flex flex-col">
 
@@ -122,15 +133,16 @@ const ViewTask = ({ task }: ViewTaskProps) => {
 
                     <div className="space-y-2">
 
-                        {/* <div>
+                        <div>
                             <Label className="text-sm font-medium text-muted-foreground">Assignee</Label>
-                            <div className="flex items-center gap-2 mt-1">
-                                <Avatar className="h-6 w-6">
-                                    <AvatarFallback className="text-xs">{task.assignee?.initials}</AvatarFallback>
-                                </Avatar>
-                                <span className="text-sm">{task.assignee?.name || "Unassigned"}</span>
-                            </div>
-                        </div> */}
+                            <TaskAssigneeCombobox
+                                members={members}
+                                value={task.assignee}
+                                onValueChange={changeAssignee}
+                                disabled={isUpdatingAssignee}
+                                className="mt-1 h-10 bg-background text-left"
+                            />
+                        </div>
                         {/* 
                         <div>
                             <Label className="text-sm font-medium text-muted-foreground">Reporter</Label>

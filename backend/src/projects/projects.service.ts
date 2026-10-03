@@ -9,12 +9,15 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { GetProjectQueryDto } from './dto/get-project-query.dto';
 import { ProjectDto, ProjectWithOwnerDto } from './dto/response-dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { AuditLogService } from 'src/audit-log/audit-log.service';
+import { GetProjectActivityQueryDto } from 'src/audit-log/dto/get-project-activity-query.dto';
 
 @Injectable()
 export class ProjectsService {
     constructor(
         @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
         @Inject(forwardRef(() => TeamService)) private readonly teamService: TeamService,
+        private readonly auditLogService: AuditLogService,
     ) {}
 
     async createProject(body: CreateProjectDto, user: UserJwt) {
@@ -25,7 +28,16 @@ export class ProjectsService {
             projectId: project._id.toString(),
             userId: ownerId,
             role: 'owner'  
-        })
+        }, false)
+
+        await this.auditLogService.record({
+            projectId: project._id,
+            actorId: user.id,
+            action: 'project.created',
+            entityType: 'project',
+            entityId: project._id,
+            summary: 'Created the project',
+        });
 
         return plainToInstance(ProjectDto, project, {
             excludeExtraneousValues: true,
@@ -76,6 +88,10 @@ export class ProjectsService {
         });
     }    
 
+    async getProjectActivity(id: Types.ObjectId, query: GetProjectActivityQueryDto) {
+        return this.auditLogService.getProjectActivity(id, query);
+    }
+
     async updateProject(id: Types.ObjectId, body: UpdateProjectDto, user: UserJwt) {
         const updatedProject = await this.projectModel.findOneAndUpdate(
             { _id: id }, body, { new: true }
@@ -84,6 +100,16 @@ export class ProjectsService {
         if(!updatedProject) {
             throw new NotFoundException("Project not found or you do not have permission to update this project");
         }
+
+        await this.auditLogService.record({
+            projectId: updatedProject._id,
+            actorId: user.id,
+            action: 'project.updated',
+            entityType: 'project',
+            entityId: updatedProject._id,
+            summary: 'Updated project details',
+            changedFields: Object.keys(body),
+        });
 
         return plainToInstance(ProjectWithOwnerDto, updatedProject, {
             excludeExtraneousValues: true,
@@ -122,6 +148,21 @@ export class ProjectsService {
     }
 
     async deleteProject(id: Types.ObjectId, user: UserJwt) {
+        const existingProject = await this.projectModel.findById(id).select('_id');
+
+        if (!existingProject) {
+            throw new NotFoundException("Project not found or you do not have permission to delete this project");
+        }
+
+        await this.auditLogService.record({
+            projectId: existingProject._id,
+            actorId: user.id,
+            action: 'project.deleted',
+            entityType: 'project',
+            entityId: existingProject._id,
+            summary: 'Deleted the project',
+        });
+
         const project = await this.projectModel.findOneAndDelete({ _id: id });
 
         if(!project) {

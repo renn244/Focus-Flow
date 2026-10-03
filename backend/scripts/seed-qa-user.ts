@@ -13,13 +13,30 @@ import { Board } from '../src/schema/Board.schema';
 import { Column } from '../src/schema/Column.schema';
 import { Comment } from '../src/schema/Comment.schema';
 import { Task } from '../src/schema/Task.schema';
+import { TeamMember } from '../src/schema/TeamMember.schema';
 import { User } from '../src/schema/User.schema';
+import { TeamService } from '../src/team/team.service';
 
 const credentials = {
     username: 'focusflow-qa',
     password: 'FocusFlow-QA-2026!',
     email: 'focusflow-qa@focusflow.local',
 };
+
+const qaTeamFixtures = [
+    { username: 'alex-morgan', email: 'alex.morgan@focusflow.local', displayName: 'Alex Morgan', role: 'admin' },
+    { username: 'devon-lee', email: 'devon.lee@focusflow.local', displayName: 'Devon Lee', role: 'admin' },
+    { username: 'jordan-kim', email: 'jordan.kim@focusflow.local', displayName: 'Jordan Kim', role: 'member' },
+    { username: 'samira-patel', email: 'samira.patel@focusflow.local', displayName: 'Samira Patel', role: 'member' },
+    { username: 'noah-williams', email: 'noah.williams@focusflow.local', displayName: 'Noah Williams', role: 'member' },
+    { username: 'priya-shah', email: 'priya.shah@focusflow.local', displayName: 'Priya Shah', role: 'member' },
+    { username: 'marcus-rivera', email: 'marcus.rivera@focusflow.local', displayName: 'Marcus Rivera', role: 'member' },
+    { username: 'elena-garcia', email: 'elena.garcia@focusflow.local', displayName: 'Elena Garcia', role: 'member' },
+    { username: 'taylor-brooks', email: 'taylor.brooks@focusflow.local', displayName: 'Taylor Brooks', role: 'member' },
+    { username: 'casey-nguyen', email: 'casey.nguyen@focusflow.local', displayName: 'Casey Nguyen', role: 'member' },
+    { username: 'riley-chen', email: 'riley.chen@focusflow.local', displayName: 'Riley Chen', role: 'member' },
+    { username: 'morgan-reed', email: 'morgan.reed@focusflow.local', displayName: 'Morgan Reed', role: 'member' },
+] as const;
 
 const expectOk = async (response: Response, action: string) => {
     if (!response.ok) {
@@ -38,7 +55,9 @@ async function main() {
     const taskModel = app.get<Model<Task>>(getModelToken(Task.name));
     const commentModel = app.get<Model<Comment>>(getModelToken(Comment.name));
     const attachmentModel = app.get<Model<Attachment>>(getModelToken(Attachment.name));
+    const teamMemberModel = app.get<Model<TeamMember>>(getModelToken(TeamMember.name));
     const authService = app.get(AuthService);
+    const teamService = app.get(TeamService);
 
     try {
         let user = await userModel.findOne({ username: credentials.username });
@@ -78,6 +97,41 @@ async function main() {
                     dueDate: '2026-10-15',
                 }),
             }), 'create QA project').then((response) => response.json());
+        }
+
+        for (const fixture of qaTeamFixtures) {
+            let fixtureUser = await userModel.findOne({ username: fixture.username });
+
+            if (!fixtureUser) {
+                fixtureUser = await userModel.create({
+                    ...fixture,
+                    password: await bcrypt.hash('FocusFlow-Demo-2026!', 10),
+                    emailVerified: true,
+                    isOauthUser: false,
+                });
+            }
+
+            const [membership] = await teamMemberModel.aggregate([
+                {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                { $eq: [{ $toString: '$projectId' }, project._id.toString()] },
+                                { $eq: [{ $toString: '$userId' }, fixtureUser._id.toString()] },
+                            ],
+                        },
+                    },
+                },
+                { $limit: 1 },
+            ]);
+
+            if (!membership) {
+                await teamService.addMember(user as any, {
+                    projectId: project._id.toString(),
+                    userId: fixtureUser._id.toString(),
+                    role: fixture.role,
+                }, false);
+            }
         }
 
         let board = await boardModel.findOne({ projectId: project._id });
@@ -159,6 +213,21 @@ async function main() {
                 size: Buffer.byteLength('FocusFlow QA attachment'),
             });
         }
+
+        await taskModel.updateMany(
+            {
+                title: {
+                    $in: [
+                        'Clarify weekly planning view',
+                        'Ship calendar interaction pass',
+                        'Review attachment previews',
+                        'Walk through audit history',
+                        'Complete final QA review',
+                    ],
+                },
+            },
+            { $set: { assignee: user!._id } },
+        );
 
         console.log(`QA user ready: ${credentials.username}`);
     } finally {

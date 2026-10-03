@@ -14,6 +14,7 @@ export const useTeamMemberSocket = (projectId: string | null) => {
             await queryClient.setQueryData(
                 ['teamMembers', projectId], (oldData: TeamMemberWithUser[]) => oldData ? [...oldData, addedMember] : [addedMember]
             )
+            await queryClient.invalidateQueries({ queryKey: ['teamMembersTable', projectId] });
         })
 
         socket.on('memberUpdated', async (updatedMember: TeamMemberWithUser) => {
@@ -22,6 +23,7 @@ export const useTeamMemberSocket = (projectId: string | null) => {
                 
                 return oldData.map(member => member._id === updatedMember._id ? updatedMember : member)
             })
+            await queryClient.invalidateQueries({ queryKey: ['teamMembersTable', projectId] });
         })
 
         socket.on('memberRemoved', async (deletedMember: TeamMemberWithUser) => {
@@ -30,6 +32,7 @@ export const useTeamMemberSocket = (projectId: string | null) => {
 
                 return oldData.filter(member => member._id !== deletedMember._id)
             })
+            await queryClient.invalidateQueries({ queryKey: ['teamMembersTable', projectId] });
         })
 
         return () => {

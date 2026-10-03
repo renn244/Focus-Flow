@@ -23,5 +23,16 @@ export type TeamMemberWithUser = Omit<TeamMember, 'userId'> & {
     user: TeamMemberUser;
 }
 
+export type TeamMemberTableSortField = 'member' | 'role' | 'email' | 'joined';
+export type TeamMemberTableSortOrder = 'asc' | 'desc';
+
+export type TeamMembersPage = {
+    items: TeamMemberWithUser[];
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
 export type AddMemberSchema = z.infer<typeof addMemberFormSchema>;
 export type ChangeRoleSchema = z.infer<typeof changeRoleFormSchema>;

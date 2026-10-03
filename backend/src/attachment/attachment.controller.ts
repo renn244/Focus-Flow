@@ -99,7 +99,11 @@ export class AttachmentController {
     @ApiOkResponse({ description: 'Attachment deleted successfully' })
     @UseGuards(AttachmentAccessGuard, AttachmentDeleteGuard)
     @Delete(':attachmentId')
-    async deleteAttachment(@Param('attachmentId', ParseObjectIdPipe) attachmentId: Types.ObjectId) {
-        return this.attachmentService.deleteAttachment(attachmentId);
+    async deleteAttachment(
+        @Param('attachmentId', ParseObjectIdPipe) attachmentId: Types.ObjectId,
+        @Req() request: { attachmentProjectId: Types.ObjectId },
+        @User() user: UserJwt,
+    ) {
+        return this.attachmentService.deleteAttachment(attachmentId, user, request.attachmentProjectId);
     }
 }

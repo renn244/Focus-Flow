@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import LoadingSpinner from "@/components/ui/loadingSpinner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -17,7 +16,7 @@ import type { ChangeRoleSchema, TeamMemberWithUser } from "../../type"
 
 export const changeRoleFormSchema = z.object({
     memberId: z.string().min(1, "Member ID is required"),
-    role: z.enum(["admin", "member"]),
+    role: z.enum(["owner", "admin", "member"]),
     reason: z.string().max(400).optional()
 })
 
@@ -55,43 +54,43 @@ const ChangeRoleForm = ({
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4", className)}>
-                <div className="space-y-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-5", className)}>
+                <div className="flex max-h-[calc(90vh-200px)] flex-col gap-5 overflow-y-auto">
 
-                    <Card className="py-0">
-                        <CardContent className="p-3 space-y-3">
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <Avatar className="w-16 h-16">
-                                        <AvatarImage src={initialData.user.avatarUrl || "/placeholder.svg"} alt={initialData.user.displayName} />
-                                        <AvatarFallback className="text-lg">{initialData.user.displayName.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="font-semibold text-lg text-gray-900">{initialData.user.displayName}</h3>
-                                </div>
-                                <FormField 
-                                control={form.control}
-                                name="role"
-                                render={({ field }) => (
-                                    <FormItem className="space-y-2">
-                                        <FormLabel>Select Role</FormLabel>
-                                        <FormControl>
-                                            <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a role" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="admin">Admin</SelectItem>
-                                                    <SelectItem value="member">Member</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
+                    <section className="flex flex-col gap-5">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="size-16">
+                                <AvatarImage src={initialData.user.avatarUrl || "/placeholder.svg"} alt={initialData.user.displayName} />
+                                <AvatarFallback className="text-lg">{initialData.user.displayName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                                <h3 className="truncate text-lg font-semibold text-foreground">{initialData.user.displayName}</h3>
+                                <p className="truncate text-sm text-muted-foreground">@{initialData.user.username}</p>
                             </div>
+                        </div>
+
+                        <FormField
+                        control={form.control}
+                        name="role"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col gap-2">
+                                <FormLabel>Role</FormLabel>
+                                <FormControl>
+                                    <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="owner" disabled>Owner</SelectItem>
+                                            <SelectItem value="admin">Admin</SelectItem>
+                                            <SelectItem value="member">Member</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
 
                             <FormField 
                             control={form.control}
@@ -110,8 +109,7 @@ const ChangeRoleForm = ({
                             )}
                             />
 
-                        </CardContent>
-                    </Card>
+                    </section>
 
 
                     {/* {hasChanges && (

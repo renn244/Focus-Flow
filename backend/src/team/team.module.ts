@@ -7,6 +7,7 @@ import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
 import { TeamGateway } from './team.gateway';
 import { TeamSharedService } from './team.shared.service';
+import { AuditLogModule } from 'src/audit-log/audit-log.module';
 
 @Global()
 @Module({
@@ -18,7 +19,8 @@ import { TeamSharedService } from './team.shared.service';
       }
     ]),
     forwardRef(() => ProjectsModule), 
-    UserModule
+    UserModule,
+    AuditLogModule
   ],
   providers: [TeamSharedService, TeamService, TeamGateway],
   controllers: [TeamController],

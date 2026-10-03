@@ -27,6 +27,8 @@ export class TaskAccessGuard implements CanActivate {
             throw new ForbiddenException('User is not a member of the project');
         }
 
+        request.taskProjectId = projectId;
+
         return true;
     }
 }

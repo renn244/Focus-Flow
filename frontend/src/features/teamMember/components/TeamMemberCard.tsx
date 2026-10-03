@@ -1,105 +1,82 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns/format';
 import { motion } from 'framer-motion';
 import { Calendar, Mail, MoreHorizontal, Settings, Trash2, User } from 'lucide-react';
 import { permissionColors, permissionIcons } from '../constants/permission';
-import type { TeamMemberWithUser } from '../type';
 import { useRemoveMemberDialog } from '../store/removeMemberStore';
 import { useChangeRoleDialog } from '../store/changeRoleStore';
+import { useViewMemberProfileDialog } from '../store/viewMemberProfileStore';
+import type { TeamMemberWithUser } from '../type';
 
 const TeamMemberCard = ({ member, index }: { member: TeamMemberWithUser, index: number }) => {
     const PermissionIcon = permissionIcons[member.role as keyof typeof permissionIcons];
 
-    const setRemoveMemberId = useRemoveMemberDialog(state => state.setMemberId);
-    const setChangeRoleMemberId = useChangeRoleDialog(state => state.setMemberId)
-
     return (
         <motion.div
         key={member._id}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: index * 0.1 }}
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.06, duration: 0.18 }}
         >
-            <Card className='hover:shadow-md transition-shadow'>
-                <CardContent>
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="relative">
-                                <Avatar className="w-12 h-12">
-                                    <AvatarImage src={member.user.avatarUrl || "/placeholder.svg"} alt={member.user.displayName} />
-                                    <AvatarFallback>{member.user.displayName.charAt(0)}</AvatarFallback>
-                                </Avatar>
-                                {/* The Active color will be handled once we got the socket */}
-                                {/* <div
-                                className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
-                                    statusColors[member.status as keyof typeof statusColors]
-                                }`}
-                                /> */}
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-gray-900">{member.user.displayName}</h3>
-                                <p className="text-sm text-gray-600">{member.role}</p>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <Badge variant="outline" className={permissionColors[member.role]}>
-                                        <PermissionIcon className="w-3 h-3 mr-1" />
-                                        {member.role}
-                                    </Badge>
-                                    {/* <Badge variant="outline" className="text-xs">
-                                        {statusLabels[member.status as keyof typeof statusLabels]}
-                                    </Badge> */}
-                                </div>
-                            </div>
-                        </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                    <MoreHorizontal className="w-4 h-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem 
-                                // onClick={() => handleMemberAction("view-profile", member)}
-                                >
-                                    <User className="w-4 h-4" />
-                                    View Profile
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                onClick={() => setChangeRoleMemberId(member._id)}
-                                >
-                                    <Settings className="w-4 h-4" />
-                                    Change Role
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                onClick={() => setRemoveMemberId(member._id)}
-                                className="text-red-600 focus:text-red-600"
-                                >
-                                    <Trash2 className="w-4 h-4 text-red-600" />
-                                    Remove Member
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Mail className="w-4 h-4" />
-                            {member.user.email}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="w-4 h-4" />
-                            Joined {format(member.joinedAt, "MMM dd, yyyy")}
+            <div className="grid gap-3 border-b border-slate-200 px-3 py-4 transition-colors hover:bg-slate-50 md:grid-cols-[minmax(15rem,1.25fr)_minmax(16rem,1fr)_10rem_2.5rem] md:items-center md:gap-6">
+                <div className="flex min-w-0 items-center gap-3">
+                    <Avatar className="size-10 border border-slate-200">
+                        <AvatarImage src={member.user.avatarUrl || "/placeholder.svg"} alt={member.user.displayName} />
+                        <AvatarFallback>{member.user.displayName.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                        <h3 className="truncate font-semibold text-slate-900">{member.user.displayName}</h3>
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                            <Badge variant="outline" className={permissionColors[member.role]}>
+                                <PermissionIcon className="mr-1 size-3" />
+                                {member.role}
+                            </Badge>
+                            <span className="text-sm text-slate-500">{member.user.username}</span>
                         </div>
                     </div>
+                </div>
 
-                </CardContent>
-            </Card>
+                <span className="flex min-w-0 items-center gap-2 truncate text-sm text-slate-500"><Mail className="size-4 shrink-0" />{member.user.email}</span>
+                <span className="flex items-center gap-2 text-sm text-slate-500"><Calendar className="size-4 shrink-0" />{format(member.joinedAt, "MMM dd, yyyy")}</span>
+
+                <TeamMemberActions member={member} />
+            </div>
         </motion.div>
     )
+}
+
+export const TeamMemberActions = ({ member }: { member: TeamMemberWithUser }) => {
+    const setRemoveMemberId = useRemoveMemberDialog(state => state.setMemberId);
+    const setChangeRoleMemberId = useChangeRoleDialog(state => state.setMemberId);
+    const setProfileMember = useViewMemberProfileDialog(state => state.setMember);
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label={`Manage ${member.user.displayName}`}>
+                    <MoreHorizontal />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setProfileMember(member)}>
+                    <User />
+                    View Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setChangeRoleMemberId(member._id)}>
+                    <Settings />
+                    Change Role
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setRemoveMemberId(member._id)} className="text-destructive focus:text-destructive">
+                    <Trash2 />
+                    Remove Member
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 export default TeamMemberCard

@@ -5,23 +5,21 @@ import { useQueryClient } from "@tanstack/react-query"
 import { UserPlus } from "lucide-react"
 import { useAddMemberMutation } from "../hooks/useAddMemberMutation"
 import { useAddMemberDialog } from "../store/addMemberStore"
-import { useTeamManagementStore } from "../store/TeamManagementStore"
 import AddMemberForm from "./forms/AddMemberForm"
 
 const AddMemberDialog = () => {
-  const setIsOpenTeamDialog = useTeamManagementStore(state => state.setIsOpen);
   const { isOpen, setIsOpen } = useAddMemberDialog();
 
   const handleOnOpenChange = (value: boolean) => {
     setIsOpen(value);
-    if(!value) {
-      setIsOpenTeamDialog(true);
-    }
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOnOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+      <DialogContent
+        className="max-h-[90vh] max-w-4xl overflow-hidden"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
         <AddMember handleOnOpenChange={handleOnOpenChange} />
       </DialogContent>
     </Dialog>
@@ -49,6 +47,7 @@ const AddMember = ({ handleOnOpenChange }: AddMemberProps) => {
         handleOnOpenChange(false);
         
         queryClient.invalidateQueries({ queryKey: ['teamMembers', projectId] });
+        queryClient.invalidateQueries({ queryKey: ['teamMembersTable', projectId] });
         queryClient.invalidateQueries({ queryKey: ['searchUser'] });
       }
     })

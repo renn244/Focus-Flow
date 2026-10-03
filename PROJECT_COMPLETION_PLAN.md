@@ -62,8 +62,8 @@ see the small, honest landing page; authenticated users go to `/projects`.
   and a Tiptap task-detail UI. Attachments have guarded local storage,
   metadata, download/delete endpoints, a task-detail UI, unit coverage, and a
   real JWT-protected integration check for upload, list, download, and delete.
-- The main app has no audit trail after intentionally removing the queue-based
-  audit integration.
+- The main app has a direct, in-process audit log with guarded project activity
+  history. It does not depend on `audit-backend`, queues, workers, Bull, or Redis.
 - Swagger exists, but endpoint descriptions, tags, request examples, and
   response documentation need a completion pass.
 - Backend unit tests include scaffold tests that need meaningful dependencies,
@@ -143,19 +143,18 @@ Build this as one task-detail activity area, not two disconnected features.
 **Done when:** authorised project members can add, view, and safely remove
 their own comments/attachments from a task.
 
-### 4. Add a simple in-process audit trail
+### 4. Add a simple in-process audit trail — complete
 
-- Create an `AuditLog` Mongoose model and a small application service in the
+- [x] Create an `AuditLog` Mongoose model and a small application service in the
   main backend—no queue, worker, microservice, Bull, or Redis.
-- Record only meaningful events: project/team changes, task create/update/
+- [x] Record only meaningful events: project/team changes, task create/update/
   move/delete, comment changes, and attachment changes.
-- Store actor, action, entity type/id, project id, timestamp, and a safe,
+- [x] Store actor, action, entity type/id, project id, timestamp, and a safe,
   minimal change summary.
-- Provide a project activity endpoint, such as
+- [x] Provide a paginated project activity endpoint:
   `GET /api/projects/:projectId/activity`, with pagination and membership
   authorisation.
-- Render a chronological project activity view when the underlying data is
-  ready.
+- [x] Render a chronological project activity view in the active project workspace.
 
 **Done when:** project members can review who changed what and when without
 any dependency on `audit-backend`.
@@ -181,6 +180,6 @@ any dependency on `audit-backend`.
 - [ ] Task assignment and due dates work end-to-end.
 - [ ] Dashboard uses real assigned-task data and a functional side calendar.
 - [x] Comments and attachments work with access controls.
-- [ ] Audit trail is local to the main backend and visible to project members.
+- [x] Audit trail is local to the main backend and visible to project members.
 - [ ] Swagger accurately documents the finished API.
 - [ ] Builds, meaningful tests, and the core browser journey pass.

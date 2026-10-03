@@ -6,6 +6,7 @@ import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 import { ProjectAccessGuard } from './guards/ProjectAccessGuard';
 import { ProjectAdminAccessGuard } from './guards/ProjectAdminAccessGuard';
+import { AuditLogModule } from 'src/audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { ProjectAdminAccessGuard } from './guards/ProjectAdminAccessGuard';
         schema: projectSchema
       }
     ]),
-    forwardRef(() => TeamModule)
+    forwardRef(() => TeamModule),
+    AuditLogModule
   ],
   providers: [ProjectsService, ProjectAccessGuard, ProjectAdminAccessGuard],
   controllers: [ProjectsController],

@@ -12,6 +12,7 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { CheckResourceTeamSource } from './decorators/ResourceTeamSource.decorator';
 import { TeamAdminAccessGuard } from './guards/TeamAdminAccessGuard';
 import { TeamAccessGuard } from './guards/TeamAccessGuard';
+import { GetTeamMembersTableQueryDto } from './dto/get-team-members-table-query.dto';
 
 @Controller('team')
 @UseGuards(JwtAuthGuard)
@@ -54,6 +55,22 @@ export class TeamController {
     @Get('active-members/:projectId')
     async getActiveMembers(@Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId) {
         return this.teamService.getActiveMembers(projectId);
+    }
+
+    @ApiBearerAuth()
+    @ApiParam({ name: 'projectId', type: String, required: true, description: 'The ID of the project to get team members for' })
+    @ApiQuery({ name: 'page', type: Number, required: false, description: 'One-based page number', example: 1 })
+    @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Maximum results per page', example: 10 })
+    @ApiQuery({ name: 'search', type: String, required: false, description: 'Case-insensitive member name, username, or email search' })
+    @ApiQuery({ name: 'sortBy', enum: ['member', 'role', 'email', 'joined'], required: false })
+    @ApiQuery({ name: 'sortOrder', enum: ['asc', 'desc'], required: false })
+    @Get('members/:projectId')
+    async getMembersTable(
+        @User() user: UserJwt,
+        @Param('projectId', ParseObjectIdPipe) projectId: Types.ObjectId,
+        @Query() query: GetTeamMembersTableQueryDto,
+    ) {
+        return this.teamService.getMembersTable(user, projectId, query);
     }
 
     @ApiBearerAuth()

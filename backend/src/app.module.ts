@@ -15,6 +15,7 @@ import { TaskModule } from './task/task.module';
 import { TeamModule } from './team/team.module';
 import { CommentModule } from './comment/comment.module';
 import { AttachmentModule } from './attachment/attachment.module';
+import { AuditLogModule } from './audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { AttachmentModule } from './attachment/attachment.module';
     TaskModule,
     TeamModule,
     CommentModule,
-    AttachmentModule
+    AttachmentModule,
+    AuditLogModule
   ],
   controllers: [],
   providers: [],

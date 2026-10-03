@@ -6,10 +6,11 @@ import axiosInstance from "@/lib/httpService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTaskDialogStore from "../../store/useTaskDialog";
 
+type TaskUpdate = Omit<Partial<Task>, 'assignee'> & { assignee?: string | null };
 type editTaskSuccessResponse = Task;
 type editTaskResponse = AxiosResponse<editTaskSuccessResponse, ExceptionResponse>;
 
-const editTask = async (taskId: string, data: any): Promise<editTaskResponse['data']> => {
+const editTask = async (taskId: string, data: TaskUpdate): Promise<editTaskResponse['data']> => {
     const response = await axiosInstance.patch(`/task/${taskId}`, data);
 
     if (response.status === 400) {
@@ -27,11 +28,14 @@ export const useEditTaskMutation = (taskId: string) => {
     const queryClient = useQueryClient();
     const setEditOpen = useTaskDialogStore((state) => state.setEditOpen);
 
-    return useMutation<Task, Error, Task>({
+    return useMutation<Task, Error, TaskUpdate>({
         mutationFn: (data) => editTask(taskId, data),
         onSuccess: (data, variable) => {
-            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', variable.boardId] })
+            if (variable.boardId) {
+                queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', variable.boardId] });
+            }
             queryClient.invalidateQueries({ queryKey: ['task', data._id] });
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'by-project'] });
             setEditOpen(false);
         }
     })

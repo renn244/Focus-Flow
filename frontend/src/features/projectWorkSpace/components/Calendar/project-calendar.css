@@ -1,0 +1,210 @@
+.project-calendar {
+  background: #ffffff;
+}
+
+.task-calendar [role="grid"] {
+  background: #ffffff;
+  border: 0 !important;
+  color: #1f2937;
+  font-family: inherit;
+}
+
+.task-calendar [role="columnheader"] {
+  background: #4263eb;
+  border-left: 0 !important;
+  color: #ffffff;
+  align-items: center;
+  box-shadow: none;
+  min-height: 2.5rem !important;
+  padding: 0 !important;
+}
+
+.task-calendar [role="row"]:has([role="columnheader"]) {
+  border-radius: 0.5rem 0.5rem 0 0;
+  overflow: hidden;
+}
+
+.task-calendar [role="columnheader"]:first-child {
+  border-radius: 0.5rem 0 0 0;
+}
+
+.task-calendar [role="columnheader"]:last-child {
+  border-radius: 0 0.5rem 0 0;
+}
+
+.task-calendar [role="columnheader"] > div {
+  text-align: center;
+}
+
+.task-calendar [role="columnheader"] [aria-hidden="true"] {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.task-calendar [role="gridcell"] {
+  border: 0 !important;
+  box-shadow: inset -1px -1px 0 #cbd5e1;
+  padding: 0.5rem 0.45rem !important;
+  transition: background-color 160ms ease-out;
+}
+
+.task-calendar [role="gridcell"]:last-child {
+  box-shadow: inset -1px -1px 0 #cbd5e1;
+}
+
+.task-calendar [role="row"]:has([role="gridcell"]) > [role="gridcell"]:first-child {
+  border-left: 1px solid #cbd5e1 !important;
+}
+
+.task-calendar [role="grid"] > div:first-child > div,
+.task-calendar [role="row"]:has([role="gridcell"]) {
+  border-bottom: 1px solid #cbd5e1 !important;
+}
+
+.task-calendar [role="gridcell"]:hover {
+  background: #fafbff;
+}
+
+.task-calendar [role="gridcell"] > div:first-child {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.task-calendar [role="gridcell"] > div:first-child > [aria-hidden="true"] {
+  color: #374151;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.1rem 0.2rem;
+}
+
+.task-calendar .task-calendar-today {
+  background: #f3f6ff;
+}
+
+.task-calendar .task-calendar-today > div:first-child > [aria-hidden="true"] {
+  color: #4263eb;
+  font-weight: 700;
+}
+
+.task-calendar .task-calendar-other-month {
+  background: #fcfcfd;
+}
+
+.task-calendar .task-calendar-other-month > div:first-child > [aria-hidden="true"] {
+  color: #b8bec9;
+}
+
+.task-calendar [role="gridcell"] a {
+  border-radius: 0.25rem;
+  text-decoration: none;
+}
+
+.task-calendar [role="gridcell"] a:focus-visible {
+  outline: 2px solid #4263eb;
+  outline-offset: 2px;
+}
+
+.task-calendar-week [role="gridcell"] {
+  min-height: 32rem;
+  padding: 0.75rem !important;
+}
+
+.task-calendar-week [role="gridcell"] [role="button"] {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.task-calendar-week [role="gridcell"] [role="button"] > div {
+  width: 100%;
+}
+
+.task-calendar-week .week-task-card {
+  min-height: 7rem !important;
+}
+
+.task-calendar [role="list"]:not([aria-label="Events"]) {
+  display: grid;
+  gap: 0.375rem;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.task-calendar :has(> [role="listitem"]) {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.task-calendar-agenda > div > div > div {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.task-calendar [role="listitem"] {
+  overflow: hidden;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: none !important;
+}
+
+.task-calendar [role="listitem"] > [data-date] {
+  min-height: 2.5rem;
+  border: 0 !important;
+  background: #f8fafc;
+  color: #0f172a;
+  padding: 0.5rem 0.75rem;
+}
+
+.task-calendar [role="list"][aria-label="Events"] {
+  display: grid;
+  row-gap: 0.5rem !important;
+  gap: 0.5rem !important;
+  padding: 0.375rem 0;
+}
+
+.task-calendar [role="list"][aria-label="Events"] > [role="button"] {
+  margin: 0 0.5rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.task-calendar [role="list"][aria-label="Events"] > [role="button"] > div:first-child {
+  display: none;
+}
+
+.task-calendar [role="list"][aria-label="Events"] > [role="button"] > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-calendar .agenda-task-card {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .project-calendar {
+    padding-inline: 1rem;
+  }
+
+  .task-calendar [role="columnheader"] {
+    min-height: 2.25rem !important;
+  }
+
+  .task-calendar [role="columnheader"] [aria-hidden="true"] {
+    font-size: 0.62rem;
+  }
+
+  .task-calendar [role="gridcell"] {
+    padding: 0.35rem 0.25rem !important;
+  }
+
+  .task-calendar-week [role="gridcell"] {
+    min-height: 20rem;
+    padding: 0.5rem !important;
+  }
+
+}

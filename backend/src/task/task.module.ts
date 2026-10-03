@@ -8,6 +8,9 @@ import { TaskAccessGuard } from './guards/TaskAccessGuard';
 import { TaskAdminAccessGuard } from './guards/TaskAdminAccessGuard';
 import { BoardModule } from 'src/board/board.module';
 import { Board, boardSchema } from 'src/schema/Board.schema';
+import { Column, columnSchema } from 'src/schema/Column.schema';
+import { User, userSchema } from 'src/schema/User.schema';
+import { AuditLogModule } from 'src/audit-log/audit-log.module';
 
 @Module({
   imports: [
@@ -19,9 +22,17 @@ import { Board, boardSchema } from 'src/schema/Board.schema';
       {
         name: Board.name,
         schema: boardSchema
+      },
+      {
+        name: Column.name,
+        schema: columnSchema
+      },
+      {
+        name: User.name,
+        schema: userSchema
       }
     ]),
-    ColumnModule, BoardModule
+    ColumnModule, BoardModule, AuditLogModule
   ],
   providers: [TaskService, TaskAccessGuard, TaskAdminAccessGuard],
   controllers: [TaskController],

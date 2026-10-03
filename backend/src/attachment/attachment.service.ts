@@ -8,11 +8,13 @@ import { UserJwt } from 'src/lib/Decorators/UserJwt';
 import { Attachment, AttachmentDocument } from 'src/schema/Attachment.schema';
 import { ATTACHMENTS_DIRECTORY } from './attachment.constants';
 import { AttachmentDto } from './dto/response.dto';
+import { AuditLogService } from 'src/audit-log/audit-log.service';
 
 @Injectable()
 export class AttachmentService {
     constructor(
         @InjectModel(Attachment.name) private readonly attachmentModel: Model<AttachmentDocument>,
+        private readonly auditLogService: AuditLogService,
     ) {}
 
     async getAttachmentsByTask(taskId: Types.ObjectId) {
@@ -44,6 +46,15 @@ export class AttachmentService {
         });
 
         await attachment.populate('authorId', '_id username displayName');
+        await this.auditLogService.record({
+            projectId,
+            actorId: user.id,
+            action: 'attachment.uploaded',
+            entityType: 'attachment',
+            entityId: attachment._id,
+            taskId,
+            summary: `Uploaded ${attachment.originalName}`,
+        });
         return plainToInstance(AttachmentDto, attachment, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
@@ -71,7 +82,7 @@ export class AttachmentService {
         return { attachment, filePath };
     }
 
-    async deleteAttachment(attachmentId: Types.ObjectId) {
+    async deleteAttachment(attachmentId: Types.ObjectId, user: UserJwt, projectId: Types.ObjectId) {
         const attachment = await this.attachmentModel.findById(attachmentId);
 
         if (!attachment) {
@@ -88,6 +99,16 @@ export class AttachmentService {
         }
 
         await attachment.deleteOne();
+
+        await this.auditLogService.record({
+            projectId,
+            actorId: user.id,
+            action: 'attachment.deleted',
+            entityType: 'attachment',
+            entityId: attachment._id,
+            taskId: attachment.taskId,
+            summary: `Deleted ${attachment.originalName}`,
+        });
 
         return { message: 'Attachment deleted successfully' };
     }

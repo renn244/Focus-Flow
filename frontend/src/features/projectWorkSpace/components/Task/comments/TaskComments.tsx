@@ -2,10 +2,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/context/authContext";
 import { formatDistanceToNow } from "date-fns";
-import { Pencil, Send, Trash2 } from "lucide-react";
+import { History, Pencil, Send, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useComments, useCreateComment, useDeleteComment, useUpdateComment } from "../../../hooks/Comment/useComments";
+import { useTaskActivity } from "../../../hooks/Audit/useProjectActivity";
+import type { ProjectActivityItem } from "../../../types/audit";
 import type { CommentPayload, TaskComment } from "../../../types/comment";
 import CommentContent from "./CommentContent";
 import RichTextEditor from "./RichTextEditor";
@@ -25,8 +27,15 @@ const initials = (name: string) =>
 
 const TaskComments = ({ taskId, standalone = false }: { taskId: string; standalone?: boolean }) => {
   const { data: comments = [], isLoading, isError } = useComments(taskId);
+  const taskActivity = useTaskActivity(taskId);
   const createComment = useCreateComment(taskId);
   const [draft, setDraft] = useState<CommentPayload>(emptyComment);
+  const discussionItems = [
+    ...comments.map((comment) => ({ type: "comment" as const, createdAt: comment.createdAt, item: comment })),
+    ...((taskActivity.data?.pages.flatMap((page) => page.items) ?? [])
+      .filter((item) => item.action !== "comment.created")
+      .map((item) => ({ type: "event" as const, createdAt: item.createdAt, item }))),
+  ].sort((left, right) => new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime());
 
   const submitComment = async () => {
     if (!draft.contentText) return;
@@ -46,17 +55,26 @@ const TaskComments = ({ taskId, standalone = false }: { taskId: string; standalo
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading comments…</p>
+        <p className="text-sm text-muted-foreground">Loading activity…</p>
       ) : isError ? (
         <p className="text-sm text-destructive">Comments could not be loaded. Please try again.</p>
-      ) : comments.length === 0 ? (
+      ) : discussionItems.length === 0 ? (
         <div className="mb-5 rounded-md border border-dashed p-4 text-sm text-muted-foreground">
           Start the conversation. Updates and decisions for this task live here.
         </div>
       ) : (
         <div className="mb-5 flex flex-col gap-5">
-          {comments.map((comment) => <CommentCard key={comment._id} comment={comment} taskId={taskId} />)}
+          {discussionItems.map((entry) => entry.type === "comment"
+            ? <CommentCard key={entry.item._id} comment={entry.item} taskId={taskId} />
+            : <ActivityEvent key={entry.item._id} item={entry.item} />)}
         </div>
+      )}
+
+      {taskActivity.hasNextPage && (
+        <Button type="button" variant="outline" size="sm" className="mb-5" onClick={() => taskActivity.fetchNextPage()} disabled={taskActivity.isFetchingNextPage}>
+          <History data-icon="inline-start" />
+          {taskActivity.isFetchingNextPage ? "Loading…" : "Load earlier activity"}
+        </Button>
       )}
 
       <div>
@@ -75,6 +93,28 @@ const TaskComments = ({ taskId, standalone = false }: { taskId: string; standalo
     </section>
   );
 };
+
+const ActivityEvent = ({ item }: { item: ProjectActivityItem }) => (
+  <article className="ml-11 py-2">
+    <div className="flex items-baseline gap-3">
+      <p className="min-w-0 flex-1 truncate text-sm">
+        <span className="font-medium">{item.actor.displayName || item.actor.username}</span>{" "}
+        <span className="text-muted-foreground">{item.summary}</span>
+      </p>
+      <time className="text-xs text-muted-foreground" dateTime={item.createdAt}>
+        {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
+      </time>
+    </div>
+    {item.changes.length > 0 && (
+      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+        {item.changes.map((change) => `${change.field}: ${change.from || "—"} → ${change.to || "—"}`).join(" · ")}
+      </p>
+    )}
+    {item.changedFields.length > 0 && item.changes.length === 0 && (
+      <p className="mt-0.5 truncate text-xs text-muted-foreground">Changed: {item.changedFields.join(", ")}</p>
+    )}
+  </article>
+);
 
 const CommentCard = ({ comment, taskId }: { comment: TaskComment; taskId: string }) => {
   const { user } = useAuthContext();

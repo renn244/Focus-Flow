@@ -1,37 +1,55 @@
 import MainNav from "@/components/common/Nav/MainNav";
 import KanbanBoard from "../../../features/projectWorkSpace/components/Board/KanbanBoard";
-import { Calendar, Clipboard, Users } from "lucide-react";
+import { CalendarDays, Clipboard, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTeamManagementStore } from "@/features/teamMember/store/TeamManagementStore";
 import ActiveMembersDisplay from "@/features/teamMember/components/ActiveMembersDisplay";
+import AddMemberDialog from "@/features/teamMember/components/AddMemberDialog";
+import ChangeRoleDialog from "@/features/teamMember/components/ChangeRoleDialog";
+import ProjectTeamPage from "@/features/teamMember/components/ProjectTeamPage";
+import RemoveMemberDialog from "@/features/teamMember/components/RemoveMemberDialog";
+import ViewMemberProfileDialog from "@/features/teamMember/components/ViewMemberProfileDialog";
+import ProjectActivityDialog from "@/features/projectWorkSpace/components/Activity/ProjectActivityDialog";
+import ProjectCalendar from "@/features/projectWorkSpace/components/Calendar/ProjectCalendar";
+import ViewTaskDialog from "@/features/projectWorkSpace/components/Task/ViewTaskDialog";
+import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
+import { useState } from "react";
 
 type ProjectWorkspaceProps = {
 }
 
 const ProjectWorkspace = ({
 }: ProjectWorkspaceProps) => {
-    const setIsOpen = useTeamManagementStore((state) => state.setIsOpen);
+    const projectId = useProjectIdStore((state) => state.projectId);
+    const [activeView, setActiveView] = useState<"board" | "team" | "calendar">("board");
 
     return (
         <div className="min-h-screen max-w-screen bg-gradient-to-br from-slate-50 to-slate-100">
             <MainNav>
-                <Button variant="ghost" size="sm" className="text-slate-600">
+                <Button variant={activeView === "board" ? "secondary" : "ghost"} size="sm" className="text-slate-600" onClick={() => setActiveView("board")}>
                     <Clipboard className="w-4 h-4" />
                     Board
                 </Button>
-                <Button onClick={() => setIsOpen(true)} variant="ghost" size="sm" className="text-slate-600">
+                <Button variant={activeView === "team" ? "secondary" : "ghost"} size="sm" className="text-slate-600" onClick={() => setActiveView("team")}>
                     <Users className="w-4 h-4" />
                     Team
                 </Button>
-                <Button variant="ghost" size="sm" className="text-slate-600">
-                    <Calendar className="w-4 h-4" />
+                <Button variant={activeView === "calendar" ? "secondary" : "ghost"} size="sm" className="text-slate-600" onClick={() => setActiveView("calendar")}>
+                    <CalendarDays className="w-4 h-4" />
                     Calendar
                 </Button>
+                <ProjectActivityDialog />
 
                 <ActiveMembersDisplay />
             </MainNav>
 
-            <KanbanBoard />
+            {activeView === "board" && <KanbanBoard />}
+            {activeView === "team" && <ProjectTeamPage />}
+            {activeView === "calendar" && projectId && <ProjectCalendar projectId={projectId} />}
+            <ViewTaskDialog />
+            <AddMemberDialog />
+            <RemoveMemberDialog />
+            <ChangeRoleDialog />
+            <ViewMemberProfileDialog />
         </div>
     )
 }

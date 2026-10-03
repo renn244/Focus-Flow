@@ -7,7 +7,7 @@ import type { AxiosResponse } from "axios";
 type changeRoleSuccessResponse = any;
 type changeRoleResponse = AxiosResponse<changeRoleSuccessResponse, ExceptionResponse>;
 
-const changeRole = async (memberId: string, newRole: 'admin' | 'member'): Promise<changeRoleResponse['data']> => {
+const changeRole = async (memberId: string, newRole: 'owner' | 'admin' | 'member'): Promise<changeRoleResponse['data']> => {
     const response = await axiosInstance.patch(`/team/update-role/${memberId}`, { newRole })
 
     if(response.status === 400) {
@@ -24,6 +24,6 @@ const changeRole = async (memberId: string, newRole: 'admin' | 'member'): Promis
 export const useChangeRoleMutation = (memberId: string) => {
     return useMutation({
         mutationKey: ['teamMembers', 'changeRole', memberId],
-        mutationFn: (args: { newRole: 'admin' | 'member' }) => changeRole(memberId, args.newRole),
+        mutationFn: (args: { newRole: 'owner' | 'admin' | 'member' }) => changeRole(memberId, args.newRole),
     })
 }

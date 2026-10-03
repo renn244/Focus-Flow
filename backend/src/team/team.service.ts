@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { plainToInstance } from 'class-transformer';
@@ -15,6 +15,8 @@ import { TeamMemberType, TeamMemberUser, TeamMemberWithUser } from './dto/respon
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { TeamSharedService } from './team.shared.service';
 import { TeamGateway } from './team.gateway';
+import { AuditLogService } from 'src/audit-log/audit-log.service';
+import { GetTeamMembersTableQueryDto, TeamMemberTableSortField } from './dto/get-team-members-table-query.dto';
 
 @Injectable()
 export class TeamService {
@@ -26,6 +28,7 @@ export class TeamService {
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         @InjectModel(TeamMember.name) private readonly teamMemberModel: Model<TeamMemberDocument>,
         @InjectConnection() private readonly connection: Connection,
+        private readonly auditLogService: AuditLogService,
     ) {}
 
     async getProjectIdsByMemberId(userId: Types.ObjectId) {
@@ -56,6 +59,118 @@ export class TeamService {
 
     async getMembers(projectId: Types.ObjectId) {
         return this.teamSharedService.getMembers(projectId);
+    }
+
+    async getMembersTable(user: UserJwt, projectId: Types.ObjectId, query: GetTeamMembersTableQueryDto) {
+        const isMember = await this.teamSharedService.isUserMemberInProject(projectId, user.id);
+
+        if (!isMember) {
+            throw new ForbiddenException('User is not a member of this project');
+        }
+
+        const page = Math.max(1, Number(query.page) || 1);
+        const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
+        const sortBy = query.sortBy ?? 'member';
+        const sortOrder = query.sortOrder === 'desc' ? -1 : 1;
+        const search = query.search?.trim();
+
+        const sortFields: Record<TeamMemberTableSortField, string> = {
+            member: 'user.displayName',
+            role: 'roleRank',
+            email: 'user.email',
+            joined: 'joinedAt',
+        };
+
+        const memberSearch = search
+            ? {
+                $match: {
+                    $or: ['displayName', 'username', 'email'].map((field) => ({
+                        [`user.${field}`]: { $regex: this.escapeRegex(search), $options: 'i' },
+                    })),
+                },
+            }
+            : null;
+
+        const [result] = await this.teamMemberModel.aggregate([
+            {
+                $match: {
+                    $expr: {
+                        $eq: [{ $toString: '$projectId' }, projectId.toString()],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    let: { teamUserId: { $toString: '$userId' } },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: [{ $toString: '$_id' }, '$$teamUserId'],
+                                },
+                            },
+                        },
+                    ],
+                    as: 'user',
+                },
+            },
+            { $unwind: '$user' },
+            ...(memberSearch ? [memberSearch] : []),
+            {
+                $addFields: {
+                    roleRank: {
+                        $switch: {
+                            branches: [
+                                { case: { $eq: ['$role', 'owner'] }, then: 0 },
+                                { case: { $eq: ['$role', 'admin'] }, then: 1 },
+                                { case: { $eq: ['$role', 'member'] }, then: 2 },
+                            ],
+                            default: 3,
+                        },
+                    },
+                },
+            },
+            {
+                $facet: {
+                    items: [
+                        { $sort: { [sortFields[sortBy]]: sortOrder, 'user.username': sortOrder, _id: sortOrder } },
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
+                        {
+                            $project: {
+                                _id: 1,
+                                projectId: 1,
+                                role: 1,
+                                joinedAt: 1,
+                                user: {
+                                    _id: '$user._id',
+                                    username: '$user.username',
+                                    email: '$user.email',
+                                    displayName: '$user.displayName',
+                                    avatarUrl: '$user.avatarUrl',
+                                },
+                            },
+                        },
+                    ],
+                    metadata: [{ $count: 'total' }],
+                },
+            },
+        ]).exec();
+
+        const total = result?.metadata[0]?.total ?? 0;
+
+        return {
+            items: result?.items ?? [],
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        };
+    }
+
+    private escapeRegex(value: string) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     async getActiveMembers(projectId: Types.ObjectId) {
@@ -112,7 +227,7 @@ export class TeamService {
     }
  
     // check if the user has the permission to add the member in guard maybe
-    async addMember(user: UserJwt, body: AddMemberDto) {
+    async addMember(user: UserJwt, body: AddMemberDto, recordAudit = true) {
         const session = await this.connection.startSession();
         session.startTransaction();
 
@@ -139,6 +254,17 @@ export class TeamService {
                 }),
             )
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
+
+            if (recordAudit) {
+                await this.auditLogService.record({
+                    projectId: body.projectId,
+                    actorId: user.id,
+                    action: 'team.member_added',
+                    entityType: 'team_member',
+                    entityId: teamMember[0]._id,
+                    summary: 'Added a member to the project',
+                });
+            }
 
             return plainToInstance(TeamMemberWithUser, teamMemberWithUser, {
                 excludeExtraneousValues: true,
@@ -189,6 +315,15 @@ export class TeamService {
             );
             await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(body.projectId)));
 
+            await this.auditLogService.record({
+                projectId: body.projectId,
+                actorId: user.id,
+                action: 'team.member_removed',
+                entityType: 'team_member',
+                entityId: teamMember._id,
+                summary: 'Removed a member from the project',
+            });
+
             return plainToInstance(TeamMemberType, teamMember, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,
@@ -219,6 +354,15 @@ export class TeamService {
             }),
         );
         await this.cacheManager.del(CACHE_KEYS.teamMemberProjects(new Types.ObjectId(updatedTeamMember.projectId)));
+        await this.auditLogService.record({
+            projectId: updatedTeamMember.projectId,
+            actorId: user.id,
+            action: 'team.member_role_updated',
+            entityType: 'team_member',
+            entityId: updatedTeamMember._id,
+            summary: 'Updated a team member role',
+            changedFields: ['role'],
+        });
         return plainToInstance(TeamMemberWithUser, updatedTeamMember, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,

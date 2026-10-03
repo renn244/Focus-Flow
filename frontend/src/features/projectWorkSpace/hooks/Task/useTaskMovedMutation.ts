@@ -68,6 +68,7 @@ export const useTaskMovedMutation = () => {
         },
         onSettled: () => {
             queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', selectedBoardId] })
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'by-project'] });
         }
     })
 }

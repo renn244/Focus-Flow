@@ -26,7 +26,7 @@ export class TaskDto {
     tags?: string[];
 
     @Expose()
-    @Transform(({ value }) => value?.toString())
+    @Transform(({ value }) => value?._id?.toString?.() ?? value?.toString?.())
     assignee?: string;
 
     @Expose()
@@ -64,6 +64,21 @@ class BoardDto {
     projectId: string;
 }
 
+class AssigneeDto {
+    @Expose()
+    @Transform(({ obj }) => obj._id?.toString())
+    _id: string;
+
+    @Expose()
+    displayName: string;
+
+    @Expose()
+    username: string;
+
+    @Expose()
+    avatarUrl?: string;
+}
+
 export class TaskWithBoardAndColumnDto extends TaskDto {
     @Expose()
     @Transform(({ obj }) => plainToInstance(ColumnDto, obj.columnId, { excludeExtraneousValues: true }))
@@ -72,4 +87,14 @@ export class TaskWithBoardAndColumnDto extends TaskDto {
     @Expose()
     @Transform(({ obj }) => plainToInstance(BoardDto, obj.boardId, { excludeExtraneousValues: true }))
     board: BoardDto;
+
+    @Expose()
+    @Transform(({ obj }) => {
+        if (!obj.assignee || typeof obj.assignee !== 'object') {
+            return undefined;
+        }
+
+        return plainToInstance(AssigneeDto, obj.assignee, { excludeExtraneousValues: true });
+    })
+    assigneeUser?: AssigneeDto;
 }

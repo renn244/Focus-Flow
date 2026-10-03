@@ -1,7 +1,3 @@
-import AddMemberDialog from "@/features/teamMember/components/AddMemberDialog";
-import ChangeRoleDialog from "@/features/teamMember/components/ChangeRoleDialog";
-import RemoveMemberDialog from "@/features/teamMember/components/RemoveMemberDialog";
-import TeamManagement from "@/features/teamMember/components/TeamManagement";
 import useSelectBoardStore from "../../store/useSelectBoard";
 import CreateColumnDialog from "../Column/CreateColumnDialog";
 import EditColumnDialog from "../Column/EditColumnDialog";
@@ -10,7 +6,6 @@ import SortableColumnView from "../Column/SortableColumnView";
 import CreateTaskDialog from "../Task/CreateTaskDialog";
 import EditTaskDialog from "../Task/EditTaskDialog";
 import RemoveTaskDialog from "../Task/RemoveTaskDialog";
-import ViewTaskDialog from "../Task/ViewTaskDialog";
 import CreateBoardDialog from "./CreateBoardDialog";
 import KanbanBoardHeader from "./KanbanBoardHeader";
 
@@ -37,22 +32,12 @@ const KanbanBoard = () => {
             <CreateBoardDialog />
 
             {/* Task Dialog */}
-            <ViewTaskDialog />
-
             <CreateTaskDialog />
 
             <EditTaskDialog />
 
             <RemoveTaskDialog />
 
-            {/* Team Member */}
-            <TeamManagement />
-
-            <AddMemberDialog />
-
-            <RemoveMemberDialog />
-
-            <ChangeRoleDialog />
         </div>
     )
 }

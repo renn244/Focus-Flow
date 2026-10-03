@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
@@ -31,8 +31,12 @@ export class CommentController {
     @CheckResourceTaskSource({ source: 'body', key: 'taskId' })
     @UseGuards(CommentTaskAccessGuard)
     @Post()
-    async createComment(@Body() body: CreateCommentDto, @User() user: UserJwt) {
-        return this.commentService.createComment(body, user);
+    async createComment(
+        @Body() body: CreateCommentDto,
+        @User() user: UserJwt,
+        @Req() request: { taskProjectId: Types.ObjectId },
+    ) {
+        return this.commentService.createComment(body, user, request.taskProjectId);
     }
 
     @ApiOperation({ summary: 'Update your own comment' })
@@ -42,15 +46,21 @@ export class CommentController {
     async updateComment(
         @Param('commentId', ParseObjectIdPipe) commentId: Types.ObjectId,
         @Body() body: UpdateCommentDto,
+        @User() user: UserJwt,
+        @Req() request: { commentProjectId: Types.ObjectId },
     ) {
-        return this.commentService.updateComment(commentId, body);
+        return this.commentService.updateComment(commentId, body, user, request.commentProjectId);
     }
 
     @ApiOperation({ summary: 'Delete your own comment' })
     @ApiParam({ name: 'commentId', type: String })
     @UseGuards(CommentAuthorAccessGuard)
     @Delete(':commentId')
-    async deleteComment(@Param('commentId', ParseObjectIdPipe) commentId: Types.ObjectId) {
-        return this.commentService.deleteComment(commentId);
+    async deleteComment(
+        @Param('commentId', ParseObjectIdPipe) commentId: Types.ObjectId,
+        @User() user: UserJwt,
+        @Req() request: { commentProjectId: Types.ObjectId },
+    ) {
+        return this.commentService.deleteComment(commentId, user, request.commentProjectId);
     }
 }

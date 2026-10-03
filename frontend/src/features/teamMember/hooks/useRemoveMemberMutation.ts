@@ -36,6 +36,7 @@ export const useRemoveMemberMutation = () => {
         onSuccess: (_, variable) => {
             setIsOpen(false);
             queryClient.invalidateQueries({ queryKey: ['teamMembers', variable.projectId] });
+            queryClient.invalidateQueries({ queryKey: ['teamMembersTable', variable.projectId] });
             queryClient.invalidateQueries({ queryKey: ['searchUser'] });
         }
     })
