@@ -88,7 +88,7 @@ const ViewProject = ({ project } : { project: ProjectWithOwner }) => {
                         )}
                         
                         <Button variant="outline" size="sm" asChild>
-                            <Link to={`/projects/view/$projectId`} params={{ projectId: project._id }}>
+                            <Link to={`/projects/$projectId`} params={{ projectId: project._id }}>
                                 <ExternalLink className="w-4 h-4 mr-2" />
                                 View Full
                             </Link>
