@@ -13,6 +13,7 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RedirectTokenRouteImport } from './routes/redirect-token'
 import { Route as MultiFactorRouteImport } from './routes/multi-factor'
 import { Route as LoginRouteImport } from './routes/login'
@@ -33,6 +34,11 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RedirectTokenRoute = RedirectTokenRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
   '/redirect-token': typeof RedirectTokenRoute
+  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
   '/redirect-token': typeof RedirectTokenRoute
+  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/multi-factor': typeof MultiFactorRoute
   '/redirect-token': typeof RedirectTokenRoute
+  '/settings': typeof SettingsRoute
   '/sign-up': typeof SignUpRoute
   '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/multi-factor'
     | '/redirect-token'
+    | '/settings'
     | '/sign-up'
     | '/verify-email'
     | '/projects/$projectId'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/multi-factor'
     | '/redirect-token'
+    | '/settings'
     | '/sign-up'
     | '/verify-email'
     | '/projects/$projectId'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/multi-factor'
     | '/redirect-token'
+    | '/settings'
     | '/sign-up'
     | '/verify-email'
     | '/projects/$projectId'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MultiFactorRoute: typeof MultiFactorRoute
   RedirectTokenRoute: typeof RedirectTokenRoute
+  SettingsRoute: typeof SettingsRoute
   SignUpRoute: typeof SignUpRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
   ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       path: '/redirect-token'
       fullPath: '/redirect-token'
       preLoaderRoute: typeof RedirectTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up': {
@@ -360,6 +380,15 @@ declare module './routes/redirect-token' {
     FileRoutesByPath['/redirect-token']['fullPath']
   >
 }
+declare module './routes/settings' {
+  const createFileRoute: CreateFileRoute<
+    '/settings',
+    FileRoutesByPath['/settings']['parentRoute'],
+    FileRoutesByPath['/settings']['id'],
+    FileRoutesByPath['/settings']['path'],
+    FileRoutesByPath['/settings']['fullPath']
+  >
+}
 declare module './routes/sign-up' {
   const createFileRoute: CreateFileRoute<
     '/sign-up',
@@ -423,6 +452,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MultiFactorRoute: MultiFactorRoute,
   RedirectTokenRoute: RedirectTokenRoute,
+  SettingsRoute: SettingsRoute,
   SignUpRoute: SignUpRoute,
   VerifyEmailRoute: VerifyEmailRoute,
   ProjectsProjectIdRoute: ProjectsProjectIdRoute,

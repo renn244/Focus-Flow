@@ -5,32 +5,42 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { CustomValidationPipe } from './CustomValidationPipe';
 import { AllExceptionFilter } from './AllExceptionFilter';
+import { join } from 'node:path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new CustomValidationPipe())
+  app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalFilters(new AllExceptionFilter());
-  app.setGlobalPrefix('api')
+  app.setGlobalPrefix('api');
+  app.use(
+    '/uploads/avatars',
+    express.static(join(process.cwd(), 'uploads', 'avatars')),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('FocusFlow API')
     .setDescription('API documentation for FocusFlow')
     .setVersion('1.0')
     .addBearerAuth({
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      })
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
     .build();
-  const documentFactory = SwaggerModule.createDocument(app, config, { 
-    extraModels: [], deepScanRoutes: true,  
+  const documentFactory = SwaggerModule.createDocument(app, config, {
+    extraModels: [],
+    deepScanRoutes: true,
   });
   SwaggerModule.setup('docs', app, documentFactory);
 
-  const allowedOrigins = (process.env.CLIENT_BASE_URL ?? 'http://localhost:4173,http://127.0.0.1:4173')
+  const allowedOrigins = (
+    process.env.CLIENT_BASE_URL ??
+      'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173'
+  )
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -38,7 +48,7 @@ async function bootstrap() {
   app.enableCors({
     origin: allowedOrigins,
     credentials: true,
-  })
+  });
 
   await app.listen(process.env.PORT ?? 5000);
 }
