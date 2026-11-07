@@ -17,6 +17,7 @@ import { useGetTaskById } from "../../hooks/Task/useGetTaskById";
 import useTaskDialogStore from "../../store/useTaskDialog";
 import type { TaskWithBoardAndColumn } from "../../type";
 import TaskAssigneeCombobox from "./TaskAssigneeCombobox";
+import TaskChecklist from "./TaskChecklist";
 
 const TaskComments = lazy(() => import("./comments/TaskComments"));
 const TaskAttachments = lazy(() => import("./attachments/TaskAttachments"));
@@ -32,7 +33,13 @@ const ViewTaskDialog = () => {
 
     return (
         <Dialog open={isViewOpen} onOpenChange={setViewOpen}>
-            <DialogContent className="h-[90vh] grid-rows-[minmax(0,1fr)] md:max-w-6xl overflow-hidden p-0">
+            <DialogContent
+                className="h-[90vh] grid-rows-[minmax(0,1fr)] md:max-w-6xl overflow-hidden p-0"
+                // Esc while typing a checklist item closes that box, not the whole task.
+                onEscapeKeyDown={(event) => {
+                    if ((document.activeElement as HTMLElement | null)?.closest("[data-checklist-input]")) event.preventDefault();
+                }}
+            >
                 {isLoading && (
                     <div role="status" aria-busy="true" className="space-y-6 p-6">
                         <DialogTitle className="sr-only">Loading task details</DialogTitle>
@@ -192,6 +199,10 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                                     {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "No due date"}
                                 </span>
                             </div>
+                        </div>
+
+                        <div className="border-t pt-3">
+                            <TaskChecklist task={task} />
                         </div>
 
                         <div>

@@ -54,6 +54,8 @@ export const useTaskSocket = (boardId: string | null | undefined) => {
 
         // taskUpdated
         socket.on('taskUpdated', (data: TaskWithBoardAndColumn) => {
+            // Keep an open task dialog in sync too (e.g. someone else ticks a checklist item).
+            queryClient.setQueryData(['task', data._id], (current: TaskWithBoardAndColumn | undefined) => current ? { ...current, ...data } : current);
             queryClient.setQueryData(['columns', 'byboard', boardId], (oldData: ColumnWithTasks[]) => {
                 if(!oldData) return oldData;
 

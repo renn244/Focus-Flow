@@ -1,6 +1,30 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, plainToInstance, Transform } from 'class-transformer';
 
+export class ChecklistItemDto {
+    @ApiProperty()
+    @Expose()
+    @Transform(({ obj }) => obj._id?.toString())
+    _id: string;
+
+    @ApiProperty()
+    @Expose()
+    text: string;
+
+    @ApiProperty()
+    @Expose()
+    done: boolean;
+
+    @ApiPropertyOptional({ description: 'Who checked it off' })
+    @Expose()
+    @Transform(({ obj }) => obj.doneBy?.toString())
+    doneBy?: string;
+
+    @ApiPropertyOptional({ format: 'date-time' })
+    @Expose()
+    doneAt?: Date;
+}
+
 export class TaskDto {
     @ApiProperty()
     @Expose()
@@ -42,6 +66,11 @@ export class TaskDto {
     @ApiPropertyOptional()
     @Expose()
     order?: number;
+
+    @ApiProperty({ type: [ChecklistItemDto] })
+    @Expose()
+    @Transform(({ obj }) => plainToInstance(ChecklistItemDto, obj.checklist ?? [], { excludeExtraneousValues: true }))
+    checklist: ChecklistItemDto[];
 
     @ApiProperty({ format: 'date-time' })
     @Expose()

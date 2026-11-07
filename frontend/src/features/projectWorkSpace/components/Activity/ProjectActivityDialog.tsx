@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { format, isToday, isYesterday } from "date-fns";
-import { ArrowRight, FileText, FolderKanban, History, MessageSquareText, MoveRight, NotebookText, Pencil, Plus, RotateCw, Trash2, UsersRound, X } from "lucide-react";
+import { ArrowRight, FileText, FolderKanban, History, ListChecks, MessageSquareText, MoveRight, NotebookText, Pencil, Plus, RotateCw, Trash2, UsersRound, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ListLoading from "@/components/common/ListLoading";
@@ -49,6 +49,7 @@ const verbs: Record<string, string> = {
 };
 
 const actionIcon = (action: string, entityType: ProjectActivityItem["entityType"]) => {
+  if (action.startsWith("checklist.")) return ListChecks;
   if (action.endsWith(".created") && entityType === "task") return Plus;
   if (action === "task.moved") return MoveRight;
   if (action.endsWith(".deleted")) return Trash2;
@@ -89,12 +90,18 @@ const isNoOp = (item: ProjectActivityItem) =>
 const batchable: Record<string, (count: number) => string> = {
   "task.created": (count) => `created ${count} tasks`,
   "team.member_added": (count) => `added ${count} members to the project`,
+  "checklist.item_checked": (count) => `checked off ${count} items in`,
+  "checklist.item_unchecked": (count) => `unchecked ${count} items in`,
+  "checklist.item_removed": (count) => `removed ${count} checklist items in`,
 };
 
-/** Back-to-back creations or member additions by one person within ten minutes read as one entry. */
+const isChecklist = (action: string) => action.startsWith("checklist.");
+
+/** Back-to-back creations, member additions or checklist ticks (on one task) by one person within ten minutes read as one entry. */
 const canBatch = (entry: Entry, item: ProjectActivityItem) =>
   item.action in batchable &&
   entry.item.action === item.action &&
+  (!isChecklist(item.action) || entry.item.taskId === item.taskId) &&
   entry.item.actor._id === item.actor._id &&
   Math.abs(new Date(entry.batch[entry.batch.length - 1].createdAt).getTime() - new Date(item.createdAt).getTime()) < 10 * 60 * 1000;
 
@@ -241,6 +248,14 @@ const ActivityRow = ({ item, batch, taskTitles, onOpenTask, last }: ActivityRowP
   const changes = item.changes.filter((change) => (change.from ?? "") !== (change.to ?? ""));
   // Task, comment and file entries name the task they belong to (a deleted task has no name left).
   const refersToTask = item.entityType !== "project" && item.entityType !== "team_member" && item.action !== "task.deleted";
+  const taskLink = item.taskId && taskTitle ? (
+    <>
+      {" "}
+      <button type="button" onClick={() => onOpenTask(item.taskId!)} className="rounded-sm font-medium text-foreground underline-offset-2 hover:underline focus-visible:outline-2">
+        {taskTitle}
+      </button>
+    </>
+  ) : " a task";
 
   return (
     <li className="relative flex gap-3 pb-4">
@@ -260,18 +275,14 @@ const ActivityRow = ({ item, batch, taskTitles, onOpenTask, last }: ActivityRowP
           <p className="min-w-0 flex-1 text-sm leading-5 text-muted-foreground">
             <span className="font-medium text-foreground">{actorName}</span>{" "}
             {batched ? (
-              <>{batchable[item.action](batch.length)}</>
+              <>{batchable[item.action](batch.length)}{isChecklist(item.action) && taskLink}</>
+            ) : isChecklist(item.action) ? (
+              // e.g. checked off “Write test” in Socket reconnect fix
+              <>{item.summary.charAt(0).toLowerCase() + item.summary.slice(1)} in{taskLink}</>
             ) : verb ? (
               <>
                 {verb}
-                {refersToTask && (item.taskId && taskTitle ? (
-                  <>
-                    {" "}
-                    <button type="button" onClick={() => onOpenTask(item.taskId!)} className="rounded-sm font-medium text-foreground underline-offset-2 hover:underline focus-visible:outline-2">
-                      {taskTitle}
-                    </button>
-                  </>
-                ) : " a task")}
+                {refersToTask && taskLink}
               </>
             ) : (
               item.summary.charAt(0).toLowerCase() + item.summary.slice(1)

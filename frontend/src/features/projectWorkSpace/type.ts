@@ -35,6 +35,14 @@ export type ColumnWithTasks = {
     tasks: TaskWithBoardAndColumn[];
 } & Omit<Column, 'tasks'>
 
+export type ChecklistItem = {
+    _id: string;
+    text: string;
+    done: boolean;
+    doneBy?: string;
+    doneAt?: string;
+}
+
 export type Task = {
     _id: string;
     title: string;
@@ -47,6 +55,7 @@ export type Task = {
     dueDate?: string;
     tags?: string[];
     order?: number
+    checklist?: ChecklistItem[];
 
     createdAt: string;
     updatedAt: string;

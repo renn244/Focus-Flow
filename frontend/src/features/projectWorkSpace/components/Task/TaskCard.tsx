@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 import { format, isBefore, isToday, startOfDay } from "date-fns"
-import { CalendarClock, GripVertical } from "lucide-react"
+import { CalendarClock, GripVertical, ListChecks } from "lucide-react"
 import type { TaskWithBoardAndColumn } from "../../type"
 import TaskOptions from "./TaskOptions"
 import useTaskDialogStore from "../../store/useTaskDialog"
@@ -38,13 +38,16 @@ const TaskCard = ({
     const overdue = !isDone && !!task.dueDate && isBefore(startOfDay(new Date(task.dueDate)), startOfDay(new Date()))
     const dueToday = !isDone && !!task.dueDate && isToday(new Date(task.dueDate))
     const assigneeName = task.assigneeUser?.displayName || task.assigneeUser?.username
+    const checklistTotal = task.checklist?.length ?? 0
+    const checklistDone = task.checklist?.filter((item) => item.done).length ?? 0
+    const checklistComplete = checklistTotal > 0 && checklistDone === checklistTotal
 
     return (
         <article
         ref={setNodeRef}
         style={style}
         className={cn(
-            "group rounded-lg border bg-card p-3 shadow-[0_1px_2px_rgb(15_23_42/0.06)] transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-[0_4px_12px_rgb(15_23_42/0.08)]",
+            "group relative overflow-hidden rounded-lg border bg-card p-3 shadow-[0_1px_2px_rgb(15_23_42/0.06)] transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-[0_4px_12px_rgb(15_23_42/0.08)]",
             isDragging && "relative z-50 shadow-[0_12px_32px_rgb(15_23_42/0.18)]"
         )}>
             <div className="flex items-start gap-1">
@@ -81,6 +84,15 @@ const TaskCard = ({
                         {overdue && <span className="sr-only">(overdue)</span>}
                     </time>
                 )}
+                {checklistTotal > 0 && (
+                    <span
+                        title={`Checklist: ${checklistDone} of ${checklistTotal} done`}
+                        className={cn("flex items-center gap-1 text-xs font-medium tabular-nums", checklistComplete ? "text-emerald-700" : "text-muted-foreground")}
+                    >
+                        <ListChecks className="size-3.5" aria-hidden="true" />
+                        <span className="sr-only">Checklist </span>{checklistDone}/{checklistTotal}
+                    </span>
+                )}
                 {isMine ? (
                     <span className="ml-auto rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">You</span>
                 ) : assigneeName ? (
@@ -90,6 +102,16 @@ const TaskCard = ({
                     </Avatar>
                 ) : null}
             </div>
+
+            {/* Checklist progress runs along the card's bottom edge. */}
+            {checklistTotal > 0 && (
+                <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[3px] bg-slate-100">
+                    <div
+                        className={cn("h-full transition-[width] duration-300", checklistComplete ? "bg-emerald-500" : "bg-primary")}
+                        style={{ width: `${(checklistDone / checklistTotal) * 100}%` }}
+                    />
+                </div>
+            )}
         </article>
     )
 }

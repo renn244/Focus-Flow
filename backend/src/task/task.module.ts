@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { TaskController } from './task.controller';
+import { ChecklistController } from './checklist.controller';
+import { ChecklistService } from './checklist.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Task, taskSchema } from 'src/schema/Task.schema';
 import { ColumnModule } from 'src/column/column.module';
@@ -34,8 +36,8 @@ import { AuditLogModule } from 'src/audit-log/audit-log.module';
     ]),
     ColumnModule, BoardModule, AuditLogModule
   ],
-  providers: [TaskService, TaskAccessGuard, TaskAdminAccessGuard],
-  controllers: [TaskController],
+  providers: [TaskService, ChecklistService, TaskAccessGuard, TaskAdminAccessGuard],
+  controllers: [TaskController, ChecklistController],
   exports: [TaskService]
 })
 export class TaskModule {}
