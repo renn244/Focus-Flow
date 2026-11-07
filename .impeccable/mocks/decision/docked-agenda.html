@@ -1,0 +1,94 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1440px;height:900px;overflow:hidden;font-family:Inter,sans-serif;font-size:14px;color:#15233b;background:#f4f6fb;display:grid;grid-template-rows:56px 1fr}
+.top{background:#08142d;display:flex;align-items:center;gap:6px;padding:0 20px;color:#dbeafe;border-bottom:1px solid rgba(147,197,253,.14)}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:16px;margin-right:22px}
+.logo{width:30px;height:30px;border-radius:8px;background:#3b82f6;display:grid;place-items:center;font-weight:700}
+.tab{height:56px;display:flex;align-items:center;gap:8px;padding:0 14px;color:#9fb3d6;border-bottom:2px solid transparent}
+.tab.on{color:#fff;border-color:#3b82f6;background:rgba(255,255,255,.04)}
+.dot{width:8px;height:8px;border-radius:3px;display:inline-block}
+.right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.search{width:240px;height:34px;border:1px solid rgba(147,197,253,.2);border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;color:#8fa3c7;font-size:13px}
+.me{width:32px;height:32px;border-radius:50%;background:#c7d2fe;color:#1e3a8a;display:grid;place-items:center;font-weight:600;font-size:12px}
+.body{display:grid;grid-template-columns:340px 1fr;min-height:0}
+.dock{background:#0b1630;color:#dbeafe;padding:22px 18px;overflow:hidden}
+.dh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.dh b{color:#fff;font-size:17px;font-weight:600}
+.dh span{color:#8fa3c7;font-size:12px}
+.seg{display:flex;gap:4px;background:rgba(255,255,255,.05);border-radius:8px;padding:3px;margin:14px 0 18px}
+.seg div{flex:1;text-align:center;padding:6px 0;border-radius:6px;font-size:12px;color:#9fb3d6}
+.seg .on{background:#3b82f6;color:#fff;font-weight:600}
+.lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8fa3c7;margin:16px 4px 8px}
+.task{display:flex;gap:12px;padding:11px 10px;border-radius:10px;border:1px solid rgba(147,197,253,.12);margin-bottom:8px;background:rgba(255,255,255,.03)}
+.task.here{border-color:rgba(59,130,246,.6);background:rgba(59,130,246,.12)}
+.chk{width:16px;height:16px;border:1.5px solid #5b77a8;border-radius:50%;flex:none;margin-top:2px}
+.tt{color:#fff;font-weight:500}.tm{font-size:12px;color:#8ea3c8;margin-top:3px;display:flex;gap:6px;align-items:center}
+.late{color:#fca5a5}
+.work{padding:22px 28px;min-width:0;overflow:hidden}
+.wh{display:flex;align-items:center;gap:14px}
+h1{font-size:24px;font-weight:600;letter-spacing:-.02em}
+.pill{border:1px solid #dfe5ef;background:#fff;border-radius:8px;padding:5px 10px;font-size:13px;color:#3d4a60}
+.views{display:flex;gap:22px;margin-top:16px;border-bottom:1px solid #dfe5ef}
+.views div{padding:0 0 10px;color:#58677d;font-weight:500}
+.views .on{color:#15233b;border-bottom:2px solid #3b82f6}
+.avs{margin-left:auto;display:flex}
+.avs i{width:28px;height:28px;border-radius:50%;border:2px solid #f4f6fb;margin-left:-8px;display:grid;place-items:center;font-size:11px;font-style:normal;font-weight:600}
+.btn{height:36px;padding:0 14px;border-radius:8px;background:#3b82f6;color:#fff;font-weight:600;display:flex;align-items:center}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px}
+.col{background:#e9eef6;border-radius:12px;padding:12px}
+.ch{display:flex;justify-content:space-between;font-weight:600;font-size:13px;padding:2px 4px 12px}
+.ch span{color:#58677d;font-weight:500}
+.card{background:#fff;border:1px solid #dfe5ef;border-radius:10px;padding:12px;margin-bottom:10px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.card.mine{box-shadow:inset 3px 0 0 #3b82f6,0 1px 2px rgba(15,23,42,.05)}
+.cm{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:#58677d}
+.pri{font-size:11px;font-weight:600;padding:2px 7px;border-radius:6px}
+.hi{background:#fee2e2;color:#b91c1c}.md{background:#fef3c7;color:#a16207}.lo{background:#dcfce7;color:#15803d}
+</style></head><body>
+<header class="top">
+  <div class="brand"><div class="logo">F</div>FocusFlow</div>
+  <div class="tab"><span>My work</span></div>
+  <div class="tab on"><i class="dot" style="background:#f59e0b"></i>Capstone team</div>
+  <div class="tab"><i class="dot" style="background:#22d3ee"></i>Computer Science</div>
+  <div class="tab"><i class="dot" style="background:#f472b6"></i>Design Studio</div>
+  <div class="tab"><i class="dot" style="background:#a78bfa"></i>English Lit</div>
+  <div class="tab" style="color:#8fa3c7">+2 more</div>
+  <div class="right"><div class="search">Search <span>Ctrl K</span></div><div class="me">RS</div></div>
+</header>
+<div class="body">
+  <aside class="dock">
+    <div class="dh"><b>My agenda</b><span>Sat, Nov 7</span></div>
+    <div class="seg"><div>Overdue 2</div><div class="on">Today 4</div><div>7 days 9</div></div>
+    <div class="lbl">Overdue</div>
+    <div class="task"><i class="chk"></i><div><div class="tt">Submit lab report 3</div><div class="tm"><i class="dot" style="background:#22d3ee"></i>Computer Science · <span class="late">Nov 5</span></div></div></div>
+    <div class="lbl">Today</div>
+    <div class="task"><i class="chk"></i><div><div class="tt">Read chapter 4: The Great Gatsby</div><div class="tm"><i class="dot" style="background:#a78bfa"></i>English Lit · 9:00</div></div></div>
+    <div class="task here"><i class="chk"></i><div><div class="tt">API endpoints for task comments</div><div class="tm"><i class="dot" style="background:#f59e0b"></i>Capstone team · 11:00 · on this board</div></div></div>
+    <div class="task"><i class="chk"></i><div><div class="tt">Poster concepts round 2</div><div class="tm"><i class="dot" style="background:#f472b6"></i>Design Studio · 14:00</div></div></div>
+    <div class="task"><i class="chk"></i><div><div class="tt">Plan next week</div><div class="tm"><i class="dot" style="background:#facc15"></i>Personal · 18:00</div></div></div>
+  </aside>
+  <main class="work">
+    <div class="wh"><h1>Capstone team</h1><span class="pill">Board: Sprint 4 ▾</span>
+      <div class="avs"><i style="background:#c7d2fe;color:#1e3a8a">RS</i><i style="background:#bbf7d0;color:#166534">AL</i><i style="background:#fde68a;color:#92400e">MK</i><i style="background:#fbcfe8;color:#9d174d">JP</i></div>
+      <span class="pill">Activity</span><div class="btn">+ Task</div></div>
+    <div class="views"><div class="on">Board</div><div>Calendar</div><div>Team</div></div>
+    <div class="cols">
+      <div class="col"><div class="ch">To do <span>4</span></div>
+        <div class="card">Write onboarding copy<div class="cm">Nov 12<span class="pri lo">Low</span></div></div>
+        <div class="card">Attachment size limits<div class="cm">Nov 13<span class="pri md">Medium</span></div></div>
+        <div class="card">Usability test script<div class="cm">Nov 16<span class="pri md">Medium</span></div></div></div>
+      <div class="col"><div class="ch">In progress <span>3</span></div>
+        <div class="card">Calendar drag to reschedule<div class="cm">Nov 10<span class="pri hi">High</span></div></div>
+        <div class="card">Team roles table<div class="cm">Nov 9<span class="pri md">Medium</span></div></div></div>
+      <div class="col"><div class="ch">In review <span>2</span></div>
+        <div class="card mine">API endpoints for task comments<div class="cm">Today · 3 comments<span class="pri hi">High</span></div></div>
+        <div class="card">Activity log schema<div class="cm">Nov 8<span class="pri lo">Low</span></div></div></div>
+      <div class="col"><div class="ch">Done <span>12</span></div>
+        <div class="card" style="opacity:.6">Login page redesign<div class="cm">Nov 2</div></div>
+        <div class="card" style="opacity:.6">Socket reconnect fix<div class="cm">Nov 1</div></div></div>
+    </div>
+  </main>
+</div>
+</body></html>

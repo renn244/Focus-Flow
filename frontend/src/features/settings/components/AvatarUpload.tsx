@@ -71,7 +71,7 @@ const AvatarUpload = ({
           )}
           Change photo
         </Button>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-muted-foreground">
           JPG, PNG, or WebP - up to 2 MB
         </p>
         <input

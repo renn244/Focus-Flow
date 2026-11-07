@@ -2,8 +2,9 @@ import LoadingSpinner from '../ui/loadingSpinner'
 
 const ScreenLoading = () => {
   return (
-    <div className='flex items-center justify-center h-screen'>
-        <LoadingSpinner />
+    <div role="status" aria-busy="true" className="flex min-h-svh items-center justify-center bg-background">
+        <span className="sr-only">Loading FocusFlow</span>
+        <LoadingSpinner className="size-6 text-primary" />
     </div>
   )
 }

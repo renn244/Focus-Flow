@@ -22,7 +22,7 @@ const ViewAllActiveMembers = ({ members }: ViewAllActiveMembersProps) => {
                     <DropdownMenuLabel className="flex gap-2" key={idx}>
                         <Avatar>
                             <AvatarImage src={member.avatarUrl} alt={member.displayName} />
-                            <AvatarFallback className="select-none">{member.displayName.charAt(0)}</AvatarFallback>
+                            <AvatarFallback className="select-none bg-slate-200 text-xs font-semibold text-slate-700">{member.displayName.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col space-y-1">
                             <p className="text-sm font-medium leading-none">

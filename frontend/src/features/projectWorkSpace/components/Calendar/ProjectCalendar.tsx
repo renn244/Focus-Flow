@@ -15,6 +15,7 @@ import { useGetTasksByProject } from "../../hooks/Task/useGetTasksByProject";
 import useTaskDialogStore from "../../store/useTaskDialog";
 import type { TaskWithBoardAndColumn } from "../../type";
 import "./project-calendar.css";
+import ProjectCalendarSkeleton from "./ProjectCalendarSkeleton";
 
 type ProjectCalendarProps = {
   projectId: string;
@@ -29,21 +30,21 @@ const toCalendarDate = (dueDate: string) => {
 };
 
 const priorityStyles = {
-  high: "bg-orange-500 text-white hover:bg-orange-600",
-  medium: "bg-[#4263eb] text-white hover:bg-[#3654d8]",
-  low: "bg-sky-400 text-sky-950 hover:bg-sky-500",
+  high: "bg-rose-700 text-white hover:bg-rose-800",
+  medium: "bg-amber-200 text-amber-950 hover:bg-amber-300",
+  low: "bg-emerald-100 text-emerald-900 hover:bg-emerald-200",
 } as const;
 
 const agendaPriorityStyles = {
-  high: "bg-orange-500",
-  medium: "bg-[#4263eb]",
-  low: "bg-sky-400",
+  high: "bg-rose-700",
+  medium: "bg-amber-500",
+  low: "bg-emerald-600",
 } as const;
 
 const calendarRailStyles = {
   high: "bg-white/85",
-  medium: "bg-white/85",
-  low: "bg-sky-950/70",
+  medium: "bg-amber-800/70",
+  low: "bg-emerald-800/70",
 } as const;
 
 const initials = (name: string) => name
@@ -122,7 +123,9 @@ const formatCalendarEvent = (eventInfo: EventDisplayInfo) => {
 const ProjectCalendar = ({ projectId }: ProjectCalendarProps) => {
   const calendarRef = useRef<CalendarRef>(null);
   const [calendarTitle, setCalendarTitle] = useState("");
-  const [calendarView, setCalendarView] = useState<CalendarView>("dayGridMonth");
+  const [calendarView, setCalendarView] = useState<CalendarView>(() =>
+    window.matchMedia("(max-width: 639px)").matches ? "listWeek" : "dayGridMonth"
+  );
   const { data: tasks = [], isLoading, isError } = useGetTasksByProject(projectId);
   const setViewTaskId = useTaskDialogStore((state) => state.setViewTaskId);
 
@@ -149,7 +152,7 @@ const ProjectCalendar = ({ projectId }: ProjectCalendarProps) => {
   };
 
   if (isLoading) {
-    return <div className="p-6 text-sm text-muted-foreground">Loading project calendar…</div>;
+    return <ProjectCalendarSkeleton agenda={calendarView === "listWeek"} />;
   }
 
   if (isError) {
@@ -163,17 +166,16 @@ const ProjectCalendar = ({ projectId }: ProjectCalendarProps) => {
   }
 
   return (
-    <section className="project-calendar min-h-[calc(100vh-4rem)] px-6 pb-10 pt-7" aria-label="Project calendar">
+    <section className="project-calendar app-content min-h-[calc(100vh-8rem)]" aria-label="Project calendar">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold tracking-tight text-slate-950" aria-live="polite">{calendarTitle}</h2>
+        <h2 className="text-xl font-semibold text-foreground" aria-live="polite">{calendarTitle}</h2>
         <div className="flex flex-wrap items-center justify-end gap-3">
-          <p className="text-sm text-slate-500">Click a task to open its details.</p>
-          <div className="flex items-center gap-1.5" aria-label="Calendar controls">
+          <div className="flex flex-wrap items-center gap-1.5" aria-label="Calendar controls">
             <Tabs value={calendarView} onValueChange={(value) => changeView(value as CalendarView)} aria-label="Calendar view">
               <TabsList className="h-9 rounded-lg bg-slate-100 p-1 shadow-none">
-                <TabsTrigger value="dayGridMonth" className="h-7 min-w-16 rounded-md border-0 px-3 text-xs font-semibold text-slate-500 hover:text-slate-900 data-[state=active]:bg-[#4263eb] data-[state=active]:text-white data-[state=active]:shadow-sm">Month</TabsTrigger>
-                <TabsTrigger value="dayGridWeek" className="h-7 min-w-16 rounded-md border-0 px-3 text-xs font-semibold text-slate-500 hover:text-slate-900 data-[state=active]:bg-[#4263eb] data-[state=active]:text-white data-[state=active]:shadow-sm">Week</TabsTrigger>
-                <TabsTrigger value="listWeek" className="h-7 min-w-16 rounded-md border-0 px-3 text-xs font-semibold text-slate-500 hover:text-slate-900 data-[state=active]:bg-[#4263eb] data-[state=active]:text-white data-[state=active]:shadow-sm">Agenda</TabsTrigger>
+                <TabsTrigger value="dayGridMonth" className="h-7 min-w-16 rounded-md border-0 px-3 text-xs font-semibold text-slate-500 hover:text-slate-900 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm">Month</TabsTrigger>
+                <TabsTrigger value="dayGridWeek" className="h-7 min-w-16 rounded-md border-0 px-3 text-xs font-semibold text-slate-500 hover:text-slate-900 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm">Week</TabsTrigger>
+                <TabsTrigger value="listWeek" className="h-7 min-w-16 rounded-md border-0 px-3 text-xs font-semibold text-slate-500 hover:text-slate-900 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm">Agenda</TabsTrigger>
               </TabsList>
             </Tabs>
             <Button type="button" variant="outline" size="sm" className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-950" onClick={() => navigate("today")}>Today</Button>
@@ -216,7 +218,7 @@ const ProjectCalendar = ({ projectId }: ProjectCalendarProps) => {
 
       {events.length === 0 && (
         <div className="mt-6 flex items-start gap-3 text-sm text-slate-500">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#4263eb]/10 text-[#4263eb]">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
             <CalendarDays className="size-4" aria-hidden="true" />
           </span>
           <p className="pt-1 leading-5"><span className="font-medium text-slate-800">No due dates yet.</span> Set a due date on a task and it will appear in this month view.</p>

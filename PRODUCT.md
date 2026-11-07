@@ -25,8 +25,9 @@ in one deliberately small student-project application.
 ## Operating Context
 
 Users sign in, create projects and teams, arrange tasks on boards, assign work,
-set due dates, and return to see their current agenda. The project will also
-support task comments, attachments, and a project activity trail.
+set due dates, and return to see their current agenda. Tasks support comments
+and attachments; projects have a calendar view, a team table, and an activity
+trail; users manage their profile and password in settings.
 
 ## Capabilities and Constraints
 
@@ -43,6 +44,9 @@ support task comments, attachments, and a project activity trail.
 - Product name: FocusFlow.
 - The login/sign-up visual language is the reference for the app: deep navy
   surfaces with restrained blue, purple, and cyan accents.
+- In the signed-in app, the navy identity carries the shell and accents, but
+  boards, lists, and other long-session work areas may sit on lighter surfaces
+  (confirmed 2026-11-07).
 - Copy must be honest about currently supported or planned core workflow;
   invented enterprise, AI, integration, billing, or user-count claims are not
   allowed.

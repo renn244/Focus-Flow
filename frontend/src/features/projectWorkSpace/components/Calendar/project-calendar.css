@@ -1,18 +1,18 @@
 .project-calendar {
-  background: #ffffff;
+  background: var(--background);
 }
 
 .task-calendar [role="grid"] {
-  background: #ffffff;
+  background: var(--card);
   border: 0 !important;
-  color: #1f2937;
+  color: var(--foreground);
   font-family: inherit;
 }
 
 .task-calendar [role="columnheader"] {
-  background: #4263eb;
+  background: var(--primary);
   border-left: 0 !important;
-  color: #ffffff;
+  color: var(--card);
   align-items: center;
   box-shadow: none;
   min-height: 2.5rem !important;
@@ -43,22 +43,22 @@
 
 .task-calendar [role="gridcell"] {
   border: 0 !important;
-  box-shadow: inset -1px -1px 0 #cbd5e1;
+  box-shadow: inset -1px -1px 0 var(--border);
   padding: 0.5rem 0.45rem !important;
   transition: background-color 160ms ease-out;
 }
 
 .task-calendar [role="gridcell"]:last-child {
-  box-shadow: inset -1px -1px 0 #cbd5e1;
+  box-shadow: inset -1px -1px 0 var(--border);
 }
 
 .task-calendar [role="row"]:has([role="gridcell"]) > [role="gridcell"]:first-child {
-  border-left: 1px solid #cbd5e1 !important;
+  border-left: 1px solid var(--border) !important;
 }
 
 .task-calendar [role="grid"] > div:first-child > div,
 .task-calendar [role="row"]:has([role="gridcell"]) {
-  border-bottom: 1px solid #cbd5e1 !important;
+  border-bottom: 1px solid var(--border) !important;
 }
 
 .task-calendar [role="gridcell"]:hover {
@@ -82,7 +82,7 @@
 }
 
 .task-calendar .task-calendar-today > div:first-child > [aria-hidden="true"] {
-  color: #4263eb;
+  color: var(--primary);
   font-weight: 700;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .task-calendar .task-calendar-other-month > div:first-child > [aria-hidden="true"] {
-  color: #b8bec9;
+  color: #64748b;
 }
 
 .task-calendar [role="gridcell"] a {
@@ -100,7 +100,7 @@
 }
 
 .task-calendar [role="gridcell"] a:focus-visible {
-  outline: 2px solid #4263eb;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -145,8 +145,8 @@
 .task-calendar [role="listitem"] {
   overflow: hidden;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 0.75rem;
-  background: #ffffff;
+  border-radius: 0.5rem;
+  background: var(--card);
   box-shadow: none !important;
 }
 

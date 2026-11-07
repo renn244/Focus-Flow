@@ -14,13 +14,13 @@ const Controls = () => {
     const setFilterPriority = useProjectFilterStore((state) => state.setFilterPriority);
 
     return (
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b pb-5">
             <div className="flex items-center gap-4">
 
                 {/* Filters */}
                 <div className="flex items-center gap-2">
                     <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="w-32">
+                        <SelectTrigger className="w-32 bg-card" aria-label="Filter by status">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -32,7 +32,7 @@ const Controls = () => {
                     </Select>
                     
                     <Select value={filterPriority} onValueChange={setFilterPriority}>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-32 bg-card" aria-label="Filter by priority">
                             <SelectValue placeholder="Priority" />
                         </SelectTrigger>
                         <SelectContent>
@@ -63,10 +63,10 @@ const Controls = () => {
                     <Plus className="w-4 h-4 mr-2" />
                     Create Project
                 </Button>
-                <Button variant={viewMode === "grid" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grid")}>
+                <Button variant={viewMode === "grid" ? "secondary" : "ghost"} size="icon" className="size-9" aria-label="Grid view" aria-pressed={viewMode === "grid"} title="Grid view" onClick={() => setViewMode("grid")}>
                     <Grid3X3 className="w-4 h-4" />
                 </Button>
-                <Button variant={viewMode === "list" ? "default" : "outline"} size="sm" onClick={() => setViewMode("list")}>
+                <Button variant={viewMode === "list" ? "secondary" : "ghost"} size="icon" className="size-9" aria-label="List view" aria-pressed={viewMode === "list"} title="List view" onClick={() => setViewMode("list")}>
                     <List className="w-4 h-4" />
                 </Button>
             </div>

@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, InternalServerErrorException, Logger } from "@nestjs/common";
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from "@nestjs/common";
 import { SentryExceptionCaptured } from "@sentry/nestjs";
 import { Error as MongooseError } from "mongoose";
 import * as Sentry from '@sentry/nestjs';
@@ -20,10 +20,17 @@ export class AllExceptionFilter implements ExceptionFilter {
         let errors: any = undefined;
 
         if(exception instanceof MongooseError || exception?.name === "MongoServerError") {
+            try {
+                errors = handleMongooseError(exception);
+            } catch (mappedException) {
+                exception = mappedException;
+            }
+        }
+
+        if (errors) {
             status = 400;
             name = undefined;
             message = "Validation failed";
-            errors = handleMongooseError(exception);
 
         } else if (exception instanceof HttpException) {
             const exceptionResponse = exception.getResponse() as any;
@@ -43,7 +50,6 @@ export class AllExceptionFilter implements ExceptionFilter {
         } else {
             // handle the server unexpected bugs that should be fixed
             this.loggerr.error(exception);
-            message = exception.message;
             
             if(process.env.SOFTWARE_ENV === "production") {
                 // Log to Sentry Manually if needed

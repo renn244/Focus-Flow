@@ -8,6 +8,7 @@ import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { downloadAttachment, getAttachmentBlob, useAttachments, useDeleteAttachment, useUploadAttachment } from "../../../hooks/Attachment/useAttachments";
 import type { TaskAttachment } from "../../../types/attachment";
+import ListLoading from "@/components/common/ListLoading";
 
 const allowedFileTypes = ".pdf,.jpg,.jpeg,.png,.webp,.txt,.docx";
 const maxFileSize = 5 * 1024 * 1024;
@@ -68,7 +69,7 @@ const TaskAttachments = ({ taskId, standalone = false }: { taskId: string; stand
       </div>
 
       {isLoading ? (
-        <p className="mt-4 text-sm text-muted-foreground">Loading attachments…</p>
+        <ListLoading className="mt-4" label="Loading attachments" rows={2} />
       ) : isError ? (
         <p className="mt-4 text-sm text-destructive">Attachments could not be loaded. Please try again.</p>
       ) : attachments.length === 0 ? (

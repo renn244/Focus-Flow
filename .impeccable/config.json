@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-11-07T13:59:20.616Z",
+        "reason": "DESIGN.md typography binds Inter as the FocusFlow brand face (display, headline, body, label)"
+      }
+    ]
+  }
+}

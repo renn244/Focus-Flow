@@ -1,46 +1,89 @@
-import MainNav from "@/components/common/Nav/MainNav";
-import KanbanBoard from "../../../features/projectWorkSpace/components/Board/KanbanBoard";
-import { CalendarDays, Clipboard, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { CalendarDays, ListTodo, SquareKanban, Users } from "lucide-react";
+import AppShell from "@/components/layout/AppShell";
+import { useShellStore } from "@/components/layout/shellStore";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import KanbanBoard from "@/features/projectWorkSpace/components/Board/KanbanBoard";
+import ProjectActivityDialog from "@/features/projectWorkSpace/components/Activity/ProjectActivityDialog";
+import ProjectCalendar from "@/features/projectWorkSpace/components/Calendar/ProjectCalendar";
+import ViewTaskDialog from "@/features/projectWorkSpace/components/Task/ViewTaskDialog";
+import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
+import { useGetProjectById } from "@/features/projects/hooks/useGetProjectById";
+import { projectDotClass } from "@/features/projects/hooks/useNavProjects";
 import ActiveMembersDisplay from "@/features/teamMember/components/ActiveMembersDisplay";
 import AddMemberDialog from "@/features/teamMember/components/AddMemberDialog";
 import ChangeRoleDialog from "@/features/teamMember/components/ChangeRoleDialog";
 import ProjectTeamPage from "@/features/teamMember/components/ProjectTeamPage";
 import RemoveMemberDialog from "@/features/teamMember/components/RemoveMemberDialog";
 import ViewMemberProfileDialog from "@/features/teamMember/components/ViewMemberProfileDialog";
-import ProjectActivityDialog from "@/features/projectWorkSpace/components/Activity/ProjectActivityDialog";
-import ProjectCalendar from "@/features/projectWorkSpace/components/Calendar/ProjectCalendar";
-import ViewTaskDialog from "@/features/projectWorkSpace/components/Task/ViewTaskDialog";
-import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
-import { useState } from "react";
 
-type ProjectWorkspaceProps = {
-}
+type View = "board" | "calendar" | "team";
 
-const ProjectWorkspace = ({
-}: ProjectWorkspaceProps) => {
+const views: { id: View; label: string; icon: typeof SquareKanban }[] = [
+    { id: "board", label: "Board", icon: SquareKanban },
+    { id: "calendar", label: "Calendar", icon: CalendarDays },
+    { id: "team", label: "Team", icon: Users },
+];
+
+const ProjectWorkspace = () => {
     const projectId = useProjectIdStore((state) => state.projectId);
-    const [activeView, setActiveView] = useState<"board" | "team" | "calendar">("board");
+    const [activeView, setActiveView] = useState<View>("board");
+    const { data: project, isLoading } = useGetProjectById(projectId || "");
+    const setAgendaDrawerOpen = useShellStore((state) => state.setAgendaDrawerOpen);
 
     return (
-        <div className="min-h-screen max-w-screen bg-gradient-to-br from-slate-50 to-slate-100">
-            <MainNav>
-                <Button variant={activeView === "board" ? "secondary" : "ghost"} size="sm" className="text-slate-600" onClick={() => setActiveView("board")}>
-                    <Clipboard className="w-4 h-4" />
-                    Board
-                </Button>
-                <Button variant={activeView === "team" ? "secondary" : "ghost"} size="sm" className="text-slate-600" onClick={() => setActiveView("team")}>
-                    <Users className="w-4 h-4" />
-                    Team
-                </Button>
-                <Button variant={activeView === "calendar" ? "secondary" : "ghost"} size="sm" className="text-slate-600" onClick={() => setActiveView("calendar")}>
-                    <CalendarDays className="w-4 h-4" />
-                    Calendar
-                </Button>
-                <ProjectActivityDialog />
+        <AppShell dock projectId={projectId}>
+            <div className="border-b bg-card">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 pt-5 sm:px-6 lg:px-8">
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                        {isLoading ? (
+                            <Skeleton className="h-7 w-56" />
+                        ) : (
+                            <>
+                                <span aria-hidden="true" className={cn("size-3 shrink-0 rounded", projectDotClass(project?.color))} />
+                                <h1 className="truncate text-xl font-semibold tracking-tight text-foreground sm:text-2xl" title={project?.name}>
+                                    {project?.name ?? "Project"}
+                                </h1>
+                            </>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="hidden sm:block"><ActiveMembersDisplay /></div>
+                        <ProjectActivityDialog />
+                    </div>
+                </div>
 
-                <ActiveMembersDisplay />
-            </MainNav>
+                <div className="flex items-end justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                    <div role="tablist" aria-label="Project views" className="-mb-px flex gap-1 overflow-x-auto">
+                        {views.map(({ id, label, icon: Icon }) => (
+                            <button
+                                key={id}
+                                type="button"
+                                role="tab"
+                                aria-selected={activeView === id}
+                                onClick={() => setActiveView(id)}
+                                className={cn(
+                                    "mt-3 flex h-10 shrink-0 items-center gap-2 border-b-2 px-2.5 text-sm font-medium sm:px-3 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2",
+                                    activeView === id ? "border-shell-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                <Icon className="hidden size-4 sm:block" />
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setAgendaDrawerOpen(true)}
+                        className="mb-1.5 flex h-8 shrink-0 items-center gap-2 rounded-md border px-2.5 text-sm font-medium text-foreground hover:bg-accent focus-visible:outline-2 lg:hidden"
+                    >
+                        <ListTodo className="size-4" />
+                        <span className="sm:hidden">Agenda</span>
+                        <span className="hidden sm:inline">My agenda</span>
+                    </button>
+                </div>
+            </div>
 
             {activeView === "board" && <KanbanBoard />}
             {activeView === "team" && <ProjectTeamPage />}
@@ -50,8 +93,8 @@ const ProjectWorkspace = ({
             <RemoveMemberDialog />
             <ChangeRoleDialog />
             <ViewMemberProfileDialog />
-        </div>
-    )
-}
+        </AppShell>
+    );
+};
 
-export default ProjectWorkspace
+export default ProjectWorkspace;

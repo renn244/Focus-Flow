@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
+import TeamMembersSkeleton from "./TeamMembersSkeleton";
 import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
 import { CircleAlert, Search, UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -43,11 +43,11 @@ const ProjectTeamPage = () => {
     const endResult = data ? Math.min(data.page * data.limit, data.total) : 0;
 
     return (
-        <section className="min-h-[calc(100vh-4rem)] px-4 pb-10 pt-7 sm:px-6 lg:px-8" aria-label="Project team">
+        <section className="app-content min-h-[calc(100vh-8rem)]" aria-label="Project team">
             <div>
                 <div className="flex flex-wrap items-start justify-between gap-4 pb-5">
                     <div>
-                        <h2 className="text-xl font-semibold tracking-tight text-slate-950">Team</h2>
+                        <h2 className="text-xl font-semibold text-foreground">Team</h2>
                         <p className="mt-1 text-sm text-slate-500">Manage the people and roles in this project.</p>
                     </div>
                     <Button type="button" onClick={() => setAddMemberOpen(true)}>
@@ -57,9 +57,7 @@ const ProjectTeamPage = () => {
                 </div>
 
                 {isLoading && (
-                    <div className="flex min-h-56 items-center justify-center">
-                        <LoadingSpinner />
-                    </div>
+                    <TeamMembersSkeleton />
                 )}
 
                 {isError && (

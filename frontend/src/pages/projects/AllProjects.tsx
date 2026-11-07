@@ -12,26 +12,22 @@ import { useAllProjects } from "@/features/projects/hooks/useAllProject"
 import useProjectDialogStore from "@/features/projects/store/useProjectDialog"
 import useViewModeStore from "@/features/projects/store/useViewMode.store"
 import { Folder, Plus } from "lucide-react"
+import AppShell from "@/components/layout/AppShell"
 
 const AllProjects = () => {
     const viewMode = useViewModeStore((state) => state.viewMode);
     const setCreateOpen = useProjectDialogStore((state) => state.setCreateOpen);
     const { data: projects, error, isLoading } = useAllProjects();
 
-    if(isLoading) {
-        return <ProjectSkeletonLoading />
-    }
-
-    if(error) {
-        return <>Somethign went wrong</>
-    }
-
     return (
-        <div className="min-h-screen">
-            <div className="p-6">
+        <AppShell>
+            <div className="app-content">
+                <h1 className="mb-6 text-2xl font-semibold tracking-tight text-foreground">All projects</h1>
                 <Controls />
+                {isLoading && <ProjectSkeletonLoading />}
+                {error && <p role="alert" className="py-8 text-sm text-destructive">Projects could not be loaded. Please refresh and try again.</p>}
 
-                {viewMode === "grid" ? (
+                {!isLoading && !error && (viewMode === "grid" ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {projects?.map((project) => (
                             <ProjectGridCard key={project._id} project={project} />
@@ -43,16 +39,16 @@ const AllProjects = () => {
                             <ProjectListCard key={project._id} project={project} />
                         ))}
                     </div>
-                )}
+                ))}
 
-                {projects?.length === 0 && (
+                {!isLoading && !error && projects?.length === 0 && (
                     <div className="text-center py-12">
-                        <Folder className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
-                        <p className="text-gray-500 mb-4">Try adjusting your search or filter criteria</p>
+                        <Folder className="mx-auto mb-4 size-10 text-muted-foreground" />
+                        <h2 className="mb-2 text-lg font-medium text-foreground">No projects match</h2>
+                        <p className="mb-4 text-muted-foreground">Change the status or priority filter, or create a new project.</p>
                         <Button onClick={() => setCreateOpen(true)}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Create your first project
+                            <Plus className="size-4" />
+                            New project
                         </Button>
                     </div>
                 )}
@@ -67,7 +63,7 @@ const AllProjects = () => {
 
                 <DeleteProjectDialog />
             </div>
-        </div>
+        </AppShell>
     )
 }
 

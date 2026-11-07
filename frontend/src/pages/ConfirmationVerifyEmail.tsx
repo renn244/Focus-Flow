@@ -1,7 +1,8 @@
+import AuthLayout from "@/components/common/AuthLayout";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import LoadingSpinner from "@/components/ui/loadingSpinner"
-import { AlertCircle, ArrowRight, CheckCircle, Leaf } from "lucide-react"
+import { AlertCircle, ArrowRight, CheckCircle } from "lucide-react"
 import { Link } from "@tanstack/react-router";
 import { useConfirmationVerifyEmail } from "@/features/auth/hooks/useConfirmationVerifyEmail"
 import { useNewVerificationMutation } from "@/features/auth/hooks/useNewVerificationMutation"
@@ -59,79 +60,10 @@ const ConfirmationVerifyEmail = ({
 
     const statusContent = getStatusContent();
 
+
     return (
-        <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-            <div className="absolute inset-0 opacity-10">
-                <div
-                className="absolute inset-0"
-                style={{
-                    backgroundImage: `radial-gradient(circle at 20px 20px, rgba(255,255,255,0.15) 1px, transparent 0)`,
-                    backgroundSize: "40px 40px",
-                }}
-                />
-            </div>
-
-            <div className="absolute inset-0 overflow-hidden">
-                <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1200 800">
-                    <defs>
-                        <linearGradient id="connectionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#3b82f6" />
-                            <stop offset="50%" stopColor="#8b5cf6" />
-                            <stop offset="100%" stopColor="#06b6d4" />
-                        </linearGradient>
-                    </defs>
-                    <path
-                    d="M100,200 Q300,100 500,200 T900,300 Q1100,200 1200,400"
-                    fill="none"
-                    stroke="url(#connectionGradient)"
-                    strokeWidth="2"
-                    opacity="0.6"
-                    />
-                    <path
-                    d="M0,400 Q200,300 400,400 T800,500 Q1000,400 1200,600"
-                    fill="none"
-                    stroke="url(#connectionGradient)"
-                    strokeWidth="1.5"
-                    opacity="0.4"
-                    />
-                    <path
-                    d="M200,100 Q400,50 600,150 T1000,200"
-                    fill="none"
-                    stroke="url(#connectionGradient)"
-                    strokeWidth="1"
-                    opacity="0.3"
-                    />
-                </svg>
-
-                <div
-                className="absolute top-20 left-20 w-3 h-3 bg-blue-400 rounded-full opacity-40 animate-pulse"
-                style={{ animationDelay: "0s" }}
-                />
-                <div
-                className="absolute top-40 right-32 w-2 h-2 bg-purple-400 rounded-full opacity-50 animate-pulse"
-                style={{ animationDelay: "1s" }}
-                />
-                <div
-                className="absolute bottom-32 left-40 w-4 h-4 bg-cyan-400 rounded-full opacity-30 animate-pulse"
-                style={{ animationDelay: "2s" }}
-                />
-                <div
-                className="absolute bottom-20 right-20 w-2 h-2 bg-indigo-400 rounded-full opacity-40 animate-pulse"
-                style={{ animationDelay: "0.5s" }}
-                />
-            </div>
-
-            <div className="absolute top-8 left-8 z-10">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <Leaf className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="text-white font-semibold text-lg">Cloud</span>
-                </div>
-            </div>
-
-            <div className="flex items-center justify-center min-h-screen p-4">
-                <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+        <AuthLayout>
+                <Card className="w-full max-w-md bg-card border-0">
                     <CardContent className="p-8 text-center">
                         <div
                         className={`w-16 h-16 ${statusContent.bgColor} rounded-full flex items-center justify-center mx-auto mb-6`}
@@ -183,7 +115,7 @@ const ConfirmationVerifyEmail = ({
                                     </Button>
                                     <Button variant="outline" className="w-full bg-transparent" asChild>
                                         <Link to="/">
-                                            Contact support
+                                            Back to FocusFlow
                                         </Link>
                                     </Button>
                                 </div>
@@ -193,7 +125,7 @@ const ConfirmationVerifyEmail = ({
                         {status === "success" && (
                             <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
                                 <p className="text-sm text-green-700">
-                                    🎉 Welcome to Cloud! Your account is now fully activated and ready to use.
+                                    Welcome to FocusFlow! Your account is now fully activated and ready to use.
                                 </p>
                             </div>
                         )}
@@ -201,45 +133,14 @@ const ConfirmationVerifyEmail = ({
                         {status === "expired" && (
                             <div className="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
                                 <p className="text-sm text-orange-700">
-                                    ⏰ Verification links expire after 24 hours for security reasons.
+                                    Request a new verification link to confirm your email.
                                 </p>
                             </div>
                         )}
                     </CardContent>
                 </Card>
-            </div>
+        </AuthLayout>
+    );
+};
 
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-                <div className="flex items-center gap-2 text-white/60 text-sm">
-                    {status === "verifying" && (
-                        <>
-                            <div className="flex gap-1">
-                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                                    <div
-                                    className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
-                                    style={{ animationDelay: "150ms" }}
-                                    />
-                                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                            </div>
-                            <span>Verifying token...</span>
-                        </>
-                    )}
-                    {status === "success" && (
-                        <>
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                            <span>Verification complete</span>
-                        </>
-                    )}
-                    {(status === "error" || status === "expired") && (
-                        <>
-                            <AlertCircle className="w-4 h-4 text-red-400" />
-                            <span>Verification failed</span>
-                        </>
-                    )}
-                </div>
-            </div>
-        </div>
-    )
-}
-
-export default ConfirmationVerifyEmail
+export default ConfirmationVerifyEmail;

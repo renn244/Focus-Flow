@@ -1,0 +1,97 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1440px;height:900px;overflow:hidden;font-family:Inter,sans-serif;font-size:14px;color:#15233b;background:#f4f6fb;display:grid;grid-template-columns:248px 1fr}
+.sb{background:#08142d;color:#c3d3f0;padding:20px 14px;display:flex;flex-direction:column;gap:3px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:600;font-size:17px;padding:0 8px 20px}
+.logo{width:30px;height:30px;border-radius:8px;background:#3b82f6;display:grid;place-items:center;font-weight:700}
+.it{display:flex;align-items:center;justify-content:space-between;padding:9px 10px;border-radius:8px}
+.it.on{background:rgba(59,130,246,.18);color:#fff;box-shadow:inset 3px 0 0 #3b82f6}
+.it span{font-size:12px;color:#8fa3c7}
+.lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8fa3c7;padding:18px 10px 6px}
+.dot{width:8px;height:8px;border-radius:3px;display:inline-block}
+.pj{display:flex;gap:10px;align-items:center}
+.foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px 8px 0;border-top:1px solid rgba(147,197,253,.14)}
+.me{width:32px;height:32px;border-radius:50%;background:#c7d2fe;color:#1e3a8a;display:grid;place-items:center;font-weight:600;font-size:12px}
+.main{padding:28px 40px;min-width:0}
+.hd{display:flex;align-items:flex-end;justify-content:space-between}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#3b82f6;font-weight:600}
+h1{font-size:30px;font-weight:600;letter-spacing:-.025em;margin-top:6px}
+.acts{display:flex;gap:10px}
+.search{width:300px;height:38px;border:1px solid #dfe5ef;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:#58677d}
+.btn{height:38px;padding:0 16px;border-radius:8px;background:#3b82f6;color:#fff;font-weight:600;display:flex;align-items:center}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin:26px 0}
+.d{background:#fff;border:1px solid #dfe5ef;border-radius:12px;padding:12px 14px}
+.d .n{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.d .w{font-size:12px;color:#58677d}
+.d .c{margin-top:10px;display:flex;gap:4px}
+.d .c i{width:16px;height:4px;border-radius:2px}
+.d.on{background:#08142d;border-color:#08142d;color:#fff}
+.d.on .w{color:#93c5fd}
+.grid{display:grid;grid-template-columns:1fr 340px;gap:24px}
+.list{background:#fff;border:1px solid #dfe5ef;border-radius:14px}
+.lh{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #edf1f7}
+.lh b{font-size:15px}
+.tabs{display:flex;gap:4px;background:#f1f4f9;border-radius:8px;padding:3px}
+.tabs div{padding:5px 10px;border-radius:6px;font-size:12px;color:#58677d}
+.tabs .on{background:#fff;color:#15233b;font-weight:600;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+.row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #edf1f7}
+.row:last-child{border:0}
+.chk{width:18px;height:18px;border:1.5px solid #b6c2d4;border-radius:50%;flex:none}
+.t{font-weight:500}.m{font-size:12px;color:#58677d;margin-top:2px;display:flex;gap:6px;align-items:center}
+.due{margin-left:auto;font-size:13px;color:#58677d;font-variant-numeric:tabular-nums}
+.pri{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;width:62px;text-align:center}
+.hi{background:#fee2e2;color:#b91c1c}.md{background:#fef3c7;color:#a16207}.lo{background:#dcfce7;color:#15803d}
+.panel{background:#fff;border:1px solid #dfe5ef;border-radius:14px;padding:18px}
+.panel h3{font-size:15px;font-weight:600;margin-bottom:14px}
+.rp{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #edf1f7}
+.rp:last-child{border:0}
+.sw{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:600;font-size:12px}
+.prog{height:5px;background:#edf1f7;border-radius:4px;margin-top:6px;overflow:hidden;width:180px}
+.prog i{display:block;height:100%}
+</style></head><body>
+<aside class="sb">
+  <div class="brand"><div class="logo">F</div>FocusFlow</div>
+  <div class="it on">Today <span style="color:#93c5fd">4</span></div>
+  <div class="it">Upcoming <span>9</span></div>
+  <div class="it">Calendar</div>
+  <div class="it">All projects</div>
+  <div class="lbl">Projects</div>
+  <div class="it"><span class="pj" style="color:#c3d3f0;font-size:14px"><i class="dot" style="background:#f59e0b"></i>Capstone team</span><span>11</span></div>
+  <div class="it"><span class="pj" style="color:#c3d3f0;font-size:14px"><i class="dot" style="background:#22d3ee"></i>Computer Science</span><span>6</span></div>
+  <div class="it"><span class="pj" style="color:#c3d3f0;font-size:14px"><i class="dot" style="background:#f472b6"></i>Design Studio</span><span>5</span></div>
+  <div class="it"><span class="pj" style="color:#c3d3f0;font-size:14px"><i class="dot" style="background:#a78bfa"></i>English Lit</span><span>4</span></div>
+  <div class="it"><span class="pj" style="color:#c3d3f0;font-size:14px"><i class="dot" style="background:#facc15"></i>Personal</span><span>3</span></div>
+  <div class="it" style="color:#8fa3c7">+ New project</div>
+  <div class="foot"><div class="me">RS</div><div><div style="color:#fff;font-weight:500">Renato Santos</div><div style="font-size:12px;color:#8fa3c7">Settings</div></div></div>
+</aside>
+<main class="main">
+  <div class="hd"><div><div class="eyebrow">Saturday, November 7</div><h1>4 tasks due today</h1></div>
+    <div class="acts"><div class="search">Search <span>Ctrl K</span></div><div class="btn">+ New task</div></div></div>
+  <div class="week">
+    <div class="d"><div class="w">Thu</div><div class="n">5</div><div class="c"><i style="background:#dc2626"></i></div></div>
+    <div class="d"><div class="w">Fri</div><div class="n">6</div><div class="c"><i style="background:#dc2626"></i></div></div>
+    <div class="d on"><div class="w">Today</div><div class="n">7</div><div class="c"><i style="background:#a78bfa"></i><i style="background:#f59e0b"></i><i style="background:#f472b6"></i><i style="background:#facc15"></i></div></div>
+    <div class="d"><div class="w">Sun</div><div class="n">8</div><div class="c"><i style="background:#f59e0b"></i></div></div>
+    <div class="d"><div class="w">Mon</div><div class="n">9</div><div class="c"><i style="background:#f59e0b"></i><i style="background:#22d3ee"></i></div></div>
+    <div class="d"><div class="w">Tue</div><div class="n">10</div><div class="c"><i style="background:#f59e0b"></i></div></div>
+    <div class="d"><div class="w">Wed</div><div class="n">11</div><div class="c"><i style="background:#22d3ee"></i><i style="background:#a78bfa"></i></div></div>
+  </div>
+  <div class="grid">
+    <section class="list">
+      <div class="lh"><b>My tasks</b><div class="tabs"><div>Overdue 2</div><div class="on">Today 4</div><div>Next 7 days 9</div></div></div>
+      <div class="row"><i class="chk"></i><div><div class="t">Read chapter 4: The Great Gatsby</div><div class="m"><i class="dot" style="background:#a78bfa"></i>English Lit · To do</div></div><span class="due">9:00</span><span class="pri lo">Low</span></div>
+      <div class="row"><i class="chk"></i><div><div class="t">API endpoints for task comments</div><div class="m"><i class="dot" style="background:#f59e0b"></i>Capstone team · In review</div></div><span class="due">11:00</span><span class="pri hi">High</span></div>
+      <div class="row"><i class="chk"></i><div><div class="t">Poster concepts round 2</div><div class="m"><i class="dot" style="background:#f472b6"></i>Design Studio · In progress</div></div><span class="due">14:00</span><span class="pri md">Medium</span></div>
+      <div class="row"><i class="chk"></i><div><div class="t">Plan next week</div><div class="m"><i class="dot" style="background:#facc15"></i>Personal · To do</div></div><span class="due">18:00</span><span class="pri lo">Low</span></div>
+    </section>
+    <aside class="panel"><h3>Recent projects</h3>
+      <div class="rp"><div class="sw" style="background:#d97706">CP</div><div><div class="t">Capstone team</div><div class="prog"><i style="width:62%;background:#f59e0b"></i></div></div></div>
+      <div class="rp"><div class="sw" style="background:#0891b2">CS</div><div><div class="t">Computer Science</div><div class="prog"><i style="width:40%;background:#22d3ee"></i></div></div></div>
+      <div class="rp"><div class="sw" style="background:#db2777">DS</div><div><div class="t">Design Studio</div><div class="prog"><i style="width:55%;background:#f472b6"></i></div></div></div>
+    </aside>
+  </div>
+</main>
+</body></html>

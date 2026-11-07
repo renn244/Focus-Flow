@@ -16,7 +16,10 @@ const TaskList = ({ column }: TaskListProps) => {
   return (
     <div 
     ref={droppableNode} 
-    className={`flex-1 space-y-3 min-h-[200px] ${isOver ? 'ring-2 ring-blue-500 rounded-lg' : ''}`}>
+    className={`min-h-32 flex-1 space-y-2.5 rounded-lg transition-colors ${isOver ? 'bg-blue-500/[0.08] outline-2 outline-dashed outline-blue-400' : ''}`}>
+      {column.tasks?.length === 0 && !isOver && (
+        <p className="rounded-lg border border-dashed border-slate-300 px-3 py-6 text-center text-xs text-muted-foreground">Drop a task here or add one above.</p>
+      )}
       {column.tasks?.map((task) => (
         <TaskCard key={task._id} columnId={column._id} task={task} />
       ))}

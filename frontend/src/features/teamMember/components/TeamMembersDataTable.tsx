@@ -98,7 +98,7 @@ const TeamMembersDataTable = ({ members, sortBy, sortOrder, onSortChange, emptyM
     });
 
     return (
-        <div className="min-h-[calc(100vh-19rem)] overflow-hidden rounded-lg border bg-background">
+        <div className="min-h-[calc(100vh-19rem)] overflow-hidden rounded-lg border bg-card">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (

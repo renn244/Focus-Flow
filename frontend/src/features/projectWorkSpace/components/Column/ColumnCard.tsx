@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
@@ -24,23 +23,19 @@ const ColumnCard = ({
     return (
         <div 
         ref={setNodeRef}
-        key={column._id} className={`flex flex-col  
-        ${isOverlay ? 'ring-2 ring-blue-500 rounded-lg' : ''} 
+         key={column._id} className={`flex min-w-0 flex-col rounded-xl bg-lane p-3
+        ${isOverlay ? 'shadow-[0_12px_32px_rgb(15_23_42/0.18)] ring-1 ring-blue-400' : ''} 
         ${isDragging ? 'z-50 opacity-40' : ''}`} 
         style={style}>
-            <div 
-            // can't use this it looks ugly tbh so find a way to lighten the color
-            // style={{ backgroundColor: column.color }}
-            className={`bg-gray-300/50 bg-opacity-50 rounded-lg p-4 mb-1.5`}>
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                        <h2 className="font-semibold text-slate-800">{column.title}</h2>
-                        <Badge variant="secondary" className="text-xs">
-                            {column.tasks.length}
-                        </Badge>
+            <div className="mb-2.5">
+                <div className="mb-1.5 flex items-center justify-between gap-2 pl-1">
+                    <div className="flex min-w-0 items-center gap-2">
+                        <span className="size-2.5 shrink-0 rounded-full" style={{ backgroundColor: column.color }} aria-hidden="true" />
+                        <h2 className="truncate text-sm font-semibold text-foreground" title={column.title}>{column.title}</h2>
+                        <span className="text-xs font-medium text-muted-foreground tabular-nums">{column.tasks.length}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                        <Button size="sm" variant="ghost" {...listeners} {...attributes}>
+                        <Button size="icon" className="size-7" variant="ghost" {...listeners} {...attributes} aria-label={`Reorder ${column.title}`} title="Reorder column">
                             <GripVertical className="h-4 w-4" />
                         </Button>
                         <BoardCardOptions columnId={column._id} />
@@ -49,7 +44,7 @@ const ColumnCard = ({
 
                 <Button onClick={() => setCreateColumnId(column._id)}
                 variant="ghost"
-                className="w-full justify-start text-slate-600 hover:text-slate-800 hover:bg-white/50"
+                className="h-8 w-full justify-start text-muted-foreground hover:bg-card/70 hover:text-foreground"
                 >
                     <Plus className="w-4 h-4 mr-2" />
                     Add task

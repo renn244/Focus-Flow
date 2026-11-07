@@ -50,14 +50,14 @@ const SignUpForm = () => {
     }
     
     return (
-        <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 gap-2">
-            <CardHeader className="space-y-1 pb-6 gap-0">
-                <CardTitle className="text-2xl font-bold text-center text-gray-900">Create your account</CardTitle>
-                <p className="text-center text-gray-600">Enter your details to get started</p>
+        <Card className="w-full max-w-md bg-card py-8 gap-2">
+            <CardHeader className="space-y-1 px-6 pb-6 gap-0 sm:px-8">
+                <CardTitle className="text-2xl font-semibold text-left text-foreground">Create your account</CardTitle>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">Enter your details to get started</p>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-6 sm:px-8">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField 
                         control={form.control}
                         name="username"
@@ -65,7 +65,7 @@ const SignUpForm = () => {
                             <FormItem>
                                 <FormLabel>Username</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="johndoe24" {...field} />
+                                    <Input placeholder="Choose a username" autoComplete="username" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -78,7 +78,7 @@ const SignUpForm = () => {
                             <FormItem>
                                 <FormLabel>Email</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="johndoe24@example.com" {...field} />
+                                    <Input placeholder="you@example.com" type="email" autoComplete="email" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -91,7 +91,7 @@ const SignUpForm = () => {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <PasswordInput {...field} />
+                                    <PasswordInput {...field} autoComplete="new-password" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -104,14 +104,14 @@ const SignUpForm = () => {
                             <FormItem>
                                 <FormLabel>Confirm Password</FormLabel>
                                 <FormControl>
-                                    <PasswordInput {...field} />
+                                    <PasswordInput {...field} autoComplete="new-password" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                         />
 
-                        <Button className='w-full bg-blue-600 hover:bg-blue-700' variant="default" type="submit">
+                        <Button className='w-full bg-blue-600 hover:bg-blue-700' variant="default" type="submit" disabled={isPending}>
                             {isPending ? (
                                 <LoadingSpinner /> 
                             ): (
@@ -127,7 +127,7 @@ const SignUpForm = () => {
                                 <Separator className="w-full" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
                             </div>
                         </div>
 
@@ -139,9 +139,9 @@ const SignUpForm = () => {
                             </>
                         </Button>
 
-                        <div className="text-center text-sm text-gray-600">
+                        <div className="text-center text-sm text-muted-foreground">
                             Already have an account?{" "}
-                            <Link to='/login' className="text-blue-600 hover:text-blue-700 p-0 h-auto font-medium">
+                            <Link to='/login' className="text-blue-700 hover:text-blue-600 p-0 h-auto font-medium">
                                 Login
                             </Link>
                         </div>

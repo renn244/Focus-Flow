@@ -51,7 +51,7 @@ const ChangePasswordForm = ({
     }
 
     return (
-        <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0 gap-2">
+        <Card className="w-full max-w-md bg-card border-0 gap-2">
             <CardHeader className="space-y-1 pb-6 gap-0">
                 <div>
                     <Button

@@ -67,7 +67,7 @@ const ProjectForm = ({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className={cn("space-y-4", className)}>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div className="space-y-4">
                         <FormField 
                         control={form.control}

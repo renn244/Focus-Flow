@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
 import { Task, TaskDocument } from 'src/schema/Task.schema';
@@ -101,7 +101,11 @@ export class TaskService {
     }
 
     async getTasksByProject(projectId: Types.ObjectId) {
-        const boards = await this.boardModel.find({ projectId: projectId.toString() }).select('_id');
+        // Refs are stored as ObjectIds in older documents and strings in newer ones.
+        // $expr skips Mongoose casting, so comparing as strings matches both forms.
+        const boards = await this.boardModel
+            .find({ $expr: { $eq: [{ $toString: '$projectId' }, projectId.toString()] } })
+            .select('_id');
         const boardIds = boards.map((board) => board._id);
 
         if (boardIds.length === 0) {
@@ -109,7 +113,7 @@ export class TaskService {
         }
 
         const tasks = await this.taskModel
-            .find({ boardId: { $in: boardIds } })
+            .find({ $expr: { $in: [{ $toString: '$boardId' }, boardIds.map(String)] } })
             .populate([
                 { path: 'columnId', select: 'title color _id' },
                 { path: 'boardId', select: 'name projectId _id' },
@@ -131,7 +135,7 @@ export class TaskService {
         }
 
         const boards = await this.boardModel.find({
-            projectId: { $in: projectIds.map((projectId) => projectId.toString()) },
+            $expr: { $in: [{ $toString: '$projectId' }, projectIds.map((projectId) => projectId.toString())] },
         }).select('_id');
         const boardIds = boards.map((board) => board._id);
 
@@ -140,7 +144,15 @@ export class TaskService {
         }
 
         const tasks = await this.taskModel
-            .find({ assignee: new Types.ObjectId(user.id), boardId: { $in: boardIds } })
+            // Compare as strings so refs stored either as ObjectIds or strings match.
+            .find({
+                $expr: {
+                    $and: [
+                        { $eq: [{ $toString: '$assignee' }, user.id] },
+                        { $in: [{ $toString: '$boardId' }, boardIds.map(String)] },
+                    ],
+                },
+            })
             .populate([
                 { path: 'columnId', select: 'title color _id' },
                 { path: 'boardId', select: 'name projectId _id' },
@@ -206,29 +218,40 @@ export class TaskService {
     }
 
     async updateMovedTask(taskId: Types.ObjectId, body: MoveTaskDto, user: UserJwt) {
-        const session = await this.connection.startSession();
-        session.startTransaction();
+        const { updatedTask, projectId } = await this.connection.transaction(async (session) => {
+            // Operations on a transaction session must run sequentially.
+            const currentColumn = await this.columnModel.findById(body.taskCurrentColumnId)
+                .select('title').session(session);
+            const futureColumn = await this.columnModel.findById(body.taskFutureColumnId)
+                .select('title').session(session);
 
-        try {
-            const [currentColumn, futureColumn] = await Promise.all([
-                this.columnModel.findById(body.taskCurrentColumnId).select('title').session(session),
-                this.columnModel.findById(body.taskFutureColumnId).select('title').session(session),
-            ]);
+            if (!currentColumn || !futureColumn) {
+                throw new NotFoundException('Column not found');
+            }
+            const task = await this.taskModel.findById(taskId).select('boardId columnId').session(session);
+            if (!task) {
+                throw new NotFoundException('Task not found');
+            }
+            const board = await this.boardModel.findById(task.boardId).select('projectId columns').session(session);
+            if (!board) {
+                throw new NotFoundException('Board not found');
+            }
+            if (![body.taskCurrentColumnId, body.taskFutureColumnId].every((id) =>
+                board.columns.some((columnId) => columnId.toString() === id))) {
+                throw new BadRequestException('Tasks must be moved between columns of the same board');
+            }
+
             const updatedTask = await this.taskModel.findOneAndUpdate(
-                { _id: taskId }, { columnId: body.taskFutureColumnId }, { new: true, session }
+                { _id: taskId, columnId: body.taskCurrentColumnId, boardId: task.boardId },
+                { columnId: body.taskFutureColumnId }, { new: true, session }
             );
             
             if(!updatedTask) {
-                throw new NotFoundException('Task not found');
+                throw new ConflictException('Task is no longer in the source column. Refresh the board and try again.');
             }
             
             await this.columnService.removeTaskFromColumn(body.taskCurrentColumnId.toString(), taskId, session);
             await this.columnService.addTaskToColumn(body.taskFutureColumnId.toString(), taskId, session);
-
-            const board = await this.boardModel.findById(updatedTask.boardId).select('projectId');
-            if (!board) {
-                throw new NotFoundException('Board not found');
-            }
 
             await this.auditLogService.record({
                 projectId: board.projectId,
@@ -242,32 +265,24 @@ export class TaskService {
                 changes: [{ field: 'Status', from: currentColumn?.title ?? 'Unknown', to: futureColumn?.title ?? 'Unknown' }],
             }, session);
 
-            await session.commitTransaction();
-            
-            const populatedData = await updatedTask.populate([
-                { path: 'columnId', select: 'title color _id' },
-                { path: 'boardId', select: 'name _id' }
-            ])
+            return { updatedTask, projectId: board.projectId.toString() };
+        });
 
-            const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-            this.teamGateway.io.to(projectId).emit('taskMoved',
-                { 
-                    ...body, 
-                    updatorUserId: user.id,
-                    task: plainToInstance(TaskWithBoardAndColumnDto, populatedData, { 
-                        excludeExtraneousValues: true, enableImplicitConversion: true 
-                    }) 
-                }
-            );
+        updatedTask.$session(null);
+        const populatedData = await updatedTask.populate([
+            { path: 'columnId', select: 'title color _id' },
+            { path: 'boardId', select: 'name _id' }
+        ]);
 
-            return { message: "Task moved successfully" };
-        } catch (error) {
-            console.log(error);
-            await session.abortTransaction();
-            throw error;
-        } finally {
-            session.endSession();
-        }
+        this.teamGateway.io.to(projectId).emit('taskMoved', {
+            ...body,
+            updatorUserId: user.id,
+            task: plainToInstance(TaskWithBoardAndColumnDto, populatedData, {
+                excludeExtraneousValues: true, enableImplicitConversion: true
+            })
+        });
+
+        return { message: "Task moved successfully" };
     }
 
     async updateTask(id: Types.ObjectId, body: UpdateTaskDto, user: UserJwt) {

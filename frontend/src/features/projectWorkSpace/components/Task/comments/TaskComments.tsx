@@ -11,6 +11,7 @@ import type { ProjectActivityItem } from "../../../types/audit";
 import type { CommentPayload, TaskComment } from "../../../types/comment";
 import CommentContent from "./CommentContent";
 import RichTextEditor from "./RichTextEditor";
+import ListLoading from "@/components/common/ListLoading";
 
 const emptyComment: CommentPayload = {
   content: { type: "doc", content: [{ type: "paragraph" }] },
@@ -54,8 +55,8 @@ const TaskComments = ({ taskId, standalone = false }: { taskId: string; standalo
         <h3 className="font-medium">Activity</h3>
       </div>
 
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">Loading activity…</p>
+      {isLoading || taskActivity.isLoading ? (
+        <ListLoading className="mb-5" label="Loading task activity" avatar />
       ) : isError ? (
         <p className="text-sm text-destructive">Comments could not be loaded. Please try again.</p>
       ) : discussionItems.length === 0 ? (

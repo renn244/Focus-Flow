@@ -14,7 +14,7 @@ const VerifyEmailForm = ({
     const { mutate: resendEmail, isPending, error } = useResendVerificationEmailMutation(); 
 
     return (
-        <Card className="w-full max-w-md bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+        <Card className="w-full max-w-md bg-card border-0">
             <CardContent className="p-8 text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Mail className="w-8 h-8 text-blue-600" />
@@ -67,11 +67,6 @@ const VerifyEmailForm = ({
                     </ul>
                 </div>
 
-                <div className="mt-4">
-                    <Button variant="link" className="text-blue-600 hover:text-blue-700 text-sm">
-                        Need help? Contact support
-                    </Button>
-                </div>
             </CardContent>
         </Card>
     )

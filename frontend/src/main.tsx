@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App'
 import AuthProvider, { type AuthContextType } from './context/authContext'
 import { routeTree } from './routeTree.gen'
+import ScreenLoading from './components/common/ScreenLoading'
 
 export const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ export const router = createRouter({
   // since we are using the `@tanstack/react-query` package, we can set the default preload stale time to 0
   // to ensure that data is always fresh when navigating between routes and when preloaded
   defaultPreloadStaleTime: 0,
+  defaultPendingComponent: ScreenLoading,
   scrollRestoration: true,
   context: {
     queryClient, authContext: undefined

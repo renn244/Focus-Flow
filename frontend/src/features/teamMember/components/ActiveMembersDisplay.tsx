@@ -6,6 +6,8 @@ import { useGetActiveMembers } from "../hooks/useGetActiveMember"
 import { useActiveMemberSocket } from "../hooks/useActiveMemberSocket"
 import ViewAllActiveMembers from "./ViewAllActiveMembers"
 
+const initials = (name: string) => name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()
+
 const ActiveMembersDisplay = () => {
     const projectId = useProjectIdStore((state) => state.projectId);
 
@@ -17,13 +19,13 @@ const ActiveMembersDisplay = () => {
     const members = activeMembers?.filter(member => member._id !== user?._id);
 
     return (
-        <div className="*:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale">
+        <div className="flex -space-x-1">
             {members?.slice(0, 3).map((member) => (
                 <DropdownMenu key={member._id}>
                     <DropdownMenuTrigger className="rounded-full data-[state=open]:outline-1 data-[state=open]:outline-ring data-[state=open]:z-20">
-                        <Avatar className="cursor-pointer">
+                        <Avatar className="cursor-pointer ring-2 ring-card">
                             <AvatarImage src={member.avatarUrl} alt={member.displayName} />
-                            <AvatarFallback className="select-none">{member.displayName.charAt(0)}</AvatarFallback>
+                            <AvatarFallback className="select-none bg-slate-200 text-xs font-semibold text-slate-700">{initials(member.displayName)}</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">

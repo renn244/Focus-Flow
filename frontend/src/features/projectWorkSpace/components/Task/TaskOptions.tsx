@@ -23,9 +23,10 @@ const TaskOptions = ({
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
-                    size="sm"
+                    size="icon"
                     aria-label="Task options"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Task options"
+                    className="size-7 text-muted-foreground"
                 >
                     <MoreHorizontal className="w-4 h-4" />
                 </Button>

@@ -3,18 +3,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const ProjectSkeletonGridCard = () => {
     return (
-        <Card className="hover:shadow-md transition-all duration-200 cursor-pointer group bg-white border border-gray-50 py-0">
-            <CardContent className="p-6">
+        <Card className="h-full min-w-0 bg-card py-0">
+            <CardContent className="p-5">
                 <div className="space-y-4">
 
                     <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
+                        <div className="flex min-w-0 w-full items-start gap-3">
                             <div className="flex flex-col items-center-safe gap-1">
-                                <Skeleton className="w-8 h-8 rounded" />
+                                <Skeleton className="size-9 shrink-0 rounded" />
                             </div>
-                            <div className="flex-1">
+                            <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
-                                    <Skeleton className="w-82 h-6" />
+                                    <Skeleton className="w-3/4 h-6" />
                                 </div>
                                 <Skeleton className="w-full max-w-[326px] h-4.5 my-0.5" />
                                 <Skeleton className="w-full max-w-[250px] h-4.5" />

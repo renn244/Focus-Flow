@@ -34,19 +34,19 @@ const UserDropDown = ({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger aria-label="Account menu" title="Account" className="rounded-full outline-offset-4 focus-visible:outline-2 focus-visible:outline-blue-400">
         <Avatar className="w-8 h-8">
-          <AvatarImage src={avatarUrl} alt="User" />
-          <AvatarFallback>
+          <AvatarImage src={avatarUrl || undefined} alt={userName || "User"} />
+          <AvatarFallback className="bg-blue-100 text-blue-800">
             <User className="w-4 h-4" />
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-64 max-w-[calc(100vw-2rem)]">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{userName}</p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="truncate text-sm font-medium leading-5">{userName}</p>
+            <p className="truncate text-xs leading-5 text-muted-foreground">
               {userEmail}
             </p>
           </div>

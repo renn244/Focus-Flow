@@ -19,13 +19,14 @@ const CreateColumnDialog = () => {
     return (
         <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-                <Button size="icon" className="btn btn-primary">
+                <Button variant="outline" className="hidden bg-card sm:inline-flex">
                     <Plus />
+                    Add column
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Create Column</DialogTitle>
+                    <DialogTitle>Add column</DialogTitle>
                 </DialogHeader>
                 <ColumnForm boardId={selectedBoardId || ""} 
                 isLoading={isPending} onsubmit={mutateAsync as any} />

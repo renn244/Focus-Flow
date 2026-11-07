@@ -19,7 +19,7 @@ const ProjectCardOptions = ({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon" className="size-8 shrink-0 text-muted-foreground" aria-label="Project options" title="Project options">
                     <MoreHorizontal className="w-4 h-4" />
                 </Button>
             </DropdownMenuTrigger>

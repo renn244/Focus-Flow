@@ -1,0 +1,132 @@
+{
+  "title": "Choose the app shell layout",
+  "question": "Same FocusFlow world (navy shell, blue actions, lighter work areas). Pick how the signed-in app is organised, or re-roll.",
+  "options": [
+    {
+      "id": "project-rail",
+      "kind": "assigned",
+      "label": "Project rail",
+      "kicker": "THE ROLL",
+      "thesis": "Every project is one click away on a slim navy rail; Today is the first stop on it.",
+      "palette": ["#08142d", "#3b82f6", "#22d3ee", "#a78bfa", "#f4f6fb"],
+      "materials": ["navy icon rail", "light work canvas"],
+      "viewport": "72px navy rail of project tiles, a navy context panel for the selected project, and a light agenda canvas with Today's tasks grouped by due time.",
+      "risk": "Project tiles need short names or initials; a 7th+ project scrolls the rail.",
+      "raised": [
+        { "from": "challenger-acetate", "raise": "The selected project's own colour owns its rail tile and panel header at full strength, not just a dot." },
+        { "from": "challenger-splitflap", "raise": "Agenda rows sit on a strict time column so the next due task reads like the next departure." }
+      ],
+      "html": ".impeccable/mocks/decision/project-rail.html"
+    },
+    {
+      "id": "docked-agenda",
+      "kind": "dealt",
+      "label": "Docked agenda",
+      "thesis": "Your personal agenda stays docked beside whichever project board you open.",
+      "palette": ["#08142d", "#0b1630", "#3b82f6", "#22d3ee", "#f4f6fb"],
+      "materials": ["navy agenda dock", "light board canvas"],
+      "viewport": "Navy top bar with project tabs; a navy agenda dock on the left (overdue, today, next 7 days) and the light project board filling the rest.",
+      "risk": "Less board width on laptops; the dock must collapse cleanly.",
+      "html": ".impeccable/mocks/decision/docked-agenda.html"
+    },
+    {
+      "id": "agenda-sidebar",
+      "kind": "dealt",
+      "label": "Agenda sidebar",
+      "thesis": "A classic navy sidebar with Today, Projects and Calendar, opening on a light agenda page.",
+      "palette": ["#08142d", "#3b82f6", "#22d3ee", "#a78bfa", "#f4f6fb"],
+      "materials": ["navy sidebar", "light agenda page", "week strip"],
+      "viewport": "240px navy sidebar listing views and projects; light main page led by a week strip and Today's task list with a mini calendar on the right.",
+      "risk": "The most familiar layout of the three; distinctiveness rests on detail.",
+      "html": ".impeccable/mocks/decision/agenda-sidebar.html"
+    },
+    {
+      "id": "challenger-splitflap",
+      "kind": "challenger",
+      "catalogId": "signals-instruments-split-flap-concourse",
+      "label": "Departures agenda",
+      "verdict": "competitive",
+      "thesis": "Today's work as a departures board: rows ranked by due time, live updates flip in place.",
+      "palette": ["#08142d", "#0b1630", "#ffffff", "#f59e0b", "#3b82f6"],
+      "materials": ["ruled time rows", "per-cell flip on live update"],
+      "viewport": "Navy top bar; a full-width board of today's tasks in fixed columns (due, task, project, column, status), overdue rows in amber.",
+      "case": "Students read departure boards daily and 'what's due next' maps cleanly; loses on navigation, which it leaves to a plain top bar.",
+      "risk": "Can read as a novelty if the flip animation shows up anywhere but real live changes.",
+      "html": ".impeccable/mocks/decision/challenger-splitflap.html",
+      "hero": "https://impeccable.style/worlds/cards/signals-instruments-split-flap-concourse-hero.webp"
+    },
+    {
+      "id": "challenger-acetate",
+      "kind": "challenger",
+      "catalogId": "rw-manual-acetate-tab-board",
+      "label": "Tabbed manual",
+      "verdict": "declined",
+      "thesis": "Projects as a stepped, colour-coded tab rail down the page edge.",
+      "palette": ["#e0661f", "#f2c230", "#2f9e5a", "#1f8a8a", "#f6f3ea"],
+      "materials": ["coloured divider boards", "acetate leaves"],
+      "viewport": "Full-strength section colour behind the current project with a tab rail on the right edge.",
+      "case": "Its full-strength section hues would replace the navy identity.",
+      "risk": "Breaks the committed navy brand.",
+      "kept": "Project colour owns the selected state at full strength."
+    },
+    {
+      "id": "challenger-metro",
+      "kind": "challenger",
+      "catalogId": "digital-design-canon-metro-typographic-tiles",
+      "label": "Metro tiles",
+      "verdict": "declined",
+      "thesis": "Projects as flat live tiles on a panorama.",
+      "palette": ["#000000", "#00aba9", "#ff0097", "#ffffff"],
+      "materials": ["flat tiles", "giant lowercase"],
+      "viewport": "Panorama of project tiles with cropped headlines.",
+      "case": "Panorama navigation fights frequent project switching and the drag-and-drop board.",
+      "risk": "Replaces familiar navigation.",
+      "kept": "Nothing beyond type scale contrast."
+    },
+    {
+      "id": "challenger-ticket",
+      "kind": "challenger",
+      "catalogId": "vernacular-ephemera-jet-age-ticket-wallet",
+      "label": "Ticket wallet",
+      "verdict": "declined",
+      "thesis": "Tasks as tear-off coupons in a wallet.",
+      "palette": ["#14254f", "#c8202f", "#ffffff", "#5b3c88"],
+      "materials": ["coupon stock", "carbon numerals"],
+      "viewport": "A stack of task coupons, used ones stamped.",
+      "case": "Coupons are a one-way journey; tasks move between columns.",
+      "risk": "Wrong mental model for boards.",
+      "kept": "Done tasks stay visible, marked rather than vanishing."
+    },
+    {
+      "id": "challenger-laban",
+      "kind": "challenger",
+      "catalogId": "notation-diagram-systems-labanotation",
+      "label": "Dance score",
+      "verdict": "declined",
+      "thesis": "Time running upward on a centre staff.",
+      "palette": ["#ffffff", "#111111", "#d4d4d4"],
+      "materials": ["score paper", "shaded blocks"],
+      "viewport": "Vertical staff with task blocks sized by duration.",
+      "case": "Tasks have due dates, not durations; nobody here reads notation.",
+      "risk": "Unreadable to the audience.",
+      "kept": "Nothing."
+    },
+    {
+      "id": "challenger-zoo",
+      "kind": "challenger",
+      "catalogId": "aww2-zoo-gardens-guide-map",
+      "label": "Guide map",
+      "verdict": "declined",
+      "thesis": "Projects as colour lobes on a map.",
+      "palette": ["#8ed462", "#f5f1e4", "#2c2e2a", "#ff705d"],
+      "materials": ["flat colour lobes", "capsule controls"],
+      "viewport": "One dominant lobe per screen.",
+      "case": "Replaces the navy world and standard controls.",
+      "risk": "Breaks brand and familiarity.",
+      "kept": "Nothing."
+    }
+  ],
+  "reroll": true,
+  "buildPath": { "value": "code" },
+  "steer": true
+}

@@ -19,7 +19,7 @@ const ColumnCardOptions = ({
     return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="icon" className="size-7" aria-label="Column options" title="Column options">
                     <MoreHorizontal className="w-4 h-4" />
                 </Button>
             </DropdownMenuTrigger>

@@ -1,101 +1,192 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-20T17:47:42+08:00",
+  "generatedAt": "2026-11-07T22:00:00+08:00",
   "title": "Design System: FocusFlow",
   "extensions": {
     "colorMeta": {
       "navy-field": { "role": "neutral", "displayName": "Night Field", "canonical": "#08142d", "tonalRamp": ["#030817", "#07112a", "#08142d", "#102040", "#1c3155", "#3a5278", "#7f99bd", "#e6efff"] },
       "navy-surface": { "role": "neutral", "displayName": "Workbench Navy", "canonical": "#0b1630", "tonalRamp": ["#040916", "#08112a", "#0b1630", "#142545", "#263b60", "#536b92", "#9aaed0", "#eaf1ff"] },
       "navy-section": { "role": "neutral", "displayName": "Section Navy", "canonical": "#0a1834", "tonalRamp": ["#040a18", "#07132b", "#0a1834", "#13274a", "#274166", "#58739a", "#9bb7d9", "#eaf3ff"] },
+      "shell-hover": { "role": "neutral", "displayName": "Shell Hover Navy", "canonical": "#132449", "tonalRamp": ["#060c1c", "#0b1630", "#132449", "#1e3460", "#34507f", "#5f78a2", "#a2b4d3", "#ebf1fb"] },
       "action-blue": { "role": "primary", "displayName": "Forward Blue", "canonical": "#3b82f6", "tonalRamp": ["#071d49", "#0c357d", "#1457b7", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe", "#eff6ff"] },
       "action-blue-hover": { "role": "primary", "displayName": "Lifted Blue", "canonical": "#60a5fa", "tonalRamp": ["#0b2a59", "#124889", "#1f6fbe", "#60a5fa", "#7eb8fb", "#a6d2fc", "#c9e3fe", "#f0f8ff"] },
+      "action-blue-strong": { "role": "primary", "displayName": "Deep Forward Blue", "canonical": "#2563eb", "tonalRamp": ["#172554", "#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#93c5fd", "#dbeafe"] },
       "signal-violet": { "role": "secondary", "displayName": "Planning Violet", "canonical": "#a78bfa", "tonalRamp": ["#24124c", "#42227c", "#6440af", "#a78bfa", "#b9a5fb", "#d0c2fd", "#e5dfff", "#f7f4ff"] },
       "signal-cyan": { "role": "tertiary", "displayName": "Attention Cyan", "canonical": "#22d3ee", "tonalRamp": ["#05323b", "#075969", "#0c8c9e", "#22d3ee", "#55def2", "#8aeaf7", "#bdf4fb", "#edfdff"] },
       "text-primary": { "role": "neutral", "displayName": "Clear White", "canonical": "#ffffff", "tonalRamp": ["#1c2330", "#3a4557", "#596779", "#7b899a", "#a0adbb", "#c2ccd5", "#e2e8ed", "#ffffff"] },
       "text-secondary": { "role": "neutral", "displayName": "Blue White", "canonical": "#dbeafe", "tonalRamp": ["#172439", "#2b405e", "#4c668a", "#7190b9", "#9cb7d8", "#bfd2ea", "#dbeafe", "#f4f9ff"] },
-      "border-subtle": { "role": "neutral", "displayName": "Blue Mist Border", "canonical": "rgba(147,197,253,0.15)", "tonalRamp": ["rgba(147,197,253,0.06)", "rgba(147,197,253,0.10)", "rgba(147,197,253,0.15)", "rgba(147,197,253,0.22)", "rgba(147,197,253,0.32)", "rgba(147,197,253,0.45)", "rgba(147,197,253,0.65)", "rgba(147,197,253,0.85)"] }
+      "shell-muted": { "role": "neutral", "displayName": "Shell Mist", "canonical": "#9db0d3", "tonalRamp": ["#1a2538", "#2f4060", "#4a5f86", "#6f86ae", "#9db0d3", "#bccbe3", "#dbe4f2", "#f3f6fb"] },
+      "border-subtle": { "role": "neutral", "displayName": "Blue Mist Border", "canonical": "rgba(147,197,253,0.15)", "tonalRamp": ["rgba(147,197,253,0.06)", "rgba(147,197,253,0.10)", "rgba(147,197,253,0.15)", "rgba(147,197,253,0.22)", "rgba(147,197,253,0.32)", "rgba(147,197,253,0.45)", "rgba(147,197,253,0.65)", "rgba(147,197,253,0.85)"] },
+      "shell-border": { "role": "neutral", "displayName": "Shell Border", "canonical": "rgb(147 197 253 / 16%)", "tonalRamp": ["rgb(147 197 253 / 6%)", "rgb(147 197 253 / 10%)", "rgb(147 197 253 / 16%)", "rgb(147 197 253 / 22%)", "rgb(147 197 253 / 32%)", "rgb(147 197 253 / 45%)", "rgb(147 197 253 / 65%)", "rgb(147 197 253 / 85%)"] },
+      "work-canvas": { "role": "neutral", "displayName": "Work Canvas", "canonical": "#f4f6fb", "tonalRamp": ["#1b2230", "#3a4558", "#5f6c82", "#8a96aa", "#b6c0d0", "#dbe1ec", "#f4f6fb", "#fbfcfe"] },
+      "work-lane": { "role": "neutral", "displayName": "Lane Grey-Blue", "canonical": "#e9eef6", "tonalRamp": ["#1a2232", "#36435a", "#5a6a85", "#8292ad", "#acb9cf", "#d2dbe9", "#e9eef6", "#f7f9fc"] },
+      "work-card": { "role": "neutral", "displayName": "Card White", "canonical": "#ffffff", "tonalRamp": ["#1c2330", "#3a4557", "#596779", "#7b899a", "#a0adbb", "#c2ccd5", "#e2e8ed", "#ffffff"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#15233b", "tonalRamp": ["#0a1222", "#15233b", "#2a3a55", "#45556f", "#58677d", "#8593a6", "#c0c9d6", "#eef2f7"] },
+      "ink-muted": { "role": "neutral", "displayName": "Ink Muted", "canonical": "#58677d", "tonalRamp": ["#151c27", "#28323f", "#3d4a5c", "#58677d", "#76849a", "#9ba7b8", "#c6cfdb", "#eef2f7"] },
+      "fill-muted": { "role": "neutral", "displayName": "Muted Fill", "canonical": "#eef2f7", "tonalRamp": ["#1b222d", "#38445a", "#5c6a82", "#8593aa", "#b0bccd", "#d6dee9", "#eef2f7", "#f9fbfd"] },
+      "fill-hover": { "role": "neutral", "displayName": "Hover Tint", "canonical": "#eef3fc", "tonalRamp": ["#17223a", "#2e4370", "#4c68a4", "#7690c8", "#a4b8e0", "#cfdcf3", "#eef3fc", "#f8fafe"] },
+      "line": { "role": "neutral", "displayName": "Hairline", "canonical": "#dfe5ef", "tonalRamp": ["#1a2130", "#364257", "#59677f", "#8190a8", "#aab6c9", "#cdd5e2", "#dfe5ef", "#f4f6fa"] },
+      "line-input": { "role": "neutral", "displayName": "Input Stroke", "canonical": "#cbd5e1", "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#f1f5f9"] }
     },
     "typographyMeta": {
-      "display": { "displayName": "Focused Display", "purpose": "Hero promise statements and the clearest page-level intent." },
-      "headline": { "displayName": "Task Headline", "purpose": "Section and callout headings." },
-      "body": { "displayName": "Supporting Body", "purpose": "Short explanatory copy and task context." },
-      "label": { "displayName": "Context Label", "purpose": "Small uppercase timing or location cues." }
+      "display": { "displayName": "Focused Display", "purpose": "Landing hero promise only." },
+      "headline": { "displayName": "Task Headline", "purpose": "Landing section and callout headings." },
+      "page-title": { "displayName": "Page Title", "purpose": "The single h1 per app page: date on My work, All projects, project name (20-24px in the workspace header). 24px base, 28px from sm." },
+      "title": { "displayName": "Panel Title", "purpose": "Panel headings, board picker (18px), column names (14px). Tracking 0." },
+      "body": { "displayName": "Supporting Body", "purpose": "Landing explanatory copy." },
+      "ui": { "displayName": "Working UI", "purpose": "Task titles, tabs, buttons and list rows in the app." },
+      "meta": { "displayName": "Meta", "purpose": "Due times, dates, counts and project names; always tabular numerals. Chips step down to 11px semibold." },
+      "label": { "displayName": "Context Label", "purpose": "Landing preview only; not used for app headings." }
     },
     "shadows": [
-      { "name": "action-glow", "value": "0 10px 28px rgba(59,130,246,0.30)", "purpose": "Primary CTA emphasis." },
-      { "name": "brand-glow", "value": "0 8px 24px rgba(59,130,246,0.35)", "purpose": "Compact brand-mark emphasis." },
-      { "name": "selection-glow", "value": "0 5px 16px rgba(59,130,246,0.45)", "purpose": "Selected calendar date." },
-      { "name": "preview-lift", "value": "0 32px 90px rgba(0,0,0,0.42)", "purpose": "Large workspace preview only." }
+      { "name": "action-glow", "value": "0 10px 28px rgba(59,130,246,0.30)", "purpose": "Landing primary CTA only." },
+      { "name": "brand-glow", "value": "0 8px 24px rgba(59,130,246,0.35)", "purpose": "Landing logo tile only." },
+      { "name": "selection-glow", "value": "0 5px 16px rgba(59,130,246,0.45)", "purpose": "Landing preview's selected calendar date only." },
+      { "name": "preview-lift", "value": "0 32px 90px rgba(0,0,0,0.42)", "purpose": "Landing workspace preview only." },
+      { "name": "card-rest", "value": "0 1px 2px rgb(15 23 42 / 0.06)", "purpose": "App task cards at rest." },
+      { "name": "card-hover", "value": "0 4px 12px rgb(15 23 42 / 0.08)", "purpose": "App task card hover." },
+      { "name": "drag-lift", "value": "0 12px 32px rgb(15 23 42 / 0.18)", "purpose": "Card or lane while dragged." },
+      { "name": "segment-raise", "value": "0 1px 2px rgb(15 23 42 / 0.1)", "purpose": "Selected segment in a light segmented control." },
+      { "name": "drawer-cast", "value": "8px 0 32px rgb(0 0 0 / 0.35)", "purpose": "Mobile agenda drawer over a 60% navy scrim." }
     ],
     "motion": [
-      { "name": "color-response", "value": "transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease", "purpose": "Reserved hover response for controls and task rows." }
+      { "name": "color-response", "value": "transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease", "purpose": "Hover response for controls, tabs and task rows." },
+      { "name": "dock-resize", "value": "transition: width 200ms cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Agenda dock collapse and expand; disabled under prefers-reduced-motion." },
+      { "name": "drawer-slide", "value": "slide-in-from-left 200ms with 0 to 1 scrim fade", "purpose": "Mobile agenda drawer enter and exit." },
+      { "name": "nudge", "value": "transform: translateX(2px) on group hover", "purpose": "Arrow in 'Next:' links." }
     ],
     "breakpoints": [
       { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
       { "name": "lg", "value": "1024px" },
-      { "name": "content-max", "value": "1280px" }
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" },
+      { "name": "content-max", "value": "1280px" },
+      { "name": "dashboard-max", "value": "1400px" },
+      { "name": "board-max", "value": "1600px" }
     ]
   },
   "components": [
     {
-      "name": "Primary CTA",
+      "name": "Landing Primary CTA",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The clear route to creating a workspace or starting a focused flow.",
+      "description": "Landing route to creating a workspace. Glow and #3b82f6 fill are landing-only.",
       "html": "<button class=\"ds-primary-cta\">Create your workspace <svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14m-6-6 6 6-6 6\"/></svg></button>",
       "css": ".ds-primary-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; height:44px; padding:0 20px; border:0; border-radius:8px; background:#3b82f6; color:#fff; font:600 14px Inter, sans-serif; box-shadow:0 10px 28px rgba(59,130,246,.30); transition:background-color 150ms ease, box-shadow 150ms ease; } .ds-primary-cta svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; } .ds-primary-cta:hover { background:#60a5fa; } .ds-primary-cta:focus-visible { outline:2px solid #bfdbfe; outline-offset:2px; } .ds-primary-cta:active { box-shadow:0 5px 16px rgba(59,130,246,.28); }"
     },
     {
-      "name": "Outline CTA",
+      "name": "Landing Outline CTA",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "A visible alternate route that remains quiet beside the primary action.",
+      "description": "A visible alternate route that remains quiet beside the landing primary action.",
       "html": "<button class=\"ds-outline-cta\">Log in</button>",
-      "css": ".ds-outline-cta { display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 20px; border:1px solid rgba(191,219,254,.25); border-radius:8px; background:transparent; color:#eff6ff; font:600 14px Inter, sans-serif; transition:background-color 150ms ease, border-color 150ms ease; } .ds-outline-cta:hover { border-color:rgba(191,219,254,.45); background:rgba(255,255,255,.05); } .ds-outline-cta:focus-visible { outline:2px solid #bfdbfe; outline-offset:2px; } .ds-outline-cta:active { background:rgba(255,255,255,.08); }"
+      "css": ".ds-outline-cta { display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 20px; border:1px solid rgba(191,219,254,.25); border-radius:8px; background:#08142d; color:#eff6ff; font:600 14px Inter, sans-serif; transition:background-color 150ms ease, border-color 150ms ease; } .ds-outline-cta:hover { border-color:rgba(191,219,254,.45); background:rgba(255,255,255,.05); } .ds-outline-cta:focus-visible { outline:2px solid #bfdbfe; outline-offset:2px; } .ds-outline-cta:active { background:rgba(255,255,255,.08); }"
     },
     {
-      "name": "Navigation Link",
+      "name": "App Primary Button",
+      "kind": "button",
+      "refersTo": "button-work-primary",
+      "description": "The single primary action in a light work header ('New task'). Deep Forward Blue for white-text contrast; no glow.",
+      "html": "<button class=\"ds-work-primary\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg>New task</button>",
+      "css": ".ds-work-primary { display:inline-flex; align-items:center; gap:8px; height:36px; padding:0 12px; border:0; border-radius:6px; background:var(--primary, #2563eb); color:#fff; font:500 14px Inter, sans-serif; box-shadow:0 1px 2px rgb(0 0 0 / .05); transition:background-color 150ms ease; } .ds-work-primary svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; } .ds-work-primary:hover { background:rgb(37 99 235 / .9); } .ds-work-primary:focus-visible { outline:none; box-shadow:0 0 0 3px rgb(59 130 246 / .5); }"
+    },
+    {
+      "name": "Shell Top-Bar Tabs",
       "kind": "nav",
-      "refersTo": "text-navigation",
-      "description": "A compact, unobtrusive navigation action with a generous focusable hit area.",
-      "html": "<a class=\"ds-nav-link\" href=\"#\">Log in</a>",
-      "css": ".ds-nav-link { display:inline-flex; align-items:center; min-height:36px; padding:0 12px; border-radius:8px; color:rgba(219,234,254,.75); font:500 14px Inter, sans-serif; text-decoration:none; transition:color 150ms ease, background-color 150ms ease; } .ds-nav-link:hover { color:#fff; background:rgba(255,255,255,.06); } .ds-nav-link:focus-visible { outline:2px solid #93c5fd; outline-offset:2px; } .ds-nav-link:active { background:rgba(255,255,255,.10); }"
+      "refersTo": "shell-top-bar",
+      "description": "56px navy bar with My work and project tabs; active tab carries a 2px Forward Blue underline; project identity is a 3px-cornered dot.",
+      "html": "<nav class=\"ds-topbar\"><a class=\"ds-tab\" href=\"#\">My work</a><span class=\"ds-tab-sep\"></span><a class=\"ds-tab ds-tab-active\" href=\"#\" aria-current=\"page\"><span class=\"ds-dot\" style=\"background:#f97316\"></span>Capstone team</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-dot\" style=\"background:#0ea5e9\"></span>Computer Science 201</a></nav>",
+      "css": ".ds-topbar { display:flex; align-items:stretch; height:56px; padding:0 12px; background:var(--shell, #08142d); border-bottom:1px solid rgb(147 197 253 / 16%); font-family:Inter, sans-serif; } .ds-tab { position:relative; display:flex; align-items:center; gap:8px; padding:0 12px; color:#9db0d3; font-size:14px; font-weight:500; text-decoration:none; transition:color 150ms ease; } .ds-tab:hover, .ds-tab-active { color:#fff; } .ds-tab-active::after { content:''; position:absolute; left:12px; right:12px; bottom:0; height:2px; border-radius:999px; background:#3b82f6; } .ds-tab:focus-visible { outline:2px solid #3b82f6; outline-offset:-2px; } .ds-tab-sep { width:1px; margin:16px 4px; background:rgb(147 197 253 / 16%); } .ds-dot { width:8px; height:8px; border-radius:3px; flex-shrink:0; }"
     },
     {
-      "name": "Workspace Preview Surface",
+      "name": "Agenda Row",
+      "kind": "custom",
+      "refersTo": "agenda-row",
+      "description": "Docked agenda task row with tabular due time; 'On this board' rows take a 14% Forward Blue tint.",
+      "html": "<div class=\"ds-agenda\"><button class=\"ds-agenda-row\"><span><span class=\"ds-agenda-title\">Read chapter 4: The Great Gatsby</span><span class=\"ds-agenda-meta\"><span class=\"ds-dot\" style=\"background:#a855f7\"></span>English Literature</span></span><time>09:00</time></button><button class=\"ds-agenda-row ds-agenda-here\"><span><span class=\"ds-agenda-title\">API endpoints for task comments</span><span class=\"ds-agenda-meta\"><span class=\"ds-dot\" style=\"background:#f97316\"></span>Capstone team <b>· On this board</b></span></span><time>11:00</time></button></div>",
+      "css": ".ds-agenda { width:316px; padding:8px 12px; background:var(--shell-raised, #0b1630); font-family:Inter, sans-serif; } .ds-agenda-row { display:grid; grid-template-columns:1fr auto; gap:0 12px; width:100%; padding:10px 12px; border:0; border-radius:8px; background:transparent; text-align:left; cursor:pointer; transition:background-color 150ms ease; } .ds-agenda-row:hover { background:#132449; } .ds-agenda-row:focus-visible { outline:2px solid #3b82f6; outline-offset:-2px; } .ds-agenda-here { background:rgb(59 130 246 / .14); } .ds-agenda-here:hover { background:rgb(59 130 246 / .20); } .ds-agenda-title { display:block; color:#fff; font-size:14px; font-weight:500; } .ds-agenda-meta { display:flex; align-items:center; gap:6px; margin-top:4px; color:#9db0d3; font-size:12px; } .ds-agenda-meta b { color:#93c5fd; font-weight:500; } .ds-agenda-row time { padding-top:2px; color:#9db0d3; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; } .ds-dot { width:8px; height:8px; border-radius:3px; flex-shrink:0; }"
+    },
+    {
+      "name": "Light Segmented Range",
+      "kind": "chip",
+      "refersTo": "segmented-range",
+      "description": "Overdue / Today / Next 7 days switch on light panels; selected segment is white with a neutral raise, counts are tabular.",
+      "html": "<div class=\"ds-seg\" role=\"group\"><button class=\"ds-seg-item\">Overdue <span class=\"ds-seg-alert\">2</span></button><button class=\"ds-seg-item\" aria-pressed=\"true\">Today <span>4</span></button><button class=\"ds-seg-item\">Next 7 days <span>3</span></button></div>",
+      "css": ".ds-seg { display:inline-flex; gap:4px; padding:4px; border-radius:8px; background:#eef2f7; font-family:Inter, sans-serif; } .ds-seg-item { display:flex; align-items:center; gap:6px; height:28px; padding:0 10px; border:0; border-radius:6px; background:transparent; color:#58677d; font-size:12px; font-weight:500; cursor:pointer; transition:color 150ms ease, background-color 150ms ease; } .ds-seg-item span { font-variant-numeric:tabular-nums; } .ds-seg-item:hover { color:#15233b; } .ds-seg-item[aria-pressed=true] { background:#fff; color:#15233b; box-shadow:0 1px 2px rgb(15 23 42 / .1); } .ds-seg-item:focus-visible { outline:2px solid #3b82f6; } .ds-seg-alert { color:#b91c1c; }"
+    },
+    {
+      "name": "Task Card in Lane",
+      "kind": "card",
+      "refersTo": "task-card",
+      "description": "White 8px card on a 12px Lane Grey-Blue column; neutral rest/hover shadows; priority chip, tabular due date, 'You' ownership chip.",
+      "html": "<div class=\"ds-lane\"><div class=\"ds-lane-head\"><span class=\"ds-lane-dot\"></span>To do <span class=\"ds-lane-count\">3</span></div><article class=\"ds-task\"><h3>Usability test script</h3><span class=\"ds-tag\">research</span><div class=\"ds-task-foot\"><span class=\"ds-prio\">Medium</span><time><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M16 3v4M8 3v4M3 10h18\"/></svg>Nov 8</time><span class=\"ds-you\">You</span></div></article></div>",
+      "css": ".ds-lane { width:240px; padding:12px; border-radius:12px; background:var(--lane, #e9eef6); font-family:Inter, sans-serif; } .ds-lane-head { display:flex; align-items:center; gap:8px; margin:0 0 10px 4px; color:#15233b; font-size:14px; font-weight:600; } .ds-lane-dot { width:10px; height:10px; border-radius:50%; background:#94a3b8; } .ds-lane-count { color:#58677d; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; } .ds-task { padding:12px; border:1px solid #dfe5ef; border-radius:8px; background:#fff; box-shadow:0 1px 2px rgb(15 23 42 / .06); transition:border-color 150ms ease, box-shadow 150ms ease; } .ds-task:hover { border-color:#cbd5e1; box-shadow:0 4px 12px rgb(15 23 42 / .08); } .ds-task:focus-within { outline:2px solid #3b82f6; outline-offset:2px; } .ds-task h3 { margin:0; color:#15233b; font-size:14px; font-weight:500; line-height:20px; } .ds-tag { display:inline-block; margin-top:8px; padding:2px 6px; border-radius:4px; background:#f1f5f9; color:#475569; font-size:11px; font-weight:500; } .ds-task-foot { display:flex; align-items:center; gap:8px; margin-top:12px; } .ds-prio { padding:2px 6px; border-radius:4px; background:#fffbeb; color:#92400e; box-shadow:inset 0 0 0 1px #fde68a; font-size:11px; font-weight:600; } .ds-task time { display:flex; align-items:center; gap:4px; color:#58677d; font-size:12px; font-variant-numeric:tabular-nums; } .ds-task time svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; } .ds-you { margin-left:auto; padding:2px 8px; border-radius:999px; background:#eff6ff; color:#1d4ed8; font-size:11px; font-weight:600; }"
+    },
+    {
+      "name": "Week Strip Day",
+      "kind": "custom",
+      "refersTo": "week-strip",
+      "description": "My work day tiles; the selected day turns navy, task presence shows as short project-colour bars.",
+      "html": "<div class=\"ds-week\"><button class=\"ds-day\" aria-pressed=\"true\"><span class=\"ds-day-name\">Today</span><span class=\"ds-day-num\">7</span><span class=\"ds-day-bars\"><i style=\"background:#f97316\"></i><i style=\"background:#a855f7\"></i></span></button><button class=\"ds-day\"><span class=\"ds-day-name\">Sun</span><span class=\"ds-day-num\">8</span><span class=\"ds-day-bars\"><i style=\"background:#0ea5e9\"></i></span></button></div>",
+      "css": ".ds-week { display:grid; grid-template-columns:repeat(2, 88px); gap:8px; font-family:Inter, sans-serif; } .ds-day { display:flex; flex-direction:column; align-items:flex-start; padding:10px 12px; border:1px solid #dfe5ef; border-radius:12px; background:#fff; color:#15233b; cursor:pointer; transition:border-color 150ms ease; } .ds-day:hover { border-color:#cbd5e1; } .ds-day:focus-visible { outline:2px solid #3b82f6; outline-offset:2px; } .ds-day[aria-pressed=true] { border-color:#08142d; background:#08142d; color:#fff; } .ds-day-name { color:#58677d; font-size:12px; font-weight:500; } .ds-day[aria-pressed=true] .ds-day-name { color:#9db0d3; } .ds-day-num { font-size:20px; font-weight:600; font-variant-numeric:tabular-nums; } .ds-day-bars { display:flex; gap:4px; margin-top:8px; min-height:6px; } .ds-day-bars i { width:16px; height:6px; border-radius:999px; }"
+    },
+    {
+      "name": "Landing Workspace Preview Surface",
       "kind": "card",
       "refersTo": "surface-workspace",
-      "description": "A single broad product-evidence surface with subtle containment and large-scale lift.",
-      "html": "<section class=\"ds-workspace\"><p class=\"ds-workspace-label\">TODAY</p><h3>Your next tasks</h3><div class=\"ds-divider\"></div><p>Outline project brief</p></section>",
-      "css": ".ds-workspace { width:320px; padding:20px; border:1px solid rgba(147,197,253,.15); border-radius:16px; background:#0b1630; color:#eff6ff; box-shadow:0 32px 90px rgba(0,0,0,.42); font-family:Inter,sans-serif; } .ds-workspace-label { margin:0 0 6px; color:rgba(147,197,253,.70); font-size:12px; font-weight:500; letter-spacing:.16em; } .ds-workspace h3 { margin:0; color:#fff; font-size:20px; font-weight:600; letter-spacing:-.02em; } .ds-workspace p:last-child { margin:14px 0 0; font-size:14px; font-weight:500; } .ds-divider { height:1px; margin-top:16px; background:rgba(255,255,255,.08); }"
+      "description": "The landing page's single broad product-evidence surface with subtle containment and large-scale lift.",
+      "html": "<section class=\"ds-workspace\"><h3>Your next tasks</h3><div class=\"ds-divider\"></div><p>Outline project brief</p></section>",
+      "css": ".ds-workspace { width:320px; padding:20px; border:1px solid rgba(147,197,253,.15); border-radius:16px; background:#0b1630; color:#eff6ff; box-shadow:0 32px 90px rgba(0,0,0,.42); font-family:Inter,sans-serif; } .ds-workspace h3 { margin:0; color:#fff; font-size:20px; font-weight:600; letter-spacing:-.02em; } .ds-workspace p:last-child { margin:14px 0 0; font-size:14px; font-weight:500; } .ds-divider { height:1px; margin-top:16px; background:rgba(255,255,255,.08); }"
     },
     {
-      "name": "Workflow Step",
+      "name": "Landing Workflow Step",
       "kind": "custom",
       "refersTo": "workflow-step",
-      "description": "A linear work sequence that turns project setup into an understandable next action.",
-      "html": "<article class=\"ds-flow-step\"><span class=\"ds-flow-icon\">✓</span><div><h3>Return to what matters</h3><p>Use your personal view to pick up the next task.</p></div></article>",
-      "css": ".ds-flow-step { display:grid; grid-template-columns:40px 1fr; gap:16px; color:#fff; font-family:Inter,sans-serif; } .ds-flow-icon { display:flex; width:40px; height:40px; align-items:center; justify-content:center; border:1px solid rgba(147,197,253,.15); border-radius:12px; background:rgba(59,130,246,.10); color:#bfdbfe; font-size:18px; } .ds-flow-step h3 { margin:6px 0 0; font-size:16px; font-weight:600; } .ds-flow-step p { max-width:360px; margin:6px 0 0; color:rgba(219,234,254,.65); font-size:14px; line-height:1.5; }"
-    },
-    {
-      "name": "Selected Calendar Date",
-      "kind": "custom",
-      "refersTo": "calendar-selection",
-      "description": "The compact, unambiguous selected-day state for due-date awareness.",
-      "html": "<span class=\"ds-calendar-date\">18</span>",
-      "css": ".ds-calendar-date { display:inline-flex; width:28px; height:28px; align-items:center; justify-content:center; border-radius:8px; background:#3b82f6; color:#fff; box-shadow:0 5px 16px rgba(59,130,246,.45); font:600 12px Inter,sans-serif; }"
+      "description": "Landing process sequence that turns project setup into an understandable next action.",
+      "html": "<article class=\"ds-flow-step\"><span class=\"ds-flow-icon\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></span><div><h3>Return to what matters</h3><p>Use your personal view to pick up the next task.</p></div></article>",
+      "css": ".ds-flow-step { display:grid; grid-template-columns:40px 1fr; gap:16px; color:#fff; font-family:Inter,sans-serif; } .ds-flow-icon { display:flex; width:40px; height:40px; align-items:center; justify-content:center; border:1px solid rgba(147,197,253,.15); border-radius:12px; background:rgba(59,130,246,.10); color:#bfdbfe; } .ds-flow-icon svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; } .ds-flow-step h3 { margin:6px 0 0; font-size:16px; font-weight:600; } .ds-flow-step p { max-width:360px; margin:6px 0 0; color:rgba(219,234,254,.65); font-size:14px; line-height:1.5; }"
     }
   ],
   "narrative": {
     "northStar": "The Focused Night Desk",
-    "overview": "FocusFlow is a quiet, capable workspace for turning shared project activity into a clear next task. A deep navy field keeps the page calm and concentrated; blue light indicates the route forward, while cyan and violet distinguish small task signals without competing for attention.\n\nThe system is spacious and task-led rather than dashboard-dense. Large, direct headings establish intent, then contained work evidence—boards, agendas, due dates, and a short process—does the explaining. Depth is present but soft: restrained borders, tonal shifts, and diffuse blue shadows give hierarchy without making the interface feel glossy or ornamental.",
-    "keyCharacteristics": ["Deep navy canvas with slightly lighter, opaque work surfaces.", "Blue is the action color; cyan and violet are sparse status signals.", "Inter typography is compact, clear, and weighted toward actionable hierarchy.", "Rounded 12–16px surfaces and 8px controls keep structure friendly but precise.", "Generous whitespace frames a concrete path from project plan to next task."],
-    "rules": [
-      { "name": "The Signal Budget Rule", "body": "Blue establishes the primary path. Cyan and violet appear as small, meaningful accents, never as competing page-wide decoration.", "section": "colors" },
-      { "name": "The Next-Action Hierarchy Rule", "body": "The highest contrast and largest type should make the next decision clear; supporting labels and metadata should stay visibly quieter.", "section": "typography" },
-      { "name": "The Opaque Workspace Rule", "body": "Use solid navy layers and quiet 1px translucent borders for structure. Do not use generic glassmorphism or blur-heavy panels.", "section": "elevation" }
+    "overview": "FocusFlow is a quiet, capable workspace for turning shared project activity into a clear next task. A deep navy field keeps the brand calm and concentrated; blue light indicates the route forward, while cyan and violet distinguish small task signals without competing for attention.\n\nThe system has two registers that share one identity. The landing page is the desk at night: a full navy canvas, large close-tracked headings, and a single wide piece of workspace evidence lifted by soft blue light. The signed-in app keeps the navy as its frame (the 56px top bar, the docked agenda, the mobile agenda drawer, the selected day) and opens the long-session work area onto a light, cool canvas with white cards and pale lanes, so boards and task lists stay readable for hours. Depth in the app is neutral and offset, never glowing.\n\nThe app is task-led and moderately dense: dates, times and counts carry the hierarchy, set in tabular numerals; project identity appears only as small coloured dots; the personal agenda stays docked beside whichever project is open.",
+    "keyCharacteristics": [
+      "Navy carries the identity: the landing canvas and the signed-in shell (top bar, agenda dock, drawer).",
+      "Long-session work areas sit on a light canvas (`work-canvas`) with white cards and pale lanes.",
+      "Two blues with two jobs: lighter blue marks and selects; deeper blue fills buttons that carry white text.",
+      "Inter throughout; tabular numerals for every date, time and count.",
+      "8px controls, 12px surfaces, 1px borders; neutral offset shadows in the app, blue glow only on the landing page."
     ],
-    "dos": ["Do keep the primary canvas dark navy and make surfaces only incrementally lighter.", "Do reserve blue for primary action and selected state; use cyan and violet as sparse task signals.", "Do use Inter semibold headings with tight negative tracking and softer blue-white supporting copy.", "Do favour one wide, task-specific evidence composition over a grid of generic feature panels.", "Do use 8px controls and 12–16px surfaces with 1px translucent boundaries and soft blue shadow only where hierarchy needs it."],
-    "donts": ["Don't introduce generic glass panels, strong backdrop blur, or milky transparency.", "Don't turn every container into a card, or turn buttons and tags into pills without a task-state reason.", "Don't distribute bright cyan, violet, and blue evenly across a screen; the signal budget is deliberate.", "Don't replace task, board, agenda, or due-date evidence with abstract SaaS icon grids or invented product claims."]
+    "rules": [
+      { "name": "The Navy Frame Rule", "body": "Navy is the frame, not the floor, of the signed-in app: top bar, agenda dock, agenda drawer, and the selected day tile. Long-session work areas (boards, task lists, calendars, settings forms) sit on Work Canvas and Card White.", "section": "colors" },
+      { "name": "The Two Blues Rule", "body": "Forward Blue marks (underlines, rings, tints, selected states, focus). Deep Forward Blue fills anything that carries white text on a light surface. Don't swap them.", "section": "colors" },
+      { "name": "The Project Dot Rule", "body": "A project's own colour appears only as a small dot (8–12px, 3px corners) beside its name, or as a short bar under a day in the week strip. Never as a fill, a card side border, or a header band.", "section": "colors" },
+      { "name": "The Signal Budget Rule", "body": "Blue establishes the primary path. Cyan and violet appear as small, meaningful accents, never as competing page-wide decoration.", "section": "colors" },
+      { "name": "The Tracking Split Rule", "body": "Negative tracking belongs to display sizes. The app base layer resets h1–h4, buttons and fields to 0em; only the page h1 takes -0.025em. Landing headings keep -0.035em to -0.04em.", "section": "typography" },
+      { "name": "The Tabular Time Rule", "body": "Every date, time and count (`time` elements and `.tabular-nums`) is set with tabular numerals so agenda columns and counters never jitter.", "section": "typography" },
+      { "name": "The Next-Action Hierarchy Rule", "body": "The highest contrast and largest type should make the next decision clear; supporting labels and metadata should stay visibly quieter.", "section": "typography" },
+      { "name": "The No-Glow Workspace Rule", "body": "Signed-in surfaces never use coloured or blue-tinted shadows. Elevation in the app is a neutral offset that answers interaction (hover, drag, overlay).", "section": "elevation" },
+      { "name": "The Opaque Workspace Rule", "body": "Use solid layers and quiet 1px borders for structure. Do not use generic glassmorphism or blur-heavy panels.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep navy as the identity: the landing canvas, the app top bar, the agenda dock and drawer, and the selected day tile.",
+      "Do put long-session work (boards, task lists, calendars, forms) on Work Canvas with Card White panels and Lane Grey-Blue lanes.",
+      "Do fill white-text buttons on light surfaces with Deep Forward Blue (#2563eb), and use Forward Blue (#3b82f6) for underlines, rings, tints and selection.",
+      "Do set every date, time and count in tabular numerals.",
+      "Do mark the user's own tasks with the \"You\" chip or their avatar.",
+      "Do use 8px controls and 12px surfaces with 1px borders; in the app, neutral offset shadows that grow only with hover or drag.",
+      "Do keep negative tracking for landing display sizes and the page h1 (-0.025em); everything else in the app sits at 0em."
+    ],
+    "donts": [
+      "Don't use blue or coloured glows in the signed-in app; glow is a landing-page device only.",
+      "Don't fill a project's colour across cards, headers or side borders; project colour is a small dot or day bar.",
+      "Don't put small white text on Forward Blue (#3b82f6); it reads at about 3.7:1.",
+      "Don't add uppercase, letter-spaced kicker labels above app headings; the uppercase Label style stays confined to the landing preview it shipped in.",
+      "Don't introduce generic glass panels, strong backdrop blur, or milky transparency.",
+      "Don't turn buttons and tags into pills without a task-state reason.",
+      "Don't distribute bright cyan, violet, and blue evenly across a screen; the signal budget is deliberate.",
+      "Don't replace task, board, agenda, or due-date evidence with abstract SaaS icon grids or invented product claims."
+    ]
   }
 }

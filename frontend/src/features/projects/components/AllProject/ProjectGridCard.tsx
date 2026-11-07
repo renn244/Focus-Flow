@@ -6,26 +6,27 @@ import { Calendar, CheckCircle, Circle, Folder, Star } from "lucide-react"
 import { priorityColors, statusColors } from "../../constants/ProjectBadge"
 import ProjectCardOptions from "./ProjectCardOptions"
 import type { ProjectWithOwner } from "../../type"
+import { Link } from "@tanstack/react-router"
 
 const ProjectGridCard = ({ project }: { project: ProjectWithOwner } ) => {
     
     return (
-        <Card className="hover:shadow-md transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-0">
-            <CardContent className="p-6">
+        <Card className="group h-full bg-card py-0 transition-colors hover:border-blue-400">
+            <CardContent className="p-5">
                 <div className="space-y-4">
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
+                    <div className="flex items-start justify-between gap-2">
+                        <div className="flex min-w-0 items-start gap-3">
                             <div className="flex flex-col items-center-safe gap-1">
-                                <div className={`w-8 h-8 p-2 rounded ${project.color} flex items-center justify-center`}>
+                                <div className={`size-9 shrink-0 rounded-md ${project.color || "bg-blue-600"} flex items-center justify-center`}>
                                     <Folder className="w-4 h-4 text-white" />
                                 </div>
                             </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors">{project.name}</h3>
+                            <div className="min-w-0">
+                                <div className="flex items-start gap-2">
+                                    <h3 className="font-semibold text-foreground"><Link to="/projects/$projectId" params={{ projectId: project._id }} className="rounded-sm hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">{project.name}</Link></h3>
                                     {project.starred && <Star className="w-4 h-4 text-yellow-500 fill-current" />}
                                 </div>
-                                <p className="text-sm text-gray-500 line-clamp-2">{project.description}</p>
+                                <p className="mt-1 line-clamp-2 min-h-10 text-sm text-muted-foreground">{project.description || "No description yet."}</p>
                             </div>
                         </div>
                         <ProjectCardOptions projectId={project._id} />
@@ -48,7 +49,7 @@ const ProjectGridCard = ({ project }: { project: ProjectWithOwner } ) => {
                         <Progress value={project.progress} className="h-2" />
                     </div>
 
-                    <div className="flex items-center justify-between text-sm text-gray-600">
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-1">
                                 <CheckCircle className="w-4 h-4" />

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 const ProjectSkeletonListCard = () => {
     return (
-        <Card className="hover:shadow-md transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-0.5 rounded-sm">
+        <Card className="min-w-0 bg-card py-0.5 rounded-sm">
             <CardContent className="p-2">
                 <div className="flex items-center gap-2">
 
@@ -13,12 +13,12 @@ const ProjectSkeletonListCard = () => {
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center mb-0.5">
-                            <Skeleton className="w-[300px] h-5.5" />
+                            <Skeleton className="w-3/4 max-w-72 h-5.5" />
                         </div>
-                        <Skeleton className="w-[700px] h-5" />
+                        <Skeleton className="w-full max-w-xl h-5" />
                     </div>
 
-                    <div className="flex items-center gap-6 flex-shrink-0">
+                    <div className="hidden items-center gap-6 flex-shrink-0 lg:flex">
                         <div className="flex items-center gap-2">
                             <Skeleton className="w-13 h-5.5" />
                             <Skeleton className="w-9.5 h-5.5" />

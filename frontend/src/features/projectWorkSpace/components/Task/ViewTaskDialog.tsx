@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
+import ListLoading from "@/components/common/ListLoading";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Settings } from "lucide-react";
 import { lazy, Suspense } from "react";
@@ -32,8 +33,15 @@ const ViewTaskDialog = () => {
         <Dialog open={isViewOpen} onOpenChange={setViewOpen}>
             <DialogContent className="h-[90vh] grid-rows-[minmax(0,1fr)] md:max-w-6xl overflow-hidden p-0">
                 {isLoading && (
-                    <div className="flex items-center justify-center h-64">
-                        <LoadingSpinner />
+                    <div role="status" aria-busy="true" className="space-y-6 p-6">
+                        <DialogTitle className="sr-only">Loading task details</DialogTitle>
+                        <div aria-hidden="true" className="space-y-3">
+                            <Skeleton className="h-4 w-40" />
+                            <Skeleton className="h-7 w-2/3 max-w-96" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-3/4" />
+                        </div>
+                        <ListLoading label="Loading task details" rows={4} />
                     </div>
                 )}
                 {error && (
@@ -92,7 +100,7 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                 </DialogHeader>
 
                 <div className="min-h-0 flex-1 overflow-auto px-6 py-4">
-                    <Suspense fallback={<p className="text-sm text-muted-foreground">Loading attachments…</p>}>
+                    <Suspense fallback={<ListLoading label="Loading attachments" rows={2} />}>
                         <TaskAttachments taskId={task._id} standalone />
                     </Suspense>
 
@@ -116,7 +124,7 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                         )}
                     </section>
 
-                    <Suspense fallback={<p className="mt-6 text-sm text-muted-foreground">Loading activity…</p>}>
+                    <Suspense fallback={<ListLoading className="mt-6" label="Loading task activity" avatar />}>
                         <TaskComments taskId={task._id} />
                     </Suspense>
                 </div>

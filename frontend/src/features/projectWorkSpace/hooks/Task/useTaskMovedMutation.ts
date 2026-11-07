@@ -29,13 +29,19 @@ export const useTaskMovedMutation = () => {
         mutationFn: taskMoved,
         // optimistically update the cache
         onMutate: async (movedData) => {
-            queryClient.setQueryData(
-                ["columns", "byboard", selectedBoardId],
-                (oldData: ColumnWithTasks[]): ColumnWithTasks[] => {
+            const queryKey = ["columns", "byboard", selectedBoardId] as const;
+            await queryClient.cancelQueries({ queryKey });
+            const previousColumns = queryClient.getQueryData<ColumnWithTasks[]>(queryKey);
+
+            queryClient.setQueryData<ColumnWithTasks[]>(
+                queryKey,
+                (oldData) => {
+                    if (!oldData) return oldData;
                     const task = oldData.find((item) => item._id === movedData.taskCurrentColumnId)
                         ?.tasks.find((task) => task._id === movedData.taskId);
+                    const destination = oldData.find((item) => item._id === movedData.taskFutureColumnId);
 
-                    if(!task) return oldData;
+                    if(!task || !destination || movedData.taskCurrentColumnId === movedData.taskFutureColumnId) return oldData;
 
                     const updatedData = oldData.map((column) => {
                         if(column._id === movedData.taskCurrentColumnId) {
@@ -46,7 +52,10 @@ export const useTaskMovedMutation = () => {
 
                         if(column._id === movedData.taskFutureColumnId) {
                             return {
-                                ...column, tasks: [...column.tasks, task]
+                                ...column, tasks: [...column.tasks.filter((item) => item._id !== task._id), {
+                                    ...task,
+                                    column: { ...task.column, _id: destination._id, title: destination.title, color: destination.color }
+                                }]
                             }
                         }
 
@@ -57,18 +66,19 @@ export const useTaskMovedMutation = () => {
                 }
             )
 
-            queryClient.cancelQueries({ queryKey: ['columns', 'byboard', selectedBoardId] });
-            const previousColumns = queryClient.getQueryData(['columns', 'byboard', selectedBoardId]);
-
-            return { previousColumns, movedData }
+            return { previousColumns, queryKey }
         },
-        onError: (_, __, context) => {
-            queryClient.setQueryData(['columns', 'byboard', selectedBoardId], () => (context?.previousColumns || []))
-            toast.error("An error occured while moving the task", { position: "top-center" })
+        onError: (error, __, context) => {
+            if (context?.previousColumns) {
+                queryClient.setQueryData(context.queryKey, context.previousColumns);
+            }
+            toast.error(error.message || "An error occurred while moving the task", { position: "top-center" })
         },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: ['columns', 'byboard', selectedBoardId] })
+        onSettled: (_, __, movedData, context) => {
+            queryClient.invalidateQueries({ queryKey: context?.queryKey ?? ['columns', 'byboard', selectedBoardId] })
             queryClient.invalidateQueries({ queryKey: ['tasks', 'by-project'] });
+            queryClient.invalidateQueries({ queryKey: ['tasks', 'mine'] });
+            queryClient.invalidateQueries({ queryKey: ['task', movedData.taskId] });
         }
     })
 }

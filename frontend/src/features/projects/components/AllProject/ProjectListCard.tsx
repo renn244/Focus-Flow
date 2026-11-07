@@ -6,29 +6,30 @@ import { priorityColors, statusColors } from "../../constants/ProjectBadge"
 import ProjectCardOptions from "./ProjectCardOptions"
 import { format } from "date-fns"
 import type { ProjectWithOwner } from "../../type"
+import { Link } from "@tanstack/react-router"
 
 const ProjectListCard = ({ project } : { project: ProjectWithOwner }) => {
 
     return (
-        <Card className="hover:shadow-sm transition-all duration-200 cursor-pointer group bg-white border border-gray-200 py-0.5 rounded-sm">
-            <CardContent className="p-2">
-                <div className="flex items-center gap-2">
+        <Card className="group bg-card py-0 transition-colors hover:border-blue-400">
+            <CardContent className="p-4">
+                <div className="flex flex-wrap items-center gap-3">
 
-                    <div className={`w-8 h-8 rounded ${project.color} flex items-center justify-center flex-shrink-0`}>
+                    <div className={`w-8 h-8 rounded ${project.color || "bg-blue-600"} flex items-center justify-center flex-shrink-0`}>
                         <Folder className="w-4 h-4 text-white" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                             <h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate">
-                                {project.name}
+                                <Link to="/projects/$projectId" params={{ projectId: project._id }} className="rounded-sm focus-visible:outline-2 focus-visible:outline-ring">{project.name}</Link>
                             </h3>
                             {project.starred && <Star className="w-4 h-4 text-yellow-500 fill-current flex-shrink-0" />}
                         </div>
                         <p className="text-sm text-gray-500 truncate">{project.description}</p>
                     </div>
 
-                    <div className="flex items-center gap-6 flex-shrink-0">
+                    <div className="flex w-full flex-wrap items-center gap-3 sm:gap-5 lg:w-auto">
                         <div className="flex items-center gap-2">
                             <Badge className={statusColors[project.status as "active"]} variant="secondary">
                                 {project.status}
@@ -66,7 +67,7 @@ const ProjectListCard = ({ project } : { project: ProjectWithOwner }) => {
                             ))} */}
                         </div>
 
-                        <span className="text-xs text-gray-500 w-20 text-right">{format(new Date(project.updatedAt), "MMM dd, yyyy")}</span>
+                        <span className="text-xs text-muted-foreground sm:ml-auto">{format(new Date(project.updatedAt), "MMM dd, yyyy")}</span>
 
                         <ProjectCardOptions projectId={project._id} />
                     </div>

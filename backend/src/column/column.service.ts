@@ -233,7 +233,7 @@ export class ColumnService {
     async addTaskToColumn(columnId: string, taskId: Types.ObjectId, session?: ClientSession) {
         // might wanna add permission to check if the column belongs to the user
         const updatedColumn = await this.columnModel.findOneAndUpdate(
-            { _id: columnId }, { $push: { tasks: taskId } }, { new: true }
+            { _id: columnId }, { $addToSet: { tasks: taskId } }, { new: true, session }
         );
 
         return plainToInstance(ColumnDto, updatedColumn, {

@@ -5,6 +5,7 @@ import type { User } from "@/types/User";
 import { motion } from 'framer-motion';
 import type { ComponentProps } from "react";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
+import ListLoading from "@/components/common/ListLoading";
 
 type DisplayUserProps = {
     userId: User['_id'];
@@ -17,9 +18,8 @@ const DisplayUser = ({ userId, className, userOnClick, ...props }: DisplayUserPr
     
     const { data: user, isLoading } = useGetUserInfo(userId, projectId);
 
-    // prepare a skeleton loading for this one
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <ListLoading label="Loading member profile" rows={1} avatar className={className} />;
     }
 
     return (

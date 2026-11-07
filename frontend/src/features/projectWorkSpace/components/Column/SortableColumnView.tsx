@@ -8,6 +8,8 @@ import { useTaskSocket } from "../../hooks/Task/useTaskSocket";
 import type { ColumnWithTasks, TaskWithBoardAndColumn } from "../../type";
 import transformReorderColumn from "../../utils/transformReorderColumn";
 import ColumnCard from "./ColumnCard";
+import ColumnSkeleton from "./ColumnSkeleton";
+import { Button } from "@/components/ui/button";
 
 type SortableColumnViewProps = {
     boardId: string | null | undefined;
@@ -16,12 +18,20 @@ type SortableColumnViewProps = {
 const SortableColumnView = ({
     boardId
 }: SortableColumnViewProps) => {
-    const { data: columns } = useGetColumnByBoardId(boardId || "");
+    const { data: columns, isLoading, isError, refetch, isFetching } = useGetColumnByBoardId(boardId || "");
     const { mutateAsync: reorderColumn } = useReorderColumnMutation(boardId || "");
     const { mutateAsync: moveTask } = useTaskMovedMutation();
 
     useSortableColumnViewSocket(boardId);
     useTaskSocket(boardId);
+
+    if (isLoading) return <ColumnSkeleton />;
+    if (isError) return (
+        <div role="alert" className="col-span-full flex items-center gap-3 py-8">
+            <p className="text-sm text-destructive">Board columns could not be loaded.</p>
+            <Button variant="outline" size="sm" disabled={isFetching} onClick={() => refetch()}>Retry</Button>
+        </div>
+    );
 
     return (
         <Sortable<ColumnWithTasks>
