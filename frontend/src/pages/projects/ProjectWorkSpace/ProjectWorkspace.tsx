@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { CalendarDays, ListTodo, SquareKanban, Users } from "lucide-react";
+import { CalendarDays, ListTodo, NotebookText, SquareKanban, Users } from "lucide-react";
 import AppShell from "@/components/layout/AppShell";
 import { useShellStore } from "@/components/layout/shellStore";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,6 +6,8 @@ import { cn } from "@/lib/utils";
 import KanbanBoard from "@/features/projectWorkSpace/components/Board/KanbanBoard";
 import ProjectActivityDialog from "@/features/projectWorkSpace/components/Activity/ProjectActivityDialog";
 import ProjectCalendar from "@/features/projectWorkSpace/components/Calendar/ProjectCalendar";
+import ProjectNotes from "@/features/projectWorkSpace/components/Notes/ProjectNotes";
+import useWorkspaceViewStore, { type WorkspaceView } from "@/features/projectWorkSpace/store/useWorkspaceView";
 import ViewTaskDialog from "@/features/projectWorkSpace/components/Task/ViewTaskDialog";
 import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
 import { useGetProjectById } from "@/features/projects/hooks/useGetProjectById";
@@ -18,17 +19,19 @@ import ProjectTeamPage from "@/features/teamMember/components/ProjectTeamPage";
 import RemoveMemberDialog from "@/features/teamMember/components/RemoveMemberDialog";
 import ViewMemberProfileDialog from "@/features/teamMember/components/ViewMemberProfileDialog";
 
-type View = "board" | "calendar" | "team";
+type View = WorkspaceView;
 
 const views: { id: View; label: string; icon: typeof SquareKanban }[] = [
     { id: "board", label: "Board", icon: SquareKanban },
     { id: "calendar", label: "Calendar", icon: CalendarDays },
     { id: "team", label: "Team", icon: Users },
+    { id: "notes", label: "Notes", icon: NotebookText },
 ];
 
 const ProjectWorkspace = () => {
     const projectId = useProjectIdStore((state) => state.projectId);
-    const [activeView, setActiveView] = useState<View>("board");
+    const activeView = useWorkspaceViewStore((state) => state.view);
+    const setActiveView = useWorkspaceViewStore((state) => state.setView);
     const { data: project, isLoading } = useGetProjectById(projectId || "");
     const setAgendaDrawerOpen = useShellStore((state) => state.setAgendaDrawerOpen);
 
@@ -88,6 +91,7 @@ const ProjectWorkspace = () => {
             {activeView === "board" && <KanbanBoard />}
             {activeView === "team" && <ProjectTeamPage />}
             {activeView === "calendar" && projectId && <ProjectCalendar projectId={projectId} />}
+            {activeView === "notes" && projectId && <ProjectNotes projectId={projectId} />}
             <ViewTaskDialog />
             <AddMemberDialog />
             <RemoveMemberDialog />

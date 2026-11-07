@@ -38,6 +38,18 @@ export class AuditLogService {
         return auditLog;
     }
 
+    /** True when this actor already logged the same action on the entity within the window. */
+    async hasRecentEvent(entityId: Types.ObjectId | string, actorId: Types.ObjectId | string, action: AuditAction, withinMs: number) {
+        const recent = await this.auditLogModel.exists({
+            entityId: entityId.toString(),
+            actorId: new Types.ObjectId(actorId),
+            action,
+            createdAt: { $gte: new Date(Date.now() - withinMs) },
+        });
+
+        return Boolean(recent);
+    }
+
     async getProjectActivity(projectId: Types.ObjectId, query: GetProjectActivityQueryDto): Promise<ProjectActivityPageDto> {
         return this.getActivity({ projectId }, query);
     }

@@ -9,7 +9,7 @@ export type ProjectActivityItem = {
   _id: string;
   projectId: string;
   action: string;
-  entityType: "project" | "team_member" | "task" | "comment" | "attachment";
+  entityType: "project" | "team_member" | "task" | "comment" | "attachment" | "note";
   entityId: string;
   taskId?: string;
   summary: string;

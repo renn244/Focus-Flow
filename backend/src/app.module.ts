@@ -16,6 +16,7 @@ import { TeamModule } from './team/team.module';
 import { CommentModule } from './comment/comment.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
+import { NoteModule } from './note/note.module';
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { AuditLogModule } from './audit-log/audit-log.module';
     TeamModule,
     CommentModule,
     AttachmentModule,
-    AuditLogModule
+    AuditLogModule,
+    NoteModule
   ],
   controllers: [],
   providers: [],

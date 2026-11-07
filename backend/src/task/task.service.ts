@@ -169,7 +169,7 @@ export class TaskService {
         const task = await this.taskModel
             .findById(id)
             .populate('columnId', 'title color _id')
-            .populate('boardId', 'name _id')
+            .populate('boardId', 'name projectId _id')
             .populate('assignee', 'displayName username avatarUrl _id');
 
         if (!task) {
@@ -199,6 +199,29 @@ export class TaskService {
 
     async getTaskActivity(taskId: Types.ObjectId, query: GetProjectActivityQueryDto) {
         return this.auditLogService.getTaskActivity(taskId, query);
+    }
+
+    /** Keeps only the ids that point at existing tasks inside the project. */
+    async filterTaskIdsInProject(taskIds: string[], projectId: Types.ObjectId | string) {
+        const validIds = [...new Set(taskIds)].filter((id) => Types.ObjectId.isValid(id));
+
+        if (validIds.length === 0) {
+            return [];
+        }
+
+        const boards = await this.boardModel
+            .find({ $expr: { $eq: [{ $toString: '$projectId' }, projectId.toString()] } })
+            .select('_id');
+        const boardIds = boards.map((board) => board._id.toString());
+
+        const tasks = await this.taskModel
+            .find({
+                _id: { $in: validIds.map((id) => new Types.ObjectId(id)) },
+                $expr: { $in: [{ $toString: '$boardId' }, boardIds] },
+            })
+            .select('_id');
+
+        return tasks.map((task) => task._id.toString());
     }
 
     async getProjectIdByTaskId(taskId: Types.ObjectId | string) {

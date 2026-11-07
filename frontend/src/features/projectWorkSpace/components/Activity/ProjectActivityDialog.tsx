@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { format, isToday, isYesterday } from "date-fns";
-import { ArrowRight, FileText, FolderKanban, History, MessageSquareText, MoveRight, Pencil, Plus, RotateCw, Trash2, UsersRound, X } from "lucide-react";
+import { ArrowRight, FileText, FolderKanban, History, MessageSquareText, MoveRight, NotebookText, Pencil, Plus, RotateCw, Trash2, UsersRound, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ListLoading from "@/components/common/ListLoading";
@@ -12,12 +12,13 @@ import { useProjectActivity } from "../../hooks/Audit/useProjectActivity";
 import { useGetTasksByProject } from "../../hooks/Task/useGetTasksByProject";
 import type { ProjectActivityItem } from "../../types/audit";
 
-type Filter = "all" | "task" | "comment" | "team";
+type Filter = "all" | "task" | "comment" | "note" | "team";
 
 const filters: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "task", label: "Tasks" },
   { id: "comment", label: "Comments" },
+  { id: "note", label: "Notes" },
   { id: "team", label: "Team" },
 ];
 
@@ -25,6 +26,7 @@ const matchesFilter = (item: ProjectActivityItem, filter: Filter) => {
   if (filter === "all") return true;
   if (filter === "task") return item.entityType === "task" || item.entityType === "attachment";
   if (filter === "comment") return item.entityType === "comment";
+  if (filter === "note") return item.entityType === "note";
   return item.entityType === "team_member";
 };
 
@@ -50,6 +52,7 @@ const actionIcon = (action: string, entityType: ProjectActivityItem["entityType"
   if (action.endsWith(".created") && entityType === "task") return Plus;
   if (action === "task.moved") return MoveRight;
   if (action.endsWith(".deleted")) return Trash2;
+  if (entityType === "note") return NotebookText;
   if (entityType === "comment") return MessageSquareText;
   if (entityType === "attachment") return FileText;
   if (entityType === "team_member") return UsersRound;
@@ -95,7 +98,7 @@ const canBatch = (entry: Entry, item: ProjectActivityItem) =>
   entry.item.actor._id === item.actor._id &&
   Math.abs(new Date(entry.batch[entry.batch.length - 1].createdAt).getTime() - new Date(item.createdAt).getTime()) < 10 * 60 * 1000;
 
-const fieldLabels: Record<string, string> = { starred: "starred status", dueDate: "due date", assignee: "assignee" };
+const fieldLabels: Record<string, string> = { starred: "starred status", dueDate: "due date", assignee: "assignee", contentText: "content" };
 
 const ProjectActivityDialog = () => {
   const projectId = useProjectIdStore((state) => state.projectId);
@@ -314,7 +317,7 @@ const ActivityRow = ({ item, batch, taskTitles, onOpenTask, last }: ActivityRowP
         )}
 
         {changes.length === 0 && item.changes.length === 0 && item.changedFields.length > 0 && (
-          <p className="mt-1 text-xs text-muted-foreground">Changed the {item.changedFields.map((field) => fieldLabels[field] ?? field.toLowerCase()).join(", ")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Changed the {[...new Set(item.changedFields.map((field) => fieldLabels[field] ?? field.toLowerCase()))].join(", ")}</p>
         )}
       </div>
     </li>

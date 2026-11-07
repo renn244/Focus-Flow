@@ -250,3 +250,14 @@
     }
   }
 }
+
+/* Notes editor: the cursor that sits between two blocks (e.g. above an image)
+   draws as an upright caret, like normal text, instead of ProseMirror's underline. */
+.ProseMirror.note-editor .ProseMirror-gapcursor::after {
+  top: 2px;
+  left: -8px;
+  width: 0;
+  height: 1.25rem;
+  border-top: 0;
+  border-left: 1.5px solid var(--color-foreground, currentColor);
+}

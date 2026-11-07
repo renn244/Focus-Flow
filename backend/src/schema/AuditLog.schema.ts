@@ -17,11 +17,16 @@ export const AUDIT_ACTIONS = [
     'comment.deleted',
     'attachment.uploaded',
     'attachment.deleted',
+    'note.created',
+    'note.updated',
+    'note.pinned',
+    'note.unpinned',
+    'note.deleted',
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 
-export const AUDIT_ENTITY_TYPES = ['project', 'team_member', 'task', 'comment', 'attachment'] as const;
+export const AUDIT_ENTITY_TYPES = ['project', 'team_member', 'task', 'comment', 'attachment', 'note'] as const;
 export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
 
 export type AuditChange = {

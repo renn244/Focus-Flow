@@ -7,9 +7,12 @@ import { CustomValidationPipe } from './CustomValidationPipe';
 import { AllExceptionFilter } from './AllExceptionFilter';
 import { join } from 'node:path';
 import * as express from 'express';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  // Notes send whole Tiptap documents, which can outgrow the 100kb default.
+  app.useBodyParser('json', { limit: '1mb' });
 
   app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalFilters(new AllExceptionFilter());
@@ -17,6 +20,10 @@ async function bootstrap() {
   app.use(
     '/uploads/avatars',
     express.static(join(process.cwd(), 'uploads', 'avatars')),
+  );
+  app.use(
+    '/uploads/note-images',
+    express.static(join(process.cwd(), 'uploads', 'note-images'), { immutable: true, maxAge: '30d' }),
   );
 
   const config = new DocumentBuilder()

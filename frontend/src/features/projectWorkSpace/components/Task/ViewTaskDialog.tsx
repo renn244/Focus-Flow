@@ -20,6 +20,7 @@ import TaskAssigneeCombobox from "./TaskAssigneeCombobox";
 
 const TaskComments = lazy(() => import("./comments/TaskComments"));
 const TaskAttachments = lazy(() => import("./attachments/TaskAttachments"));
+const TaskMentionedInNotes = lazy(() => import("../Notes/TaskMentionedInNotes"));
 
 
 const ViewTaskDialog = () => {
@@ -197,6 +198,10 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                             <Label className="text-sm font-medium text-muted-foreground">Order</Label>
                             <p className="text-sm mt-1">#{task.order}</p>
                         </div>
+
+                        <Suspense fallback={null}>
+                            <TaskMentionedInNotes taskId={task._id} projectId={task.board.projectId} />
+                        </Suspense>
 
                         <Separator />
 
