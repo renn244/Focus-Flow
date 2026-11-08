@@ -241,6 +241,11 @@ export class TaskService {
     }
 
     async updateMovedTask(taskId: Types.ObjectId, body: MoveTaskDto, user: UserJwt) {
+        // Dropping a task back into its own column changes nothing, so nothing is saved or logged.
+        if (body.taskCurrentColumnId.toString() === body.taskFutureColumnId.toString()) {
+            return { message: "Task is already in that column" };
+        }
+
         const { updatedTask, projectId } = await this.connection.transaction(async (session) => {
             // Operations on a transaction session must run sequentially.
             const currentColumn = await this.columnModel.findById(body.taskCurrentColumnId)

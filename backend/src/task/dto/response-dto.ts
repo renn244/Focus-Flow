@@ -60,7 +60,12 @@ export class TaskDto {
 
     @ApiPropertyOptional()
     @Expose()
-    @Transform(({ value }) => value?._id?.toString?.() ?? value?.toString?.())
+    // Read from the source: a populated assignee is a mongoose document, and its id must come from `_id`.
+    @Transform(({ obj }) => {
+        const assignee = obj.assignee;
+        if (!assignee) return undefined;
+        return assignee._id ? String(assignee._id) : String(assignee);
+    })
     assignee?: string;
 
     @ApiPropertyOptional()
