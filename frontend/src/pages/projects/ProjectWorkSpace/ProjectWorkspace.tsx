@@ -1,4 +1,4 @@
-import { CalendarDays, ListTodo, NotebookText, SquareKanban, Users } from "lucide-react";
+import { CalendarDays, ListChecks, ListTodo, NotebookText, SquareKanban, Users } from "lucide-react";
 import AppShell from "@/components/layout/AppShell";
 import { useShellStore } from "@/components/layout/shellStore";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import KanbanBoard from "@/features/projectWorkSpace/components/Board/KanbanBoard";
 import ProjectActivityDialog from "@/features/projectWorkSpace/components/Activity/ProjectActivityDialog";
 import ProjectCalendar from "@/features/projectWorkSpace/components/Calendar/ProjectCalendar";
+import ProjectList from "@/features/projectWorkSpace/components/List/ProjectList";
 import ProjectNotes from "@/features/projectWorkSpace/components/Notes/ProjectNotes";
 import useWorkspaceViewStore, { type WorkspaceView } from "@/features/projectWorkSpace/store/useWorkspaceView";
 import ViewTaskDialog from "@/features/projectWorkSpace/components/Task/ViewTaskDialog";
@@ -23,6 +24,7 @@ type View = WorkspaceView;
 
 const views: { id: View; label: string; icon: typeof SquareKanban }[] = [
     { id: "board", label: "Board", icon: SquareKanban },
+    { id: "list", label: "My list", icon: ListChecks },
     { id: "calendar", label: "Calendar", icon: CalendarDays },
     { id: "team", label: "Team", icon: Users },
     { id: "notes", label: "Notes", icon: NotebookText },
@@ -89,6 +91,7 @@ const ProjectWorkspace = () => {
             </div>
 
             {activeView === "board" && <KanbanBoard />}
+            {activeView === "list" && <ProjectList />}
             {activeView === "team" && <ProjectTeamPage />}
             {activeView === "calendar" && projectId && <ProjectCalendar projectId={projectId} />}
             {activeView === "notes" && projectId && <ProjectNotes projectId={projectId} />}

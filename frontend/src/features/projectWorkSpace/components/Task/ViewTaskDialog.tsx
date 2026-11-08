@@ -18,6 +18,7 @@ import useTaskDialogStore from "../../store/useTaskDialog";
 import type { TaskWithBoardAndColumn } from "../../type";
 import TaskAssigneeCombobox from "./TaskAssigneeCombobox";
 import TaskChecklist from "./TaskChecklist";
+import TaskStatusMenu from "./TaskStatusMenu";
 
 const TaskComments = lazy(() => import("./comments/TaskComments"));
 const TaskAttachments = lazy(() => import("./attachments/TaskAttachments"));
@@ -180,9 +181,9 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                         </div>
 
                         <div>
-                            <Label className="text-sm font-medium text-muted-foreground">Column</Label>
+                            <Label className="text-sm font-medium text-muted-foreground">Status</Label>
                             <div className="mt-1">
-                                <Badge variant="outline">{task.column.title}</Badge>
+                                <TaskStatusMenu task={task} />
                             </div>
                         </div>
 
