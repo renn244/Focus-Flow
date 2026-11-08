@@ -28,7 +28,7 @@ const writeChecklist = (queryClient: QueryClient, task: TaskRef, update: (list: 
   );
 };
 
-/** Add, tick, rename, and remove a task's checklist items. Ticking and removing show up instantly. */
+/** Add, tick, rename, reorder, and remove a task's checklist items. Ticking, reordering and removing show up instantly. */
 export const useChecklist = (task: TaskRef) => {
   const queryClient = useQueryClient();
   const base = `/task/${task._id}/checklist`;
@@ -69,5 +69,18 @@ export const useChecklist = (task: TaskRef) => {
     onError: fail,
   });
 
-  return { add, update, remove };
+  const reorder = useMutation({
+    mutationFn: async (itemIds: string[]) =>
+      unwrap(await axiosInstance.patch<ChecklistItem[]>(`${base}/order`, { itemIds }), "Unable to reorder the checklist"),
+    onMutate: (itemIds) =>
+      writeChecklist(queryClient, task, (list) => {
+        const byId = new Map(list.map((item) => [item._id, item]));
+        const ordered = itemIds.map((id) => byId.get(id)).filter((item): item is ChecklistItem => !!item);
+        return ordered.length === list.length ? ordered : list;
+      }),
+    onSuccess: (list) => writeChecklist(queryClient, task, () => list),
+    onError: fail,
+  });
+
+  return { add, update, remove, reorder };
 };

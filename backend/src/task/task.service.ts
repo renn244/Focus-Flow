@@ -46,7 +46,12 @@ export class TaskService {
         session.startTransaction();
         
         try {
-            const newTask = await this.taskModel.create([body], { session });
+            const { checklist: checklistTexts = [], ...fields } = body;
+            const createdBy = new Types.ObjectId(user.id);
+            const checklist = checklistTexts.filter(Boolean)
+                .map((text) => ({ _id: new Types.ObjectId(), text, done: false, createdBy }));
+
+            const newTask = await this.taskModel.create([{ ...fields, checklist }], { session });
             await this.columnService.addTaskToColumn(body.columnId, newTask[0]._id, session)
             await this.auditLogService.record({
                 projectId: board.projectId,
@@ -57,6 +62,19 @@ export class TaskService {
                 taskId: newTask[0]._id,
                 summary: 'Created a task',
             }, session);
+            if (checklist.length > 0) {
+                await this.auditLogService.record({
+                    projectId: board.projectId,
+                    actorId: user.id,
+                    action: 'checklist.item_added',
+                    entityType: 'task',
+                    entityId: newTask[0]._id,
+                    taskId: newTask[0]._id,
+                    summary: checklist.length === 1
+                        ? `Added “${checklist[0].text}” to the checklist`
+                        : `Added ${checklist.length} items to the checklist`,
+                }, session);
+            }
             
             await session.commitTransaction();
 

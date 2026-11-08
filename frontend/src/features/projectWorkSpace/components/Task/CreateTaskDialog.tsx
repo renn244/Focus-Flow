@@ -14,7 +14,13 @@ const CreateTaskDialog = () => {
 
     return (
         <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
-            <DialogContent>
+            <DialogContent
+                // Esc while typing a checklist item clears that box, not the whole form.
+                onEscapeKeyDown={(event) => {
+                    const active = document.activeElement as HTMLInputElement | null;
+                    if (active?.closest("[data-checklist-input]") && active.value) event.preventDefault();
+                }}
+            >
                 <DialogHeader>
                     <DialogTitle>Create new task</DialogTitle>
                 </DialogHeader>

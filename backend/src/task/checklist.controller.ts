@@ -6,7 +6,7 @@ import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { JwtAuthGuard } from 'src/lib/guards/JwtAuthGuard';
 import { ChecklistService } from './checklist.service';
 import { CheckResourceTaskSource } from './decorators/ResourceTaskSource.decorator';
-import { AddChecklistItemsDto, UpdateChecklistItemDto } from './dto/checklist.dto';
+import { AddChecklistItemsDto, ReorderChecklistDto, UpdateChecklistItemDto } from './dto/checklist.dto';
 import { ChecklistItemDto } from './dto/response-dto';
 import { TaskAccessGuard } from './guards/TaskAccessGuard';
 
@@ -25,6 +25,17 @@ export class ChecklistController {
     @Post()
     async addItems(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: AddChecklistItemsDto, @User() user: UserJwt) {
         return this.checklistService.addItems(id, body, user);
+    }
+
+    @ApiOperation({ summary: 'Put the checklist items in a new order' })
+    @ApiParam({ name: 'id', type: String, description: 'Task id' })
+    @ApiOkResponse({ description: 'The whole checklist after the change', type: ChecklistItemDto, isArray: true })
+    @CheckResourceTaskSource({ source: 'params', key: 'id' })
+    @UseGuards(TaskAccessGuard)
+    // Declared before ':itemId' so "order" isn't read as an item id.
+    @Patch('order')
+    async reorder(@Param('id', ParseObjectIdPipe) id: Types.ObjectId, @Body() body: ReorderChecklistDto) {
+        return this.checklistService.reorder(id, body);
     }
 
     @ApiOperation({ summary: 'Rename, check, or uncheck a checklist item' })

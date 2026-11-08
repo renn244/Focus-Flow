@@ -4,18 +4,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useChecklist } from "../../hooks/Task/useChecklist";
+import { SortableChecklist } from "./SortableChecklist";
+import { useSortableRow } from "./useSortableRow";
+import { toChecklistLines } from "../../utils/checklistLines";
 import type { ChecklistItem, TaskWithBoardAndColumn } from "../../type";
 
 const MAX_TEXT = 200;
 
-/** Splits pasted text into one item per non-empty line. */
-const toLines = (text: string) =>
-  text.split(/\r?\n/).map((line) => line.replace(/^\s*(?:[-*•]|\[[ xX]?\])\s*/, "").trim()).filter(Boolean);
-
 /** The task's checklist, shown in the dialog's Details panel. Any project member can use it. */
 const TaskChecklist = ({ task }: { task: TaskWithBoardAndColumn }) => {
   const items = task.checklist ?? [];
-  const { add, update, remove } = useChecklist(task);
+  const { add, update, remove, reorder } = useChecklist(task);
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -41,7 +40,7 @@ const TaskChecklist = ({ task }: { task: TaskWithBoardAndColumn }) => {
   };
 
   const onPaste = (event: ClipboardEvent<HTMLInputElement>) => {
-    const lines = toLines(event.clipboardData.getData("text"));
+    const lines = toChecklistLines(event.clipboardData.getData("text"));
     if (lines.length < 2) return;
     event.preventDefault();
     submit(lines);
@@ -75,17 +74,19 @@ const TaskChecklist = ({ task }: { task: TaskWithBoardAndColumn }) => {
       )}
 
       {items.length > 0 && (
-        <ul className="mt-1.5 -mx-1.5">
-          {items.map((item) => (
-            <ChecklistRow
-              key={item._id}
-              item={item}
-              onToggle={(value) => update.mutate({ itemId: item._id, done: value })}
-              onRename={(text) => update.mutate({ itemId: item._id, text })}
-              onRemove={() => remove.mutate(item._id)}
-            />
-          ))}
-        </ul>
+        <SortableChecklist ids={items.map((item) => item._id)} onReorder={(ids) => reorder.mutate(ids)}>
+          <ul className="mt-1.5 -mx-1.5">
+            {items.map((item) => (
+              <ChecklistRow
+                key={item._id}
+                item={item}
+                onToggle={(value) => update.mutate({ itemId: item._id, done: value })}
+                onRename={(text) => update.mutate({ itemId: item._id, text })}
+                onRemove={() => remove.mutate(item._id)}
+              />
+            ))}
+          </ul>
+        </SortableChecklist>
       )}
 
       {adding ? (
@@ -132,6 +133,7 @@ type RowProps = {
 const ChecklistRow = ({ item, onToggle, onRename, onRemove }: RowProps) => {
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(item.text);
+  const { rowProps, handle, isDragging } = useSortableRow(item._id, item.text);
 
   const save = () => {
     const next = text.trim();
@@ -141,12 +143,19 @@ const ChecklistRow = ({ item, onToggle, onRename, onRemove }: RowProps) => {
   };
 
   return (
-    <li className="group flex items-start gap-2 rounded-md px-1.5 py-1 hover:bg-accent/60">
+    <li
+      {...rowProps}
+      className={cn(
+        "group flex items-start gap-1.5 rounded-md px-1.5 py-1 hover:bg-accent/60",
+        isDragging && "bg-card shadow-[0_6px_16px_rgb(15_23_42/0.14)] ring-1 ring-border"
+      )}
+    >
+      {handle}
       <Checkbox
         checked={item.done}
         onCheckedChange={(value) => onToggle(value === true)}
         aria-label={item.done ? `Uncheck ${item.text}` : `Check off ${item.text}`}
-        className="mt-0.5 border-slate-400 bg-background"
+        className="mt-0.5 mr-0.5 border-slate-400 bg-background"
       />
       {editing ? (
         <input

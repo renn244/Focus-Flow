@@ -1,5 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsDateString, IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { ArrayMaxSize, IsArray, IsDateString, IsEnum, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { MAX_CHECKLIST_ITEMS } from "./checklist.dto";
 import { IsObjectId } from "src/lib/customValidator/isObjectId";
 
 export class CreateTaskDto {
@@ -42,4 +44,16 @@ export class CreateTaskDto {
     @IsArray()
     @IsString({ each: true, message: 'Tags must be an array of strings.' })
     tags?: string[];
+
+    @ApiPropertyOptional({ description: 'Checklist items to start the task with, in order.', example: ['Write the outline', 'Get feedback'], type: [String] })
+    @IsOptional()
+    @IsArray()
+    @ArrayMaxSize(MAX_CHECKLIST_ITEMS)
+    @IsString({ each: true })
+    @MinLength(1, { each: true, message: 'Checklist items need some text.' })
+    @MaxLength(200, { each: true, message: 'Checklist items can be up to 200 characters.' })
+    @Transform(({ value }) => (Array.isArray(value)
+        ? value.map((text) => (typeof text === 'string' ? text.trim() : text))
+        : value))
+    checklist?: string[];
 }

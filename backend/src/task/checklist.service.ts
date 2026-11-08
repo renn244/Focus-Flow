@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { Model, Types } from 'mongoose';
@@ -8,10 +8,10 @@ import { AuditAction } from 'src/schema/AuditLog.schema';
 import { Board, BoardDocument } from 'src/schema/Board.schema';
 import { Task, TaskDocument } from 'src/schema/Task.schema';
 import { TeamGateway } from 'src/team/team.gateway';
-import { AddChecklistItemsDto, UpdateChecklistItemDto } from './dto/checklist.dto';
+import { AddChecklistItemsDto, MAX_CHECKLIST_ITEMS, ReorderChecklistDto, UpdateChecklistItemDto } from './dto/checklist.dto';
 import { ChecklistItemDto, TaskWithBoardAndColumnDto } from './dto/response-dto';
 
-export const MAX_CHECKLIST_ITEMS = 100;
+export { MAX_CHECKLIST_ITEMS };
 
 const quote = (text: string) => `“${text.length > 60 ? `${text.slice(0, 57)}…` : text}”`;
 
@@ -105,6 +105,38 @@ export class ChecklistService {
         }
 
         await this.log(task, user, 'checklist.item_removed', `Removed ${quote(before.text)} from the checklist`);
+        return this.respond(task);
+    }
+
+    /**
+     * Puts the items in the given order. Built from the stored items inside the update itself,
+     * so a tick that lands at the same moment is kept. Not logged: it's only rearranging.
+     */
+    async reorder(taskId: Types.ObjectId, body: ReorderChecklistDto) {
+        const ids = body.itemIds.map((id) => new Types.ObjectId(id));
+        const task = await this.taskModel.findOneAndUpdate(
+            // Only when the ids are exactly the current items, so nothing is dropped or duplicated.
+            { _id: taskId, checklist: { $size: ids.length }, 'checklist._id': { $all: ids } },
+            [{
+                $set: {
+                    checklist: {
+                        $map: {
+                            input: ids,
+                            as: 'itemId',
+                            in: {
+                                $arrayElemAt: [{ $filter: { input: '$checklist', as: 'item', cond: { $eq: ['$$item._id', '$$itemId'] } } }, 0],
+                            },
+                        },
+                    },
+                },
+            }],
+            { new: true },
+        );
+
+        if (!task) {
+            await this.ensureTaskExists(taskId);
+            throw new ConflictException('The checklist changed while you were moving items. Try again.');
+        }
         return this.respond(task);
     }
 

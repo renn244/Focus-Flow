@@ -22,6 +22,7 @@ import { useGetMembers } from "@/features/teamMember/hooks/useGetMembers";
 import { useProjectIdStore } from "../../store/useProjectId";
 import type { Task, TaskSchema } from "../../type";
 import TaskAssigneeCombobox from "../Task/TaskAssigneeCombobox";
+import ChecklistDraft from "../Task/ChecklistDraft";
 
 // later add assignee as well as 
 export const TaskFormSchema = z.object({
@@ -36,6 +37,8 @@ export const TaskFormSchema = z.object({
     boardId: z.string().optional(),
     assignee: z.string().optional(),
     tags: z.array(z.string()).optional(),
+    /** Only sent when creating a task; the task window edits the checklist afterwards. */
+    checklist: z.array(z.string()).optional(),
 })
 
 const commonTags = ["Frontend", "Backend", "Design", "UI/UX", "API", "Database"]
@@ -259,6 +262,24 @@ const TaskForm = ({
                     </FormItem>
                 )}
                 />
+
+                {!isUpdate && (
+                    <FormField
+                    control={form.control}
+                    name="checklist"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>
+                                Checklist <span className="font-normal text-muted-foreground">(optional)</span>
+                            </FormLabel>
+                            <FormControl>
+                                <ChecklistDraft value={field.value ?? []} onChange={field.onChange} disabled={isLoading} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                )}
 
                 <DialogFooter className="gap-2">
                     <Button type="button" variant="outline" onClick={() => setCreateOpen(false)} disabled={isLoading}>
