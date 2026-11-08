@@ -15,7 +15,7 @@ import useWorkspaceViewStore from "../../store/useWorkspaceView";
 import type { TaskWithBoardAndColumn } from "../../type";
 import type { Note, NoteSummary, NoteUpdatePayload, NoteUser } from "../../types/note";
 import NoteEditor from "./NoteEditor";
-import NoteHistory from "./NoteHistory";
+import NoteHistory from "./history/NoteHistory";
 
 const SAVE_DELAY_MS = 800;
 
