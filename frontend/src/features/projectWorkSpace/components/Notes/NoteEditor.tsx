@@ -21,9 +21,11 @@ import { createTaskMention, type MentionableTask } from "./taskMention";
 type NoteEditorProps = {
   initialContent?: JSONContent;
   tasks: MentionableTask[];
-  onChange: (content: JSONContent, contentText: string) => void;
+  onChange?: (content: JSONContent, contentText: string) => void;
   onOpenTask: (taskId: string) => void;
-  onUploadImage: (file: File) => Promise<string>;
+  onUploadImage?: (file: File) => Promise<string>;
+  /** Shows the content without the toolbar or drag handle and doesn't allow edits (used for older versions). */
+  readOnly?: boolean;
 };
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -56,7 +58,7 @@ const proseClass = cn(
   "[&_p.is-editor-empty:first-child]:before:pointer-events-none [&_p.is-editor-empty:first-child]:before:float-left [&_p.is-editor-empty:first-child]:before:h-0 [&_p.is-editor-empty:first-child]:before:text-muted-foreground [&_p.is-editor-empty:first-child]:before:content-[attr(data-placeholder)]"
 );
 
-const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage }: NoteEditorProps) => {
+const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage, readOnly = false }: NoteEditorProps) => {
   const tasksRef = useRef(tasks);
   tasksRef.current = tasks;
   const onChangeRef = useRef(onChange);
@@ -77,9 +79,10 @@ const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage
         toast.error(`${file.name} is over 5 MB`);
         continue;
       }
+      const upload = onUploadRef.current;
+      if (!upload) continue;
       const toastId = toast.loading("Uploading image…");
-      onUploadRef
-        .current(file)
+      upload(file)
         .then((src) => {
           toast.dismiss(toastId);
           const editor = editorRef.current;
@@ -94,6 +97,7 @@ const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage
   }, []);
 
   const editor = useEditor({
+    editable: !readOnly,
     extensions: [
       StarterKit.configure({ link: false, heading: { levels: [2, 3] } }),
       Link.configure({ openOnClick: false, autolink: true }),
@@ -106,7 +110,7 @@ const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage
     ],
     content: initialContent,
     editorProps: {
-      attributes: { class: proseClass, "aria-label": "Note content" },
+      attributes: { class: cn(proseClass, readOnly && "min-h-0 pb-6"), "aria-label": readOnly ? "Note content (read only)" : "Note content" },
       handlePaste: (_view, event) => {
         const files = imageFiles(event.clipboardData?.files);
         if (files.length === 0) return false;
@@ -122,7 +126,7 @@ const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage
         return true;
       },
     },
-    onUpdate: ({ editor: current }) => onChangeRef.current(current.getJSON(), current.getText({ blockSeparator: "\n" }).trim()),
+    onUpdate: ({ editor: current }) => onChangeRef.current?.(current.getJSON(), current.getText({ blockSeparator: "\n" }).trim()),
   });
 
   // Clicking (or pressing Enter on) a task chip opens the task.
@@ -147,6 +151,8 @@ const NoteEditor = ({ initialContent, tasks, onChange, onOpenTask, onUploadImage
   editorRef.current = editor;
 
   if (!editor) return null;
+
+  if (readOnly) return <EditorContent editor={editor} />;
 
   return (
     <div>

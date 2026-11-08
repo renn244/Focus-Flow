@@ -80,6 +80,8 @@ export const useUpdateNote = (projectId: string) => {
       queryClient.setQueryData<NoteSummary[]>(notesKey(projectId), (list) => upsertSummary(list, note));
       queryClient.invalidateQueries({ queryKey: ["task-notes"] });
       queryClient.invalidateQueries({ queryKey: projectActivityKey(projectId) });
+      // A save can start a new version; refresh the history list if it's been loaded.
+      queryClient.invalidateQueries({ queryKey: ["note-versions", note._id], exact: true });
     },
   });
 };

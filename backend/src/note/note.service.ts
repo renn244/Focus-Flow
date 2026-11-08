@@ -7,6 +7,7 @@ import { Note, NoteDocument } from 'src/schema/Note.schema';
 import { TaskService } from 'src/task/task.service';
 import { TeamSharedService } from 'src/team/team.shared.service';
 import { CreateNoteDto, NoteDto, NoteSummaryDto, NoteUserDto, TaskNoteRefDto, UpdateNoteDto } from './dto/note.dto';
+import { NoteState, NoteVersionService } from './note-version.service';
 
 /** Tiptap node type used for task mentions inside a note. */
 export const TASK_MENTION_NODE = 'taskMention';
@@ -41,6 +42,7 @@ export class NoteService {
         private readonly taskService: TaskService,
         private readonly teamSharedService: TeamSharedService,
         private readonly auditLogService: AuditLogService,
+        private readonly noteVersionService: NoteVersionService,
     ) {}
 
     private toUser(value: unknown): NoteUserDto {
@@ -147,13 +149,17 @@ export class NoteService {
     }
 
     async updateNote(noteId: Types.ObjectId, body: UpdateNoteDto, user: UserJwt) {
-        const existing = await this.noteModel.findById(noteId).select('projectId title pinned');
+        const existing = await this.noteModel.findById(noteId).select('projectId title pinned content contentText updatedBy updatedAt createdAt');
 
         if (!existing) {
             throw new NotFoundException('Note not found');
         }
 
         const contentChanged = body.title !== undefined || body.content !== undefined || body.contentText !== undefined;
+        // Keep a copy of the note as it was, when this edit starts a new version.
+        if (contentChanged) {
+            await this.noteVersionService.beforeEdit(existing as unknown as NoteState, user.id);
+        }
         const pinChanged = body.pinned !== undefined && body.pinned !== existing.pinned;
         const update: Record<string, unknown> = {};
 
@@ -209,12 +215,60 @@ export class NoteService {
         return this.getNote(note._id, user);
     }
 
+    async getVersions(noteId: Types.ObjectId) {
+        const note = await this.noteModel.findById(noteId).select('projectId title content updatedBy updatedAt');
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+        const { current, versions } = await this.noteVersionService.list(note as unknown as NoteState);
+
+        return {
+            current,
+            versions: versions.map((version) => ({ ...version, savedBy: this.toUser(version.savedBy) })),
+        };
+    }
+
+    async getVersion(noteId: Types.ObjectId, versionId: Types.ObjectId) {
+        const version = await this.noteVersionService.get(noteId, versionId);
+        return { ...version, savedBy: this.toUser(version.savedBy) };
+    }
+
+    /** Puts an earlier version back. The note as it was is kept as a version first, so a restore can be undone. */
+    async restoreVersion(noteId: Types.ObjectId, versionId: Types.ObjectId, user: UserJwt) {
+        const note = await this.noteModel.findById(noteId);
+        if (!note) {
+            throw new NotFoundException('Note not found');
+        }
+        const version = await this.noteVersionService.findForRestore(noteId, versionId);
+
+        await this.noteVersionService.snapshot(note as unknown as NoteState);
+        await this.noteModel.updateOne({ _id: noteId }, {
+            title: version.title,
+            content: version.content,
+            contentText: version.contentText,
+            taskIds: await this.linkedTaskIds(version.content, note.projectId),
+            updatedBy: new Types.ObjectId(user.id),
+        });
+
+        await this.auditLogService.record({
+            projectId: note.projectId,
+            actorId: user.id,
+            action: 'note.restored',
+            entityType: 'note',
+            entityId: note._id,
+            summary: `Restored an earlier version of the note ${quoteTitle(version.title)}`,
+        });
+
+        return this.getNote(noteId, user);
+    }
+
     async deleteNote(noteId: Types.ObjectId, user: UserJwt) {
         const note = await this.noteModel.findByIdAndDelete(noteId);
 
         if (!note) {
             throw new NotFoundException('Note not found');
         }
+        await this.noteVersionService.deleteForNote(note._id);
 
         await this.auditLogService.record({
             projectId: note.projectId,

@@ -63,6 +63,36 @@ export class NoteUserDto {
     @ApiPropertyOptional() avatarUrl?: string;
 }
 
+export class NoteVersionSummaryDto {
+    @ApiProperty() _id: string;
+    @ApiProperty({ type: NoteUserDto, description: 'Who made the edits that led to this version' }) savedBy: NoteUserDto;
+    @ApiProperty({ format: 'date-time', description: 'When the note looked like this' }) savedAt: Date;
+    @ApiProperty({ description: 'Blocks added since the version before' }) added: number;
+    @ApiProperty({ description: 'Blocks removed since the version before' }) removed: number;
+}
+
+export class NoteChangeCountDto {
+    @ApiProperty() added: number;
+    @ApiProperty() removed: number;
+}
+
+export class NoteVersionListDto {
+    @ApiProperty({ type: NoteChangeCountDto, description: 'How the live note differs from the newest version' }) current: NoteChangeCountDto;
+    @ApiProperty({ type: [NoteVersionSummaryDto], description: 'Newest first; up to 50 are kept' }) versions: NoteVersionSummaryDto[];
+}
+
+export class NoteVersionContentDto {
+    @ApiProperty() title: string;
+    @ApiProperty({ type: Object, description: 'Tiptap JSON document' }) content: Record<string, unknown>;
+}
+
+export class NoteVersionDto extends NoteVersionContentDto {
+    @ApiProperty() _id: string;
+    @ApiProperty({ type: NoteUserDto }) savedBy: NoteUserDto;
+    @ApiProperty({ format: 'date-time' }) savedAt: Date;
+    @ApiProperty({ type: NoteVersionContentDto, nullable: true, description: 'The version before, to compare against' }) previous: NoteVersionContentDto | null;
+}
+
 export class NoteSummaryDto {
     @ApiProperty() _id: string;
     @ApiProperty() projectId: string;

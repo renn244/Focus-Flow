@@ -10,7 +10,7 @@ import { CheckResourceProjectSource } from 'src/projects/decorators/ResourceProj
 import { ProjectAccessGuard } from 'src/projects/guards/ProjectAccessGuard';
 import { CheckResourceTaskSource } from 'src/task/decorators/ResourceTaskSource.decorator';
 import { TaskAccessGuard } from 'src/task/guards/TaskAccessGuard';
-import { CreateNoteDto, NoteDto, NoteSummaryDto, TaskNoteRefDto, UpdateNoteDto } from './dto/note.dto';
+import { CreateNoteDto, NoteDto, NoteSummaryDto, NoteVersionDto, NoteVersionListDto, TaskNoteRefDto, UpdateNoteDto } from './dto/note.dto';
 import { NoteAccessGuard, NoteDeleteGuard } from './guards/NoteAccessGuard';
 import { MAX_NOTE_IMAGE_SIZE_BYTES, NOTE_IMAGES_ROUTE, NoteImageStorageService } from './note-image-storage.service';
 import { NoteService } from './note.service';
@@ -79,6 +79,42 @@ export class NoteController {
         @User() user: UserJwt,
     ) {
         return this.noteService.updateNote(noteId, body, user);
+    }
+
+    @ApiOperation({ summary: 'List a note’s earlier versions, newest first' })
+    @ApiOkResponse({ type: NoteVersionListDto })
+    @ApiParam({ name: 'noteId', type: String })
+    @UseGuards(NoteAccessGuard)
+    @Get(':noteId/versions')
+    async getVersions(@Param('noteId', ParseObjectIdPipe) noteId: Types.ObjectId) {
+        return this.noteService.getVersions(noteId);
+    }
+
+    @ApiOperation({ summary: 'Get one earlier version of a note, with the version before it' })
+    @ApiOkResponse({ type: NoteVersionDto })
+    @ApiParam({ name: 'noteId', type: String })
+    @ApiParam({ name: 'versionId', type: String })
+    @UseGuards(NoteAccessGuard)
+    @Get(':noteId/versions/:versionId')
+    async getVersion(
+        @Param('noteId', ParseObjectIdPipe) noteId: Types.ObjectId,
+        @Param('versionId', ParseObjectIdPipe) versionId: Types.ObjectId,
+    ) {
+        return this.noteService.getVersion(noteId, versionId);
+    }
+
+    @ApiOperation({ summary: 'Put an earlier version back (any project member); the current text is kept as a version' })
+    @ApiCreatedResponse({ type: NoteDto })
+    @ApiParam({ name: 'noteId', type: String })
+    @ApiParam({ name: 'versionId', type: String })
+    @UseGuards(NoteAccessGuard)
+    @Post(':noteId/versions/:versionId/restore')
+    async restoreVersion(
+        @Param('noteId', ParseObjectIdPipe) noteId: Types.ObjectId,
+        @Param('versionId', ParseObjectIdPipe) versionId: Types.ObjectId,
+        @User() user: UserJwt,
+    ) {
+        return this.noteService.restoreVersion(noteId, versionId, user);
     }
 
     @ApiOperation({ summary: 'Upload an image for a note (any project member); returns its address' })

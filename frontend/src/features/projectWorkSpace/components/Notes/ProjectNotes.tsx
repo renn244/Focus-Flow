@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { JSONContent } from "@tiptap/core";
 import { differenceInCalendarDays, format, formatDistanceToNowStrict, isToday } from "date-fns";
-import { ChevronLeft, FileText, Pin, PinOff, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronLeft, FileText, History, Pin, PinOff, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -15,6 +15,7 @@ import useWorkspaceViewStore from "../../store/useWorkspaceView";
 import type { TaskWithBoardAndColumn } from "../../type";
 import type { Note, NoteSummary, NoteUpdatePayload, NoteUser } from "../../types/note";
 import NoteEditor from "./NoteEditor";
+import NoteHistory from "./NoteHistory";
 
 const SAVE_DELAY_MS = 800;
 
@@ -38,6 +39,14 @@ const ProjectNotes = ({ projectId }: { projectId: string }) => {
   // On narrow screens the list and the open note are two screens.
   const [showListOnMobile, setShowListOnMobile] = useState(!selectedNoteId);
   const [focusTitleOf, setFocusTitleOf] = useState<string | null>(null);
+  // The note whose version history fills the Notes area, if any.
+  const [historyOf, setHistoryOf] = useState<string | null>(null);
+  const historyNote = useNote(historyOf);
+  const setViewTaskId = useTaskDialogStore((state) => state.setViewTaskId);
+  const mentionable = useMemo(
+    () => tasks.map((task) => ({ id: task._id, title: task.title, meta: `${task.column.title} · ${task.board.name}` })),
+    [tasks]
+  );
 
   // Keep a valid note open: the requested one if it belongs to this project, else the first.
   useEffect(() => {
@@ -89,6 +98,21 @@ const ProjectNotes = ({ projectId }: { projectId: string }) => {
     );
   }
 
+  if (historyOf && historyNote.data) {
+    return (
+      <div className="@container">
+        <NoteHistory
+          note={historyNote.data}
+          projectId={projectId}
+          meId={user?._id}
+          tasks={mentionable}
+          onOpenTask={setViewTaskId}
+          onClose={() => setHistoryOf(null)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="@container">
       <div className="flex min-h-[calc(100svh-10rem)]">
@@ -134,6 +158,7 @@ const ProjectNotes = ({ projectId }: { projectId: string }) => {
               meId={user?._id}
               autoFocusTitle={focusTitleOf === selectedNoteId}
               onBack={() => setShowListOnMobile(true)}
+              onOpenHistory={() => setHistoryOf(selectedNoteId)}
               onDeleted={() => {
                 setSelectedNoteId(null);
                 setShowListOnMobile(true);
@@ -193,11 +218,12 @@ type NoteDocumentProps = {
   autoFocusTitle: boolean;
   onBack: () => void;
   onDeleted: () => void;
+  onOpenHistory: () => void;
 };
 
 type SaveState = "idle" | "pending" | "saving" | "saved" | "error";
 
-const NoteDocument = ({ noteId, projectId, tasks, meId, autoFocusTitle, onBack, onDeleted }: NoteDocumentProps) => {
+const NoteDocument = ({ noteId, projectId, tasks, meId, autoFocusTitle, onBack, onDeleted, onOpenHistory }: NoteDocumentProps) => {
   const { data: note, isLoading, isError } = useNote(noteId);
   const updateNote = useUpdateNote(projectId);
   const deleteNote = useDeleteNote(projectId);
@@ -316,8 +342,15 @@ const NoteDocument = ({ noteId, projectId, tasks, meId, autoFocusTitle, onBack, 
       onError: (error) => toast.error(error.message),
     });
 
+  // Save anything still being typed first, so the history's "current version" is up to date.
+  const openHistory = () => {
+    flush();
+    onOpenHistory();
+  };
+
   const details = (
     <NoteDetails
+      onOpenHistory={openHistory}
       note={note}
       linkedTasks={linkedTasks}
       meId={meId}
@@ -371,6 +404,16 @@ const NoteDocument = ({ noteId, projectId, tasks, meId, autoFocusTitle, onBack, 
             </span>
             <SaveIndicator state={saveState} onRetry={flush} />
             <span className="ml-auto flex items-center gap-0.5 @5xl:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8 text-muted-foreground"
+                onClick={openHistory}
+                aria-label="Version history"
+                title="Version history"
+              >
+                <History />
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"
@@ -459,10 +502,11 @@ type NoteDetailsProps = {
   onOpenTask: (taskId: string) => void;
   onTogglePin: () => void;
   onDelete: () => void;
+  onOpenHistory: () => void;
   pinBusy: boolean;
 };
 
-const NoteDetails = ({ note, linkedTasks, meId, onOpenTask, onTogglePin, onDelete, pinBusy }: NoteDetailsProps) => (
+const NoteDetails = ({ note, linkedTasks, meId, onOpenTask, onTogglePin, onDelete, onOpenHistory, pinBusy }: NoteDetailsProps) => (
   <div className="space-y-5">
     <LinkedTaskList linkedTasks={linkedTasks} meId={meId} onOpenTask={onOpenTask} />
 
@@ -474,7 +518,10 @@ const NoteDetails = ({ note, linkedTasks, meId, onOpenTask, onTogglePin, onDelet
         <dt className="text-muted-foreground">Last edit</dt>
         <dd>{userName(note.updatedBy, meId)}, {editedAgo(note.updatedAt)}</dd>
       </dl>
-      <div className="mt-4 flex gap-2">
+      <Button variant="outline" size="sm" className="mt-4 w-full" onClick={onOpenHistory}>
+        <History /> Version history
+      </Button>
+      <div className="mt-2 flex gap-2">
         <Button variant="outline" size="sm" className="flex-1" onClick={onTogglePin} disabled={pinBusy} aria-pressed={note.pinned}>
           {note.pinned ? <PinOff /> : <Pin />}
           {note.pinned ? "Unpin" : "Pin"}

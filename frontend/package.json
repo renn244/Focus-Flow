@@ -52,6 +52,7 @@
     "cn": "^0.3.0",
     "color": "^5.0.0",
     "date-fns": "^4.1.0",
+    "diff": "8.0.2",
     "framer-motion": "^12.23.12",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.514.0",

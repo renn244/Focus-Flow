@@ -37,3 +37,28 @@ export type TaskNoteRef = {
   title: string;
   updatedAt: string;
 };
+
+export type NoteChangeCount = { added: number; removed: number };
+
+export type NoteVersionSummary = NoteChangeCount & {
+  _id: string;
+  savedBy: NoteUser;
+  savedAt: string;
+};
+
+export type NoteVersionList = {
+  /** How the live note differs from the newest version. */
+  current: NoteChangeCount;
+  /** Newest first. */
+  versions: NoteVersionSummary[];
+};
+
+export type NoteVersionContent = { title: string; content: JSONContent };
+
+export type NoteVersion = NoteVersionContent & {
+  _id: string;
+  savedBy: NoteUser;
+  savedAt: string;
+  /** The version before this one, to compare against; null for the oldest. */
+  previous: NoteVersionContent | null;
+};
