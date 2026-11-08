@@ -17,10 +17,15 @@ import { CommentModule } from './comment/comment.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
 import { NoteModule } from './note/note.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
+import { DiscordModule } from './integrations/discord/discord.module';
 
 @Module({
   imports: [
     SentryModule.forRoot(),
+    EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.register({ 
       isGlobal: true, 
@@ -45,7 +50,8 @@ import { NoteModule } from './note/note.module';
     CommentModule,
     AttachmentModule,
     AuditLogModule,
-    NoteModule
+    NoteModule,
+    DiscordModule,
   ],
   controllers: [],
   providers: [],

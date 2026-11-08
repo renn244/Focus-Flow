@@ -27,6 +27,8 @@ export const AUDIT_ACTIONS = [
     'note.unpinned',
     'note.deleted',
     'note.restored',
+    'integration.connected',
+    'integration.disconnected',
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];

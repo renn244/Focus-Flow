@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type WorkspaceView = "board" | "list" | "calendar" | "team" | "notes";
+export type WorkspaceView = "board" | "list" | "calendar" | "team" | "notes" | "settings";
 
 type WorkspaceViewState = {
     view: WorkspaceView;

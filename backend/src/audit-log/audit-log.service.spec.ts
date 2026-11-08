@@ -1,4 +1,5 @@
 import { getModelToken } from '@nestjs/mongoose';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { AuditLog } from 'src/schema/AuditLog.schema';
@@ -15,7 +16,7 @@ describe('AuditLogService', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({ providers: [AuditLogService] })
-            .useMocker((token) => token === getModelToken(AuditLog.name) ? model : {})
+            .useMocker((token) => token === getModelToken(AuditLog.name) ? model : token === EventEmitter2 ? { emit: jest.fn() } : {})
             .compile();
         service = module.get(AuditLogService);
     });

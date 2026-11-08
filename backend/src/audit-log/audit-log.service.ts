@@ -1,10 +1,26 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToInstance } from 'class-transformer';
 import { ClientSession, Model, Types } from 'mongoose';
 import { AuditAction, AuditChange, AuditEntityType, AuditLog, AuditLogDocument } from 'src/schema/AuditLog.schema';
 import { GetProjectActivityQueryDto } from './dto/get-project-activity-query.dto';
 import { AuditLogDto, ProjectActivityPageDto } from './dto/response.dto';
+
+/** Emitted after every activity entry is written, for things like Discord posts to react to. */
+export const AUDIT_RECORDED = 'audit.recorded';
+
+export type AuditRecordedEvent = {
+    auditLogId: string;
+    projectId: string;
+    actorId: string;
+    action: AuditAction;
+    entityId: string;
+    taskId?: string;
+    changes: AuditChange[];
+    /** Written inside a transaction: listeners should confirm it was committed before acting. */
+    inTransaction: boolean;
+};
 
 type RecordAuditEvent = {
     projectId: Types.ObjectId | string;
@@ -22,6 +38,7 @@ type RecordAuditEvent = {
 export class AuditLogService {
     constructor(
         @InjectModel(AuditLog.name) private readonly auditLogModel: Model<AuditLogDocument>,
+        private readonly events: EventEmitter2,
     ) {}
 
     async record(event: RecordAuditEvent, session?: ClientSession) {
@@ -34,6 +51,18 @@ export class AuditLogService {
             changedFields: event.changedFields ?? [],
             changes: event.changes ?? [],
         }], { session });
+
+        const recorded: AuditRecordedEvent = {
+            auditLogId: auditLog._id.toString(),
+            projectId: event.projectId.toString(),
+            actorId: event.actorId.toString(),
+            action: event.action,
+            entityId: event.entityId.toString(),
+            taskId: event.taskId?.toString(),
+            changes: event.changes ?? [],
+            inTransaction: Boolean(session?.inTransaction()),
+        };
+        this.events.emit(AUDIT_RECORDED, recorded);
 
         return auditLog;
     }
