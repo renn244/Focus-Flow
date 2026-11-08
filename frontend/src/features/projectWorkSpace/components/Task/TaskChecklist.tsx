@@ -13,8 +13,13 @@ const MAX_TEXT = 200;
 
 /** The task's checklist, shown in the dialog's Details panel. Any project member can use it. */
 const TaskChecklist = ({ task }: { task: TaskWithBoardAndColumn }) => {
-  const items = task.checklist ?? [];
   const { add, update, remove, reorder } = useChecklist(task);
+  // The order just dropped, shown right away so the row doesn't jump while the cache catches up.
+  const [droppedOrder, setDroppedOrder] = useState<string[] | null>(null);
+  const saved = task.checklist ?? [];
+  const items = droppedOrder && droppedOrder.length === saved.length
+    ? droppedOrder.map((id) => saved.find((item) => item._id === id)).filter((item): item is ChecklistItem => !!item)
+    : saved;
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -74,7 +79,10 @@ const TaskChecklist = ({ task }: { task: TaskWithBoardAndColumn }) => {
       )}
 
       {items.length > 0 && (
-        <SortableChecklist ids={items.map((item) => item._id)} onReorder={(ids) => reorder.mutate(ids)}>
+        <SortableChecklist ids={items.map((item) => item._id)} onReorder={(ids) => {
+            setDroppedOrder(ids);
+            reorder.mutate(ids, { onSettled: () => setDroppedOrder(null) });
+          }}>
           <ul className="mt-1.5 -mx-1.5">
             {items.map((item) => (
               <ChecklistRow
