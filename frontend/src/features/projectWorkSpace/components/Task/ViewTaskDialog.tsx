@@ -87,15 +87,17 @@ const ViewTask = ({ task }: ViewTaskProps) => {
     };
 
     return (
-        <div className="flex h-full min-h-0">
+        // Phones: one scrolling column with the title, then details, then the rest.
+        // From md up: content on the left, details in a fixed side panel.
+        <div className="flex h-full min-h-0 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
 
-            <div className="flex-1 flex flex-col">
+            <div className="contents md:flex md:min-w-0 md:flex-1 md:flex-col">
 
-                <DialogHeader className="px-6 py-4 border-b">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-muted-foreground">#{task._id}</span>
+                <DialogHeader className="order-1 border-b px-4 py-4 sm:px-6 md:order-none">
+                    <div className="flex items-center justify-between pr-8">
+                        <div className="flex min-w-0 items-center gap-3">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <span className="truncate text-sm text-muted-foreground">#{task._id}</span>
                             </div>
                             <Badge variant={priorityBadgeVariant[task.priority]} className="capitalize">
                                 {task.priority}
@@ -105,10 +107,10 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                             </Badge> */}
                         </div>
                     </div>
-                    <DialogTitle className="text-xl font-semibold text-left">{task.title}</DialogTitle>
+                    <DialogTitle className="text-xl font-semibold text-left break-words">{task.title}</DialogTitle>
                 </DialogHeader>
 
-                <div className="min-h-0 flex-1 overflow-auto px-6 py-4">
+                <div className="order-3 min-w-0 px-4 py-4 sm:px-6 md:order-none md:min-h-0 md:flex-1 md:overflow-auto">
                     <Suspense fallback={<ListLoading label="Loading attachments" rows={2} />}>
                         <TaskAttachments taskId={task._id} standalone />
                     </Suspense>
@@ -139,8 +141,8 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                 </div>
             </div>
 
-            <div className="w-80 border-l bg-muted/20">
-                <div className="p-4 py-6">
+            <div className="order-2 w-full border-b bg-muted/20 md:order-none md:w-80 md:shrink-0 md:overflow-auto md:border-b-0 md:border-l">
+                <div className="p-4 py-5 sm:px-6 md:px-4 md:py-6">
                     <div className="flex items-center justify-between mb-2">
                         <h3 className="font-medium">Details</h3>
                         <Button variant="ghost" size="sm">

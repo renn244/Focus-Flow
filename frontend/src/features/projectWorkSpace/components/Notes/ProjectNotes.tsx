@@ -289,12 +289,20 @@ const NoteDocument = ({ noteId, projectId, tasks, meId, autoFocusTitle, onBack, 
     }
   }, [autoFocusTitle, note]);
 
-  // Grow the title field with its text.
+  // Grow the title field with its text. It is measured again whenever its size
+  // changes, because on phones the note can render while still hidden (0px wide).
   useEffect(() => {
     const field = titleRef.current;
     if (!field) return;
-    field.style.height = "auto";
-    field.style.height = `${field.scrollHeight}px`;
+    const fit = () => {
+      if (field.offsetWidth === 0) return;
+      field.style.height = "auto";
+      field.style.height = `${field.scrollHeight}px`;
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(field);
+    return () => observer.disconnect();
   }, [title, note]);
 
   const onContentChange = useCallback(
@@ -393,7 +401,7 @@ const NoteDocument = ({ noteId, projectId, tasks, meId, autoFocusTitle, onBack, 
               }
             }}
             placeholder="Untitled note"
-            className="block w-full resize-none overflow-hidden bg-transparent text-[26px] font-semibold leading-tight tracking-[-0.025em] outline-none placeholder:text-muted-foreground sm:text-3xl"
+            className="block min-h-[1.25em] w-full resize-none overflow-hidden bg-transparent text-[26px] font-semibold leading-tight tracking-[-0.025em] outline-none placeholder:text-muted-foreground sm:text-3xl"
           />
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-muted-foreground">
             <span className="tabular-nums">

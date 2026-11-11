@@ -105,9 +105,11 @@ export const MyWorkView = () => {
                                     )}
                                 >
                                     <span className={cn("text-xs font-medium", selected ? "text-shell-muted" : "text-muted-foreground")}>
-                                        {isSameDay(day, today) ? "Today" : format(day, "EEE")}
+                                        {/* "Today" doesn't fit a phone-width tile; there the date turns blue instead. */}
+                                        <span className="sm:hidden">{format(day, "EEEEEE")}</span>
+                                        <span className="hidden sm:inline">{isSameDay(day, today) ? "Today" : format(day, "EEE")}</span>
                                     </span>
-                                    <span className="text-lg font-semibold tabular-nums sm:text-xl">{format(day, "d")}</span>
+                                    <span className={cn("text-lg font-semibold tabular-nums sm:text-xl", !selected && isSameDay(day, today) && "text-blue-700 sm:text-inherit")}>{format(day, "d")}</span>
                                     <span className="mt-2 flex min-h-1.5 flex-wrap gap-1" aria-hidden="true">
                                         {dayTasks.slice(0, 4).map((task) => (
                                             <span key={task._id} className={cn("h-1.5 w-3 rounded-full sm:w-4", projectDotClass(projectById.get(task.board.projectId)?.color))} />

@@ -47,7 +47,8 @@ const WorkspaceHeader = ({ name, color, loading = false, views, activeView, onSe
         </div>
 
         <div className="flex items-end justify-between gap-4 px-4 sm:px-6 lg:px-8">
-            <div role="tablist" aria-label="Project views" className="-mb-px flex gap-1 overflow-x-auto">
+            {/* Scrolls sideways on phones; the faded edge hints at the tabs further right. */}
+            <div role="tablist" aria-label="Project views" className="-mb-px flex min-w-0 gap-1 overflow-x-auto [scrollbar-width:none] [mask-image:linear-gradient(to_right,black_85%,transparent)] sm:[mask-image:none] [&::-webkit-scrollbar]:hidden">
                 {views.map(({ id, label, icon: Icon }) => (
                     <button
                         key={id}
@@ -68,10 +69,11 @@ const WorkspaceHeader = ({ name, color, loading = false, views, activeView, onSe
             <button
                 type="button"
                 onClick={onOpenAgenda}
-                className="mb-1.5 flex h-8 shrink-0 items-center gap-2 rounded-md border px-2.5 text-sm font-medium text-foreground hover:bg-accent focus-visible:outline-2 lg:hidden"
+                aria-label="My agenda"
+                title="My agenda"
+                className="mb-1.5 flex h-8 shrink-0 items-center gap-2 rounded-md border px-2 text-sm font-medium text-foreground hover:bg-accent focus-visible:outline-2 sm:px-2.5 lg:hidden"
             >
                 <ListTodo className="size-4" />
-                <span className="sm:hidden">Agenda</span>
                 <span className="hidden sm:inline">My agenda</span>
             </button>
         </div>
