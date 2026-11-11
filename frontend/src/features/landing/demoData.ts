@@ -2,6 +2,10 @@ import { addDays, setHours, setMinutes, startOfDay } from "date-fns";
 import type { AuthContextType } from "@/context/authContext";
 import type { BoardWithColumns, ColumnWithTasks, TaskWithBoardAndColumn } from "@/features/projectWorkSpace/type";
 import type { ProjectWithOwner } from "@/features/projects/type";
+import type { TaskAttachment } from "@/features/projectWorkSpace/types/attachment";
+import type { ProjectActivityItem } from "@/features/projectWorkSpace/types/audit";
+import type { TaskComment } from "@/features/projectWorkSpace/types/comment";
+import type { DiffBlock } from "@/features/projectWorkSpace/utils/noteDiff";
 
 /**
  * Sample workspace for the landing page preview. The preview renders the real
@@ -149,4 +153,75 @@ export const demoMyTasks: TaskWithBoardAndColumn[] = [
     task(interviews, "todo", "Book two more interviews", { priority: "low", dueDate: at(1, 9, 0), assigneeUser: people.you }),
     task(sprint, "todo", "Review Jordan's pull request", { priority: "medium", dueDate: at(2), assigneeUser: people.you }),
     task(deck, "todo", "Rehearse the demo", { priority: "high", dueDate: at(5, 14, 0), assigneeUser: people.you }),
+];
+
+/** The task the landing page opens up to show its conversation, files and history. */
+export const demoFocusTask = sprintTasks.doing[0];
+
+const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000).toISOString();
+
+const paragraph = (text: string) => ({ type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text }] }] });
+
+const author = (person: typeof people.you) => ({ _id: person._id, username: person.username, displayName: person.displayName });
+
+export const demoComments: TaskComment[] = [
+    {
+        _id: "demo-comment-1",
+        taskId: demoFocusTask._id,
+        content: paragraph("Password rules are in. Can someone check the error messages read clearly?"),
+        contentText: "Password rules are in. Can someone check the error messages read clearly?",
+        author: author(people.you),
+        createdAt: ago(95),
+        updatedAt: ago(95),
+    },
+    {
+        _id: "demo-comment-2",
+        taskId: demoFocusTask._id,
+        content: paragraph("Looks good. I left wording suggestions in the doc below."),
+        contentText: "Looks good. I left wording suggestions in the doc below.",
+        author: author(people.priya),
+        createdAt: ago(40),
+        updatedAt: ago(40),
+    },
+];
+
+const event = (id: string, person: typeof people.you, minutes: number, summary: string, changes: ProjectActivityItem["changes"] = []): ProjectActivityItem => ({
+    _id: id,
+    projectId: demoProject._id,
+    action: "task.updated",
+    entityType: "task",
+    entityId: demoFocusTask._id,
+    taskId: demoFocusTask._id,
+    summary,
+    changedFields: changes.map((change) => change.field),
+    changes,
+    createdAt: ago(minutes),
+    actor: author(person),
+});
+
+export const demoTaskActivity: ProjectActivityItem[] = [
+    event("demo-event-1", people.jordan, 180, "moved the task", [{ field: "column", from: "To do", to: "In progress" }]),
+    event("demo-event-2", people.you, 70, "checked off a checklist item", [{ field: "checklist", from: "", to: "Password rules" }]),
+];
+
+export const demoAttachments: TaskAttachment[] = [
+    { _id: "demo-file-1", taskId: demoFocusTask._id, projectId: demoProject._id, originalName: "sign-up-flow.pdf", mimeType: "application/pdf", size: 248_000, createdAt: ago(120), author: author(people.you) },
+    { _id: "demo-file-2", taskId: demoFocusTask._id, projectId: demoProject._id, originalName: "error-messages.docx", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", size: 36_000, createdAt: ago(38), author: author(people.priya) },
+];
+
+/** A note compared with its previous version, as the note history shows it. */
+export const demoNoteTitle = "Sprint 3 plan";
+
+export const demoNoteChanges: DiffBlock[] = [
+    { type: "same", block: { kind: "h2", text: "Goal", depth: 0 } },
+    { type: "changed", block: { kind: "p", text: "", depth: 0 }, parts: [
+        { text: "A working sign-up and task list by " },
+        { text: "Friday", change: "removed" },
+        { text: "Monday", change: "added" },
+        { text: ", ready to demo." },
+    ] },
+    { type: "same", block: { kind: "h2", text: "Open questions", depth: 0 } },
+    { type: "same", block: { kind: "task", text: "Pick the colour palette", depth: 0, checked: true } },
+    { type: "added", block: { kind: "task", text: "Confirm the error messages with #Build the sign-up flow", depth: 0, checked: false } },
+    { type: "removed", block: { kind: "task", text: "Decide whether we need email login", depth: 0, checked: false } },
 ];

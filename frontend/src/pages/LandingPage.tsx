@@ -8,6 +8,7 @@ import {
   Leaf,
   ListChecks,
 } from "lucide-react"
+import FeatureSections from "@/features/landing/FeatureSections"
 import ProductPreview from "@/features/landing/ProductPreview"
 import { ease, rise, sequence } from "@/features/landing/motion"
 
@@ -122,6 +123,8 @@ export default function LandingPage() {
         <ProductPreview />
       </section>
 
+      <FeatureSections />
+
       <section id="how-it-works" className="relative border-y border-white/[0.07] bg-[#0a1834]">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[0.88fr_1.12fr] lg:gap-20 lg:px-10 lg:py-28">
           <div className="lg:pt-2">
@@ -161,6 +164,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 text-sm text-blue-100/55 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
           <Brand />
           <div className="flex items-center gap-5">
+            <a href="#features" className="transition hover:text-blue-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-200">Features</a>
             <a href="#how-it-works" className="transition hover:text-blue-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-200">How it works</a>
             <Link to="/login" className="transition hover:text-blue-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-200">Log in</Link>
           </div>

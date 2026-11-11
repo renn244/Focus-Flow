@@ -1,5 +1,4 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DndContext } from "@dnd-kit/core";
 import { AnimatePresence, motion } from "framer-motion";
 import { PanelLeftClose, Plus } from "lucide-react";
@@ -7,14 +6,14 @@ import AgendaPanel from "@/components/layout/AgendaPanel";
 import TopBar from "@/components/layout/TopBar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { AuthContext } from "@/context/authContext";
 import { cn } from "@/lib/utils";
 import ProjectActivityDialog from "@/features/projectWorkSpace/components/Activity/ProjectActivityDialog";
 import SwitchBoard from "@/features/projectWorkSpace/components/Board/SwitchBoard";
 import ColumnCard from "@/features/projectWorkSpace/components/Column/ColumnCard";
 import WorkspaceHeader, { workspaceViews } from "@/features/projectWorkSpace/components/WorkspaceHeader";
 import { MyWorkView } from "@/pages/projects/ProjectsDashboard";
-import { demoAuth, demoBoard, demoColumns, demoMembers, demoMyTasks, demoProject, demoProjects } from "./demoData";
+import DemoProviders from "./DemoProviders";
+import { demoBoard, demoColumns, demoMembers, demoProject } from "./demoData";
 import { ease } from "./motion";
 
 /** The width the app is laid out at before the preview scales it down. */
@@ -34,30 +33,6 @@ const scenes: { id: Scene; label: string }[] = [
 const noop = () => undefined;
 
 const initials = (name: string) => name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
-
-/**
- * A query cache that already holds the sample workspace and never fetches,
- * so the real components render sample data without touching the API.
- */
-const createDemoClient = () => {
-    const client = new QueryClient({
-        defaultOptions: {
-            queries: { enabled: false, staleTime: Infinity, gcTime: Infinity, retry: false, refetchOnMount: false, refetchOnWindowFocus: false },
-        },
-    });
-    client.setQueryData(["tasks", "mine"], demoMyTasks);
-    client.setQueryData(["allProjects", "active", "all"], demoProjects);
-    return client;
-};
-
-const DemoProviders = ({ children }: { children: ReactNode }) => {
-    const [client] = useState(createDemoClient);
-    return (
-        <QueryClientProvider client={client}>
-            <AuthContext.Provider value={demoAuth}>{children}</AuthContext.Provider>
-        </QueryClientProvider>
-    );
-};
 
 const laneList = {
     hidden: {},
