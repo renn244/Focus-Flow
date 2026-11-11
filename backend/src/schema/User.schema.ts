@@ -36,6 +36,18 @@ export class User {
 
     @Prop()
     OauthId?: string
+
+    /** Two-step sign-in with an authenticator app (password logins only). */
+    @Prop({ default: false })
+    mfaEnabled?: boolean;
+
+    /** Authenticator secret; never returned by default queries. */
+    @Prop({ select: false })
+    mfaSecret?: string;
+
+    /** Secret shown during setup, kept until the first code confirms it. */
+    @Prop({ select: false })
+    mfaPendingSecret?: string;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);

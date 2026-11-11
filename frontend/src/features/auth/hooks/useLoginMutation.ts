@@ -7,9 +7,10 @@ import { handleNestError, ValidationError } from "@/lib/handleNestError";
 import { useNavigate } from "@tanstack/react-router";
 import { useAuthContext } from "@/context/authContext";
 import { authErrorMessage } from "../authErrorMessage";
+import { mfaTicket, type MfaChallenge } from "../mfa";
 
 type loginSuccessResponse = { access_token: string; refresh_token: string; };
-type loginResponse = AxiosResponse<loginSuccessResponse, ExceptionResponse>;
+type loginResponse = AxiosResponse<loginSuccessResponse | MfaChallenge, ExceptionResponse>;
 
 const login = async (credentials: any): Promise<loginResponse['data']> => {
     const response = await axiosInstance.post('/auth/local/login', credentials);
@@ -34,6 +35,12 @@ export const useLoginMutation = <T extends FieldValues>(setError: UseFormSetErro
         // The button keeps its "Signing in…" state until the session is loaded,
         // so the landing page never flashes before the dashboard.
         onSuccess: async (data) => {
+            // Two-step sign-in: the password was right, now ask for the code.
+            if ('mfaRequired' in data) {
+                mfaTicket.save(data);
+                await navigate({ to: '/multi-factor' });
+                return;
+            }
             localStorage.setItem('access_token', data.access_token);
             localStorage.setItem('refresh_token', data.refresh_token);
             await checkAuth();

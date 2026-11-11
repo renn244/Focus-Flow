@@ -3,6 +3,7 @@ import { useAuthContext } from "@/context/authContext";
 import AvatarUpload from "@/features/settings/components/AvatarUpload";
 import ChangeSettingsPasswordForm from "@/features/settings/components/ChangeSettingsPasswordForm";
 import ProfileSettingsForm from "@/features/settings/components/ProfileSettingsForm";
+import TwoStepSignIn from "@/features/settings/components/TwoStepSignIn";
 import { CheckCircle2, Mail, ShieldCheck } from "lucide-react";
 
 const UserSettings = () => {
@@ -102,6 +103,25 @@ const UserSettings = () => {
                   </p>
                 ) : (
                   <ChangeSettingsPasswordForm />
+                )}
+              </div>
+            </section>
+
+            <section className="border-t border-border py-7">
+              <div className="max-w-xl">
+                <h2 className="text-base font-semibold text-foreground">
+                  Two-step sign-in
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Ask for a 6-digit code from your phone after your password.
+                </p>
+
+                {user.isOauthUser ? (
+                  <p className="mt-5 text-sm text-muted-foreground">
+                    You sign in with GitHub, so your account is protected by GitHub's own two-step settings.
+                  </p>
+                ) : (
+                  <TwoStepSignIn enabled={!!user.mfaEnabled} />
                 )}
               </div>
             </section>

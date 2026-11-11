@@ -1,160 +1,200 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, HelpCircle, Mail, RefreshCw, Shield, ShieldQuestion } from "lucide-react"
-import { useState } from "react"
-import { Link } from "@tanstack/react-router";
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import { REGEXP_ONLY_DIGITS } from "input-otp"
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { ArrowLeft, Mail, Smartphone } from "lucide-react";
+import AuthLayout from "@/components/common/AuthLayout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { useAuthContext } from "@/context/authContext";
+import { cn } from "@/lib/utils";
+import FormAlert from "@/features/auth/components/FormAlert";
+import { mfaApi, mfaErrorMessage, mfaTicket, type MfaMethod } from "@/features/auth/mfa";
 
-type MultifactorMethods = "authenticator" | "email"
+const methods: { id: MfaMethod; label: string; icon: typeof Smartphone }[] = [
+    { id: "authenticator", label: "Authenticator app", icon: Smartphone },
+    { id: "email", label: "Email code", icon: Mail },
+];
 
+/** The second step of a password login for accounts with two-step sign-in on. */
 const MultiFactor = () => {
-    const [selectedMethod, setSelectedMethod] = useState<MultifactorMethods>("authenticator")
-    const availableMethods: MultifactorMethods[] = ["authenticator", "email"]
+    const navigate = useNavigate();
+    const { checkAuth } = useAuthContext();
+    const [challenge] = useState(mfaTicket.read);
+    const [method, setMethod] = useState<MfaMethod>("authenticator");
+    const [code, setCode] = useState("");
+    const [error, setError] = useState<string>();
+    const [notice, setNotice] = useState<string>();
+    const [verifying, setVerifying] = useState(false);
+    const [sending, setSending] = useState(false);
+    const [cooldown, setCooldown] = useState(0);
+    const timer = useRef<number>(undefined);
+
+    useEffect(() => () => window.clearInterval(timer.current), []);
+
+    const startCooldown = (seconds: number) => {
+        setCooldown(seconds);
+        window.clearInterval(timer.current);
+        timer.current = window.setInterval(() => {
+            setCooldown((left) => {
+                if (left <= 1) window.clearInterval(timer.current);
+                return Math.max(0, left - 1);
+            });
+        }, 1000);
+    };
+
+    if (!challenge) {
+        return (
+            <AuthLayout>
+                <Card className="w-full max-w-md">
+                    <CardHeader className="px-6 sm:px-8">
+                        <CardTitle className="text-2xl font-semibold text-foreground">Sign in again</CardTitle>
+                        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                            This step only works right after you enter your password, and it expires after a few minutes.
+                        </p>
+                    </CardHeader>
+                    <CardContent className="px-6 sm:px-8">
+                        <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+                            <Link to="/login">Back to sign in</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </AuthLayout>
+        );
+    }
+
+    const verify = async (value = code) => {
+        if (value.length !== 6 || verifying) return;
+        setVerifying(true);
+        setError(undefined);
+        try {
+            const { access_token, refresh_token } = await mfaApi.verify(challenge.mfaToken, value, method);
+            localStorage.setItem("access_token", access_token);
+            if (refresh_token) localStorage.setItem("refresh_token", refresh_token);
+            mfaTicket.clear();
+            await checkAuth();
+            await navigate({ to: "/projects" });
+        } catch (failure) {
+            const message = mfaErrorMessage(failure, "That code didn't work. Try again.");
+            setError(message);
+            setCode("");
+            // An expired or used-up ticket can't recover; send them back to the password step.
+            if (/sign in again|expired|already used/i.test(message)) mfaTicket.clear();
+        } finally {
+            setVerifying(false);
+        }
+    };
+
+    const sendEmail = async () => {
+        setSending(true);
+        setError(undefined);
+        try {
+            const result = await mfaApi.sendEmail(challenge.mfaToken);
+            setNotice(result.message);
+            startCooldown(result.cooldownSeconds);
+        } catch (failure) {
+            setError(mfaErrorMessage(failure, "We couldn't send the email. Try again."));
+        } finally {
+            setSending(false);
+        }
+    };
+
+    const switchMethod = (next: MfaMethod) => {
+        setMethod(next);
+        setCode("");
+        setError(undefined);
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <div className="flex items-center gap-2 mb-2">
-                        <Link 
+        <AuthLayout>
+            <Card className="w-full max-w-md gap-2 bg-card py-8">
+                <CardHeader className="gap-0 px-6 pb-6 sm:px-8">
+                    <Link
                         to="/login"
-                        className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                            <ArrowLeft className="h-4 w-4 mr-1" />
-                            Back                            
-                        </Link>
-                    </div>
-                    <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                        Multi-Factor Authentication
-                    </CardTitle>
-                    <CardDescription>
-                        Verify your identity to complete sign in to <strong>johndoe24@example.com</strong>
-                    </CardDescription>
+                        onClick={() => mfaTicket.clear()}
+                        className="mb-4 inline-flex w-fit items-center gap-1 rounded text-sm text-muted-foreground hover:text-foreground focus-visible:outline-2"
+                    >
+                        <ArrowLeft className="size-4" /> Back to sign in
+                    </Link>
+                    <CardTitle className="text-2xl font-semibold text-foreground">Two-step sign-in</CardTitle>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                        {method === "authenticator"
+                            ? "Enter the 6-digit code from your authenticator app."
+                            : `We'll email a code to ${challenge.email}.`}
+                    </p>
                 </CardHeader>
 
-                <CardContent className="space-y-6">
-                    <div className="space-y-3">
-                        <Label className="text-sm font-medium">Choose verification method:</Label>
-                        <div className="grid gap-2">
-                            {availableMethods.map((method) => (
-                                <Button
-                                key={method}
-                                variant={selectedMethod === method ? "default" : "outline"}
-                                className="justify-start h-auto p-3"
-                                onClick={() => setSelectedMethod(method)}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <MethodIcon method={method} />
-                                        <div className="text-left">
-                                            <div className="font-medium"><MethodLabel method={method} /></div>
-                                            <div className="text-xs text-muted-foreground"><MethodDescription method={method} /></div>
-                                        </div>
-                                    </div>
-                                </Button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-4 flex flex-col items-center">
-                        <div className="text-center">
-                            <Label className="text-sm font-medium justify-center">
-                                Enter verification code
-                            </Label>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                <MethodDescription method={selectedMethod} />
-                            </p>
-                        </div>
-
-                        <InputOTP maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
-                            <InputOTPGroup>
-                                <InputOTPSlot index={0} />
-                                <InputOTPSlot index={1} />
-                                <InputOTPSlot index={2} />
-                                <InputOTPSlot index={3} />
-                                <InputOTPSlot index={4} />
-                                <InputOTPSlot index={5} />
-                            </InputOTPGroup>
-                        </InputOTP>
-
-                        <Button
-                        type="submit"
-                        className="w-full"
-                        >
-                            Verify Code
-                        </Button>
-
-                        {selectedMethod === "email" && (
-                            <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-sm w-full"
+                <CardContent className="space-y-5 px-6 sm:px-8">
+                    <div role="group" aria-label="How to get your code" className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+                        {methods.map(({ id, label, icon: Icon }) => (
+                            <button
+                                key={id}
+                                type="button"
+                                aria-pressed={method === id}
+                                onClick={() => switchMethod(id)}
+                                className={cn(
+                                    "flex h-9 items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-2",
+                                    method === id ? "bg-card text-foreground shadow-[0_1px_2px_rgb(15_23_42/0.1)]" : "text-muted-foreground hover:text-foreground"
+                                )}
                             >
-                                <RefreshCw className="h-4 w-4 mr-1" />
-                                Resend Code
-                            </Button>
-                        )}
+                                <Icon className="size-4" aria-hidden="true" /> {label}
+                            </button>
+                        ))}
                     </div>
 
-                    <div className="space-y-3">
-                        <Alert>
-                            <HelpCircle className="h-4 w-4" />
-                            <AlertDescription className="text-primary">
-                                <span className="font-bold">Having trouble?</span> 
-                                Make sure your device's time is correct and try refreshing your authenticator app.
-                            </AlertDescription>
-                        </Alert>
+                    {method === "email" && (
+                        <Button type="button" variant="outline" className="w-full" onClick={sendEmail} disabled={sending || cooldown > 0}>
+                            {sending ? <><LoadingSpinner className="size-4" /> Sending…</> : cooldown > 0 ? `Send again in ${cooldown}s` : notice ? "Send a new code" : "Email me a code"}
+                        </Button>
+                    )}
+                    {method === "email" && notice && <p className="text-sm text-muted-foreground" role="status">{notice}</p>}
 
-                        <div className="text-center">
-                            <Link to="/" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
-                                <HelpCircle className="h-3 w-3" />
-                                Lost access to your 2FA device?
-                            </Link>
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            void verify();
+                        }}
+                        className="space-y-5"
+                    >
+                        <div className="flex justify-center">
+                            <InputOTP
+                                maxLength={6}
+                                pattern={REGEXP_ONLY_DIGITS}
+                                value={code}
+                                onChange={setCode}
+                                onComplete={(value: string) => void verify(value)}
+                                autoFocus
+                                aria-label="6-digit code"
+                                disabled={verifying}
+                            >
+                                <InputOTPGroup>
+                                    {Array.from({ length: 6 }, (_, index) => (
+                                        <InputOTPSlot key={index} index={index} className="size-11 text-lg sm:size-12" />
+                                    ))}
+                                </InputOTPGroup>
+                            </InputOTP>
                         </div>
-                    </div>
+
+                        <FormAlert message={error} />
+
+                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={code.length !== 6 || verifying}>
+                            {verifying ? <><LoadingSpinner className="size-4" /> Checking…</> : "Verify and sign in"}
+                        </Button>
+                    </form>
+
+                    {method === "authenticator" && (
+                        <p className="text-center text-sm text-muted-foreground">
+                            Phone not with you?{" "}
+                            <button type="button" onClick={() => switchMethod("email")} className="font-medium text-blue-700 underline underline-offset-2 hover:text-blue-600">
+                                Get a code by email
+                            </button>
+                        </p>
+                    )}
                 </CardContent>
             </Card>
-        </div>
-    )
-}
+        </AuthLayout>
+    );
+};
 
-const MethodIcon = ({ method } : { method: MultifactorMethods }) => {
-    switch (method) {
-        case "authenticator":
-            return <Shield className="h-4 w-4" />
-        case "email":
-            return <Mail className="h-4 w-4" />
-        default:
-            return <ShieldQuestion className="h-4 w-4" />
-    
-    }
-}
-
-const MethodLabel = ({ method } : { method: MultifactorMethods }) => {
-    switch (method) {
-        case "authenticator":
-            return "Authenticator App";
-        case "email":
-            return "Email Verification";
-        default:
-            return "Unknown Method";
-    } 
-}
-
-const MethodDescription = ({ method } : { method: MultifactorMethods }) => {
-    switch (method) {
-        case "authenticator":
-            return "Enter the 6-digit code from your authenticator app";
-        case "email":
-            return "Enter the verification code sent to your email";
-        default:
-            return "Unknown Method Description";
-    }
-}
-
-export default MultiFactor
+export default MultiFactor;

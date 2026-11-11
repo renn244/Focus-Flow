@@ -7,11 +7,13 @@ import { User, UserJwt } from 'src/lib/Decorators/UserJwt';
 import { GithubAuthGuard } from 'src/lib/guards/GithubAuthGuard';
 import { LocalLoginDto } from './dto/LocalLogin.dto';
 import { ApiBearerAuth, ApiResponse, ApiServiceUnavailableResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { MfaService } from './mfa.service';
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService, 
+        private readonly mfaService: MfaService,
     ) {}
 
     @UseGuards(GithubAuthGuard)
@@ -41,6 +43,9 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Post('local/login')
     async localLogin(@Request() req: any, @Body() body: LocalLoginDto) {
+        // With two-step sign-in on, the password only earns a short-lived ticket;
+        // the access token comes from /auth/mfa/verify.
+        if (req.user?.mfaEnabled) return this.mfaService.startChallenge(req.user);
         return this.authService.login(req.user);
     }
 

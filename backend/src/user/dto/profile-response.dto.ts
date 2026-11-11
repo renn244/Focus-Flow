@@ -22,6 +22,10 @@ export class ProfileResponseDto {
   @Expose()
   emailVerified: boolean;
 
+  @ApiProperty({ example: false, description: 'Whether two-step sign-in is turned on.' })
+  @Expose()
+  mfaEnabled: boolean;
+
   @ApiPropertyOptional({
     example: 'http://localhost:5000/uploads/avatars/avatar.png',
   })

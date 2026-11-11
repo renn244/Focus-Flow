@@ -8,4 +8,6 @@ export type User = {
     avatarUrl?: string;
     isOauthUser: boolean;
     OauthId?: string;
+    /** Two-step sign-in with an authenticator app is on. */
+    mfaEnabled?: boolean;
 }
