@@ -11,6 +11,7 @@ import { ProjectDto, ProjectWithOwnerDto } from './dto/response-dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { AuditLogService } from 'src/audit-log/audit-log.service';
 import { GetProjectActivityQueryDto } from 'src/audit-log/dto/get-project-activity-query.dto';
+import { ProjectDataService } from './project-data.service';
 
 @Injectable()
 export class ProjectsService {
@@ -18,7 +19,14 @@ export class ProjectsService {
         @InjectModel(Project.name) private projectModel: Model<ProjectDocument>,
         @Inject(forwardRef(() => TeamService)) private readonly teamService: TeamService,
         private readonly auditLogService: AuditLogService,
+        private readonly projectData: ProjectDataService,
     ) {}
+
+    /** Replaces the stored task counters, which nothing keeps up to date, with live ones. */
+    private async withTaskCounts<T extends { _id: Types.ObjectId; toObject(): object }>(projects: T[]) {
+        const counts = await this.projectData.countTasks(projects.map((project) => project._id));
+        return projects.map((project) => ({ ...project.toObject(), ...this.projectData.countsFor(counts, project._id) }));
+    }
 
     async createProject(body: CreateProjectDto, user: UserJwt) {
         const ownerId = user.id;
@@ -55,7 +63,7 @@ export class ProjectsService {
             ...(query.priority && query.priority !== 'all' ? { priority: query.priority } : {})
         }).populate('ownerId', 'username email displayName avatarUrl')
     
-        return plainToInstance(ProjectWithOwnerDto, projects, {
+        return plainToInstance(ProjectWithOwnerDto, await this.withTaskCounts(projects), {
             excludeExtraneousValues: true,
             enableImplicitConversion: true
         });
@@ -69,7 +77,7 @@ export class ProjectsService {
             .sort({ lastSeen: -1 })
             .limit(5)
 
-        return plainToInstance(ProjectDto, projects, {
+        return plainToInstance(ProjectDto, await this.withTaskCounts(projects), {
             excludeExtraneousValues: true,
             enableImplicitConversion: true
         });
@@ -82,7 +90,8 @@ export class ProjectsService {
             throw new NotFoundException("Project not found");
         }
 
-        return plainToInstance(ProjectWithOwnerDto, project, {
+        const [withCounts] = await this.withTaskCounts([project]);
+        return plainToInstance(ProjectWithOwnerDto, withCounts, {
             excludeExtraneousValues: true,
             enableImplicitConversion: true
         });
@@ -168,6 +177,10 @@ export class ProjectsService {
         if(!project) {
             throw new NotFoundException("Project not found or you do not have permission to delete this project");
         }
+
+        // Boards, tasks, notes, files and the team go with it, so nothing is left
+        // showing up in members' agendas.
+        await this.projectData.deleteProjectData(project._id);
   
         return {
             message: "Project deleted successfully"
