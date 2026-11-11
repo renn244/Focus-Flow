@@ -1,28 +1,15 @@
 import { Link } from "@tanstack/react-router"
+import { MotionConfig, motion } from "framer-motion"
 import {
   ArrowRight,
   CalendarDays,
   Check,
-  Circle,
   FolderKanban,
   Leaf,
   ListChecks,
-  UsersRound,
 } from "lucide-react"
-
-const agendaTasks = [
-  { title: "Outline project brief", project: "Human-centred design", time: "10:00", accent: "bg-cyan-400" },
-  { title: "Review research notes", project: "Human-centred design", time: "13:30", accent: "bg-violet-400" },
-  { title: "Prepare team update", project: "Final presentation", time: "16:00", accent: "bg-blue-400" },
-]
-
-const calendarDays = [
-  "29", "30", "31", "1", "2", "3", "4",
-  "5", "6", "7", "8", "9", "10", "11",
-  "12", "13", "14", "15", "16", "17", "18",
-  "19", "20", "21", "22", "23", "24", "25",
-  "26", "27", "28", "29", "30", "1", "2",
-]
+import ProductPreview from "@/features/landing/ProductPreview"
+import { ease, rise, sequence } from "@/features/landing/motion"
 
 function Brand() {
   return (
@@ -31,118 +18,6 @@ function Brand() {
         <Leaf className="size-5" aria-hidden="true" />
       </span>
       <span className="text-lg font-semibold tracking-[-0.02em]">FocusFlow</span>
-    </div>
-  )
-}
-
-function ProductPreview() {
-  return (
-    <div
-      className="relative mx-auto mt-12 max-w-6xl overflow-hidden rounded-2xl border border-blue-300/15 bg-[#0b1630]/90 p-2 shadow-[0_32px_90px_rgba(0,0,0,0.42)] sm:mt-16 sm:p-3"
-      aria-label="Illustrative FocusFlow workspace preview"
-    >
-      <div className="flex h-7 items-center gap-1.5 border-b border-white/8 px-3">
-        <span className="size-2 rounded-full bg-rose-400/80" />
-        <span className="size-2 rounded-full bg-amber-300/80" />
-        <span className="size-2 rounded-full bg-emerald-400/80" />
-        <span className="ml-2 text-[10px] font-medium text-blue-200/45">Example workspace</span>
-      </div>
-
-      <div className="grid min-h-[390px] grid-cols-1 divide-y divide-white/8 lg:grid-cols-[0.83fr_1.05fr_0.9fr] lg:divide-x lg:divide-y-0">
-        <section className="p-4 sm:p-5" aria-label="Project board preview">
-          <div className="mb-5 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-semibold text-white">
-              <FolderKanban className="size-4 text-blue-300" aria-hidden="true" />
-              Project board
-            </div>
-            <span className="text-xs text-blue-200/60">Spring project</span>
-          </div>
-
-          <div className="space-y-2">
-            {[
-              ["Research direction", "In progress", "bg-violet-400"],
-              ["Write the first draft", "To do", "bg-blue-400"],
-              ["Share team update", "To do", "bg-cyan-400"],
-            ].map(([title, status, accent]) => (
-              <div key={title} className="rounded-xl border border-white/8 bg-white/[0.035] p-3">
-                <div className="flex items-start gap-2.5">
-                  <span className={`mt-1 size-2 rounded-full ${accent}`} />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-blue-50">{title}</p>
-                    <p className="mt-1 text-xs text-blue-200/55">{status}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 flex items-center gap-2 text-xs text-blue-200/60">
-            <UsersRound className="size-3.5" aria-hidden="true" />
-            Shared with your team
-          </div>
-        </section>
-
-        <section className="p-4 sm:p-5" aria-label="Today's work preview">
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-blue-300/70">Today</p>
-              <h2 className="mt-1 text-xl font-semibold tracking-[-0.02em] text-white">Your next tasks</h2>
-            </div>
-            <span className="text-xs text-blue-200/55">Tuesday, 18 June</span>
-          </div>
-
-          <div className="space-y-1">
-            {agendaTasks.map((task) => (
-              <div key={task.title} className="flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-white/[0.035]">
-                <Circle className="size-4 shrink-0 text-blue-200/70" aria-hidden="true" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-blue-50">{task.title}</p>
-                  <p className="mt-0.5 truncate text-xs text-blue-200/55">{task.project}</p>
-                </div>
-                <div className="flex shrink-0 items-center gap-1.5 text-xs text-blue-100/65">
-                  <span className={`size-1.5 rounded-full ${task.accent}`} />
-                  {task.time}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 flex items-center gap-2 rounded-xl border border-blue-400/15 bg-blue-500/[0.08] px-3 py-2.5 text-xs text-blue-100/75">
-            <ListChecks className="size-4 text-blue-300" aria-hidden="true" />
-            One task is due tomorrow
-          </div>
-        </section>
-
-        <section className="p-4 sm:p-5" aria-label="Calendar preview">
-          <div className="mb-5 flex items-center gap-2 text-sm font-semibold text-white">
-            <CalendarDays className="size-4 text-cyan-300" aria-hidden="true" />
-            June 2026
-          </div>
-          <div className="grid grid-cols-7 text-center text-[10px] font-medium uppercase tracking-[0.08em] text-blue-200/45">
-            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => <span key={`${day}-${index}`}>{day}</span>)}
-          </div>
-          <div className="mt-2 grid grid-cols-7 gap-y-1 text-center text-xs text-blue-100/70">
-            {calendarDays.map((day, index) => {
-              const isSelected = day === "18" && index > 14
-              const isMuted = index < 3 || index > 30
-              const hasTask = [16, 17, 18, 22].includes(index)
-
-              return (
-                <span key={`${day}-${index}`} className="relative flex h-7 items-center justify-center">
-                  <span className={isSelected ? "flex size-7 items-center justify-center rounded-lg bg-blue-500 font-semibold text-white shadow-[0_5px_16px_rgba(59,130,246,0.45)]" : isMuted ? "text-blue-100/25" : ""}>
-                    {day}
-                  </span>
-                  {hasTask && !isSelected ? <span className="absolute bottom-0.5 size-1 rounded-full bg-cyan-300" /> : null}
-                </span>
-              )
-            })}
-          </div>
-          <div className="mt-5 border-t border-white/8 pt-4">
-            <p className="text-xs font-medium text-blue-100">Due this week</p>
-            <p className="mt-1 text-xs leading-5 text-blue-200/55">Keep dates visible while you plan your work.</p>
-          </div>
-        </section>
-      </div>
     </div>
   )
 }
@@ -159,8 +34,8 @@ function WorkflowStep({
   isLast?: boolean
 }) {
   return (
-    <div className="relative grid grid-cols-[2.5rem_1fr] gap-4 pb-8 last:pb-0">
-      {!isLast ? <span className="absolute left-[1.18rem] top-10 h-[calc(100%-1.5rem)] w-px bg-gradient-to-b from-blue-400/70 to-violet-400/15" /> : null}
+    <motion.div variants={step} className="relative grid grid-cols-[2.5rem_1fr] gap-4 pb-8 last:pb-0">
+      {!isLast ? <motion.span variants={connector} className="absolute left-[1.18rem] top-10 h-[calc(100%-1.5rem)] w-px origin-top bg-gradient-to-b from-blue-400/70 to-violet-400/15" /> : null}
       <span className="relative z-10 flex size-10 items-center justify-center rounded-xl border border-blue-300/15 bg-blue-500/10 text-blue-200">
         <Icon className="size-[18px]" aria-hidden="true" />
       </span>
@@ -168,18 +43,35 @@ function WorkflowStep({
         <h3 className="font-semibold text-white">{title}</h3>
         <p className="mt-1.5 max-w-md text-sm leading-6 text-blue-100/65">{description}</p>
       </div>
-    </div>
+    </motion.div>
   )
+}
+
+/** The route from plan to next step is walked once, top to bottom, as it scrolls into view. */
+const steps = {
+  hidden: {},
+  shown: { transition: { staggerChildren: 0.22 } },
+}
+
+const step = {
+  hidden: { opacity: 0, x: -8 },
+  shown: { opacity: 1, x: 0, transition: { duration: 0.5, ease } },
+}
+
+const connector = {
+  hidden: { scaleY: 0 },
+  shown: { scaleY: 1, transition: { duration: 0.5, delay: 0.15, ease } },
 }
 
 export default function LandingPage() {
   return (
+    <MotionConfig reducedMotion="user">
     <main className="min-h-screen overflow-hidden bg-[#08142d] text-blue-50 selection:bg-blue-400/35">
       {/*
         THESIS: A calm, concrete path from a project board to today's work; reject generic SaaS feature grids.
         OWN-WORLD: FocusFlow's established deep navy field, precise blue/violet/cyan accents, and restrained rounded surfaces.
         STORY: A visitor understands that FocusFlow makes shared project work actionable, then chooses to create an account or sign in.
-        FIRST VIEWPORT: Minimal header, centred statement, primary action, and a wide agenda/calendar workspace preview.
+        FIRST VIEWPORT: Minimal header, centred statement, primary action, and the real app (board + My work) rendered with sample data.
         FORM: Full-width agenda evidence composition, candidate 7; seed 6c3007eb. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
       */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[42rem] overflow-hidden">
@@ -211,22 +103,22 @@ export default function LandingPage() {
       </header>
 
       <section className="relative mx-auto max-w-7xl px-5 pb-20 pt-14 sm:px-8 sm:pt-20 lg:px-10 lg:pt-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
+        <motion.div variants={sequence} initial="hidden" animate="shown" className="mx-auto max-w-3xl text-center">
+          <motion.h1 variants={rise} className="text-balance text-4xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
             Focus on the work that matters.
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-7 text-blue-100/75 sm:text-lg sm:leading-8">
+          </motion.h1>
+          <motion.p variants={rise} className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-7 text-blue-100/75 sm:text-lg sm:leading-8">
             Keep projects, task boards, assignments, and due dates together—so your next step is always clear.
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          </motion.p>
+          <motion.div variants={rise} className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link to="/sign-up" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-500 px-5 text-sm font-semibold text-white shadow-[0_10px_28px_rgba(59,130,246,0.3)] transition hover:bg-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-200">
               Create your workspace <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
             <Link to="/login" className="inline-flex h-11 items-center justify-center rounded-lg border border-blue-200/25 px-5 text-sm font-semibold text-blue-50 transition hover:border-blue-200/45 hover:bg-white/[0.05] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-200">
               Log in
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
         <ProductPreview />
       </section>
 
@@ -244,12 +136,12 @@ export default function LandingPage() {
             </a>
           </div>
 
-          <div id="start" className="max-w-xl">
+          <motion.div id="start" className="max-w-xl" variants={steps} initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.4 }}>
             <WorkflowStep icon={FolderKanban} title="Create a project" description="Start with a shared project space and give your team one place to organise the work." />
             <WorkflowStep icon={ListChecks} title="Build the board" description="Break the plan into tasks, move work through the board, and keep responsibilities visible." />
             <WorkflowStep icon={CalendarDays} title="Set a due date" description="Give important work a date so the team can see what is coming up." />
             <WorkflowStep icon={Check} title="Return to what matters" description="Use your personal view to pick up the next task instead of searching through the whole project." isLast />
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -275,5 +167,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </main>
+    </MotionConfig>
   )
 }

@@ -31,7 +31,8 @@ const dueText = (dueDate: string) => {
     return format(date, "EEE, MMM d") + time
 }
 
-const ProjectsDashboard = () => {
+/** The My work page body, without the app shell; the landing preview renders it too. */
+export const MyWorkView = () => {
     const { user } = useAuthContext()
     const today = useMemo(() => startOfDay(new Date()), [])
     const [view, setView] = useState<ListView>("today")
@@ -68,7 +69,6 @@ const ProjectsDashboard = () => {
     const firstName = (user?.displayName || user?.username || "").split(" ")[0]
 
     return (
-        <AppShell>
             <div className="mx-auto w-full max-w-[1400px] px-4 py-7 sm:px-6 lg:px-8">
                 <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
                     <div>
@@ -189,9 +189,14 @@ const ProjectsDashboard = () => {
                     </aside>
                 </div>
             </div>
-        </AppShell>
     )
 }
+
+const ProjectsDashboard = () => (
+    <AppShell>
+        <MyWorkView />
+    </AppShell>
+)
 
 const TaskRow = ({ task, project, overdue, onOpen }: { task: TaskWithBoardAndColumn; project?: ProjectWithOwner; overdue: boolean; onOpen: () => void }) => (
     <button type="button" onClick={onOpen} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 px-4 py-3.5 text-left transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:-outline-offset-2 sm:grid-cols-[6.5rem_minmax(0,1fr)_auto] sm:px-5">

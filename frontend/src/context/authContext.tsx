@@ -16,7 +16,7 @@ const initialContextState: AuthContextType = {
     checkAuth: async () => undefined
 }
 
-const AuthContext = createContext<AuthContextType>(initialContextState);
+export const AuthContext = createContext<AuthContextType>(initialContextState);
 
 export const useAuthContext = () => {
     const context = useContext(AuthContext);
