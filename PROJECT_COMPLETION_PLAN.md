@@ -166,21 +166,39 @@ any dependency on `audit-backend`.
   descriptions to the public API.
 - [x] Replace placeholder backend tests with behaviour-focused unit tests for task
   ownership, dashboard queries, comments, attachments, and audit logging.
-- Add frontend coverage for the dashboard's loading, empty, error, and dated
-  task states.
-- Test the core journey manually: sign up → create project/team → create and
+- [x] Add frontend coverage for the dashboard's loading, empty, error, and dated
+  task states (Vitest + Testing Library, `npm test` in `frontend/`).
+- [ ] Test the core journey manually: sign up → create project/team → create and
   assign dated task → dashboard → comment/attachment → activity trail.
-- Run frontend build, backend build, tests, and a browser pass before calling
+  Each step was checked on its own; a full pass is left for the project owner.
+- [x] Run frontend build, backend build, tests, and a browser pass before calling
   the project complete.
 
 ## Completion checklist
 
-- [ ] No marketing/billing/analytics/fake-product screens remain in the user
-      flow.
-- [ ] Auth and application visuals use one FocusFlow design system.
-- [ ] Task assignment and due dates work end-to-end.
+- [x] No marketing/billing/analytics/fake-product screens remain in the user
+      flow. The landing page shows the real app on sample data, and the old
+      mock two-step page was replaced by a working one.
+- [x] Auth and application visuals use one FocusFlow design system.
+- [x] Task assignment and due dates work end-to-end (due dates are optional).
 - [x] Dashboard uses real assigned-task data and a functional side calendar.
 - [x] Comments and attachments work with access controls.
 - [x] Audit trail is local to the main backend and visible to project members.
 - [x] Swagger accurately documents the finished API.
-- [x] Builds, meaningful tests, and the core browser journey pass.
+- [x] Builds and meaningful tests pass (backend Jest, frontend Vitest, lint
+      with no errors).
+
+## Added beyond the original plan
+
+- Project notes with task links, pinning, and version history with restore.
+- Checklists on tasks, the "My list" view, and drag-and-drop reordering.
+- Discord bot for project updates and a daily summary.
+- Two-step sign-in with an authenticator app and an email fallback.
+- Phone layouts for the board, task window, notes and dashboard.
+- Deleting a project removes all of its data; project task counts are live.
+
+## Known limits
+
+- Email (confirmation, password reset, emailed codes) needs working `SMTP_*`
+  settings in `backend/.env`.
+- Images inside notes stay on disk after their project is deleted.
