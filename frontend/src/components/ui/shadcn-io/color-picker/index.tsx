@@ -242,7 +242,7 @@ export const ColorPickerEyeDropper = ({ className, ...props }: ColorPickerEyeDro
 
   const handleEyeDropper = async () => {
     try {
-      // @ts-ignore - EyeDropper API is experimental
+      // @ts-expect-error - EyeDropper API is experimental and not in the DOM types yet
       const eyeDropper = new EyeDropper()
       const result = await eyeDropper.open()
       const color = Color(result.sRGBHex)
@@ -279,7 +279,7 @@ export const ColorPickerOutput = ({ className, ...props }: ColorPickerOutputProp
 
   return (
     <Select value={mode} onValueChange={setMode}>
-      <SelectTrigger className="h-8 shrink-0 text-xs" {...props}>
+      <SelectTrigger className={cn("h-8 shrink-0 text-xs", className)} {...props}>
         <SelectValue placeholder="Mode" />
       </SelectTrigger>
       <SelectContent>

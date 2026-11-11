@@ -14,7 +14,7 @@ const CreateProjectDialog = () => {
                 <DialogHeader>
                     <DialogTitle>Create New Project</DialogTitle>
                 </DialogHeader>
-                <ProjectForm isLoading={isPending} onsubmit={mutateAsync as any} />
+                <ProjectForm isLoading={isPending} onsubmit={mutateAsync} />
             </DialogContent>
         </Dialog>
     )

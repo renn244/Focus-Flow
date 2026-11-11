@@ -6,7 +6,7 @@ import axiosInstance from "@/lib/httpService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useTaskDialogStore from "../../store/useTaskDialog";
 
-type TaskUpdate = Omit<Partial<Task>, 'assignee'> & { assignee?: string | null };
+type TaskUpdate = Omit<Partial<Task>, 'assignee' | 'dueDate' | 'checklist'> & { assignee?: string | null; dueDate?: string | Date | null };
 type editTaskSuccessResponse = Task;
 type editTaskResponse = AxiosResponse<editTaskSuccessResponse, ExceptionResponse>;
 

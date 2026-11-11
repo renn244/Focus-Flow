@@ -31,7 +31,7 @@ const ForgotPasswordForm = () => {
     const onSubmit = async (data: forgotPasswordSchema) => {
         try {
             mutate(data.email);
-        } catch (error) {
+        } catch {
             toast.error("An error occurred while sending the reset link. Please try again.");
         }
     }

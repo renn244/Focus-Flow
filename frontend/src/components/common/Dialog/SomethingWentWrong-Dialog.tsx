@@ -7,7 +7,6 @@ import type { ComponentProps } from "react";
 type SomethingWentWrongDialogProps = {
   title?: string;
   message?: string;
-  searchQuery?: string;
   customActions?: React.ReactNode;
   className?: string;
 
@@ -21,7 +20,6 @@ type SomethingWentWrongDialogProps = {
 const SomethingWentWrongDialog = ({
   title = "Something Went Wrong",
   message = "An unexpected error occurred. Please try again later.",
-  searchQuery,
   customActions,
   className,
   onBack, backLoading = false,

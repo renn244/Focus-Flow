@@ -93,11 +93,11 @@ const TaskForm = ({
             
             // When editing, an emptied due date is sent as null so the server clears it.
             await onsubmit(isUpdate && !data.dueDate ? { ...data, dueDate: null as unknown as undefined } : data);
-        } catch(error: any | ValidationError) {
+        } catch (error: unknown) {
             if(error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
             } else {
-                toast.error(error.message || "An error occurred while creating the task");
+                toast.error((error instanceof Error && error.message) || "An error occurred while creating the task");
             }
         }
     }

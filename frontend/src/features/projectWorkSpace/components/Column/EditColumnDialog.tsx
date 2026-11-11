@@ -48,7 +48,7 @@ const EditColumnDialog = () => {
                         title: data.title,
                         color: data.color || '',
                     }}
-                    onsubmit={mutateAsync as any}
+                    onsubmit={mutateAsync}
                     isLoading={isPending}
                     isUpdate />
                 )}

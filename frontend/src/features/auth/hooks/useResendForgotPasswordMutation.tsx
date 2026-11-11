@@ -10,7 +10,7 @@ const resendForgotPassword = async (email: string) => {
         throw new Error(response.data.message || "An error occurred while resending the reset link.");
     }
 
-    response.data;
+    return response.data;
 }
 
 export const useResendForgotPasswordMutation = () => {

@@ -21,7 +21,7 @@ export const addMemberFormSchema = z.object({
 })
 
 type AddMemberFormProps = {
-    onsubmit: (data: AddMemberSchema) => Promise<void>;
+    onsubmit: (data: AddMemberSchema) => Promise<unknown>;
     isLoading: boolean;
     className?: string;
 }
@@ -41,11 +41,11 @@ const AddMemberForm = ({
     const onSubmit = async (data: AddMemberSchema) => {
         try {
             await onsubmit(data);
-        } catch (error: any | ValidationError) {
+        } catch (error: unknown) {
             if(error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
             } else {
-                toast.error(error.message || "An error occurred while adding a team member.");
+                toast.error((error instanceof Error && error.message) || "An error occurred while adding a team member.");
             }
         }
     }

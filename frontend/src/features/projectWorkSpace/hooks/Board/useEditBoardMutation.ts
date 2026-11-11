@@ -9,7 +9,7 @@ import type { BoardWithColumns } from "../../type";
 type editBoardSuccessResponse = BoardWithColumns;
 type editBoardResponse = AxiosResponse<editBoardSuccessResponse, ExceptionResponse>;
 
-const editBoard = async (id: string, data: any): Promise<editBoardResponse['data']> => {
+const editBoard = async (id: string, data: unknown): Promise<editBoardResponse['data']> => {
     const response = await axiosInstance.patch(`/board/${id}`, data);
 
     if(response.status === 400) {
@@ -29,7 +29,7 @@ export const useEditBoardMutation = (boardId: string) => {
     const setEditOpen = useBoardDialogStore((state) => state.setEditOpen);
 
     return useMutation({
-        mutationFn: (data) => editBoard(boardId, data),
+        mutationFn: (data: unknown) => editBoard(boardId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['boards'] })
             queryClient.invalidateQueries({ queryKey: ['board', editBoardId] });

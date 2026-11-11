@@ -3,7 +3,7 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 
-type getUserInfoSuccessResponse = any;
+type getUserInfoSuccessResponse = { _id: string; displayName: string; email: string; username: string; avatarUrl?: string } | null;
 type getUserInfoResponse = AxiosResponse<getUserInfoSuccessResponse, ExceptionResponse>;
 
 const getUserInfo = async (userId: string | null, projectId: string | null): Promise<getUserInfoResponse['data']> => {

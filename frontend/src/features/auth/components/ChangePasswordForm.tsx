@@ -45,7 +45,7 @@ const ChangePasswordForm = ({
     const onSubmit = async (data: changePasswordSchema) => {
         try {
             mutate({ ...data, email, token });
-        } catch (error) {
+        } catch {
             toast.error("An error occurred while changing the password")
         }
     }

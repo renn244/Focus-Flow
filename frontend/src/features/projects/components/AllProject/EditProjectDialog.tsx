@@ -52,7 +52,7 @@ const EditProjectDialog = () => {
                         color: data.color || "",
                         dueDate: new Date(data.dueDate),
                     }}
-                    onsubmit={mutateAsync as any}
+                    onsubmit={mutateAsync}
                     isLoading={isPending}
                     isUpdate
                     />

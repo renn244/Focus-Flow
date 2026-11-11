@@ -8,7 +8,7 @@ import type { ProjectWithOwnerList } from "../type";
 type AllProjectsSuccessResponse = ProjectWithOwnerList;
 type AllProjectsResponse = AxiosResponse<AllProjectsSuccessResponse, ExceptionResponse>;
 
-const allProjects = async (query: any): Promise<AllProjectsResponse['data']> => {
+const allProjects = async (query: Record<string, unknown>): Promise<AllProjectsResponse['data']> => {
     const response = await axiosInstance.get('/projects', {
         params: query,
     });

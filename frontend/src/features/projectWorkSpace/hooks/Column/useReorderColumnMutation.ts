@@ -28,15 +28,16 @@ export const useReorderColumnMutation = (boardId: string) => {
         onMutate: (reorderColumnData) => {
             queryClient.setQueryData(
                 ['columns', 'byboard', boardId],
-                (oldData: any) => {
+                (oldData: { _id: string; order: number }[] | undefined) => {
                     // Build that becomes O(N) instead of O(N^2)(double looping)
-                    const orderMap = new Map(reorderColumnData.map((col: any) => [col._id, col.order]));
+                    const orderMap = new Map(reorderColumnData.map((col) => [col._id, col.order]));
 
+                    if (!oldData) return oldData;
                     return oldData
-                        .map((column: any) => ({
-                            ...column, order: orderMap.has(column._id) ? orderMap.get(column._id) : column.order,
+                        .map((column) => ({
+                            ...column, order: orderMap.get(column._id) ?? column.order,
                         }))
-                        .sort((a: any, b: any) => a.order - b.order);
+                        .sort((a, b) => a.order - b.order);
                 }
             );
 

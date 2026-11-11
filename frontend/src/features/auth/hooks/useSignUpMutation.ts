@@ -10,7 +10,7 @@ import { authErrorMessage } from "../authErrorMessage";
 type signUpSuccessResponse = { message: string, email: string, displayName: string }
 type signUpResponse = AxiosResponse<signUpSuccessResponse, ExceptionResponse>;
 
-const signUp = async (data: any): Promise<signUpResponse['data']> => {
+const signUp = async (data: unknown): Promise<signUpResponse['data']> => {
     const response = await axiosInstance.post('/auth/local/signup', data);
 
     if(response.status === 400) {
@@ -32,7 +32,7 @@ export const useSignUpMutation = <T extends FieldValues>(setError: UseFormSetErr
         onSuccess: async (data) => {
             navigate({ to: '/verify-email', search: { email: data.email } });
         },
-        onError: (error: any | ValidationError) => {
+        onError: (error: unknown) => {
             if(error instanceof ValidationError) {
                 handleNestError<T>(error.response, setError)
             } else {

@@ -29,7 +29,7 @@ const CreateColumnDialog = () => {
                     <DialogTitle>Add column</DialogTitle>
                 </DialogHeader>
                 <ColumnForm boardId={selectedBoardId || ""} 
-                isLoading={isPending} onsubmit={mutateAsync as any} />
+                isLoading={isPending} onsubmit={mutateAsync} />
             </DialogContent>
         </Dialog>
     )

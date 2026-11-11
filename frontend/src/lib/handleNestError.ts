@@ -1,5 +1,5 @@
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
-import type { FieldValues, UseFormSetError } from "react-hook-form";
+import type { FieldValues, Path, UseFormSetError } from "react-hook-form";
 import { toast } from "sonner";
 
 export class ValidationError extends Error {
@@ -17,7 +17,7 @@ export function handleNestError<T extends FieldValues>(
     if(error?.errors) {
         const fieldErrors = error.errors;
         for (const field in fieldErrors) {
-            setError(field as any, {
+            setError(field as Path<T>, {
                 type: "manual",
                 message: fieldErrors[field].message || "Invalid input",
             })

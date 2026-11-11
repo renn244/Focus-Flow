@@ -10,7 +10,7 @@ import ListLoading from "@/components/common/ListLoading";
 type DisplayUserProps = {
     userId: User['_id'];
     className?: string;
-    userOnClick: (e: any) => void | undefined;
+    userOnClick: (e: React.MouseEvent<HTMLElement>) => void | undefined;
 } & ComponentProps<"div">;
 
 const DisplayUser = ({ userId, className, userOnClick, ...props }: DisplayUserProps) => {
@@ -20,6 +20,11 @@ const DisplayUser = ({ userId, className, userOnClick, ...props }: DisplayUserPr
 
     if (isLoading) {
         return <ListLoading label="Loading member profile" rows={1} avatar className={className} />;
+    }
+
+    // The person may have left the project or deleted their account.
+    if (!user) {
+        return <p className={cn("rounded-md border p-3 text-sm text-muted-foreground", className)}>This person couldn't be found.</p>;
     }
 
     return (

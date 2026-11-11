@@ -21,7 +21,7 @@ export const changeRoleFormSchema = z.object({
 })
 
 type ChangeRoleFormProps = {
-    onsubmit: (data: ChangeRoleSchema) => Promise<void>;
+    onsubmit: (data: ChangeRoleSchema) => Promise<unknown>;
     isLoading: boolean;
     className?: string;
     initialData: TeamMemberWithUser;
@@ -43,11 +43,11 @@ const ChangeRoleForm = ({
     const onSubmit = async (data: ChangeRoleSchema) => {
         try {
             await onsubmit(data);
-        } catch (error: any | ValidationError) {
+        } catch (error: unknown) {
             if(error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
             } else {
-                toast.error(error.message || "An error occured while adding a team member.");
+                toast.error((error instanceof Error && error.message) || "An error occured while adding a team member.");
             }
         }
     }

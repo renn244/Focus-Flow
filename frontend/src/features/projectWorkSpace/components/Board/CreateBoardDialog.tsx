@@ -19,7 +19,7 @@ const CreateBoardDialog = () => {
                 </DialogHeader>
 
                 <BoardForm isLoading={isPending} projectId={projectId} 
-                onsubmit={mutateAsync as any} />
+                onsubmit={mutateAsync} />
             </DialogContent>
         </Dialog>
     )

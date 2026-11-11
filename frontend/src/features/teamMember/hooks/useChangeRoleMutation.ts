@@ -4,7 +4,7 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
 
-type changeRoleSuccessResponse = any;
+type changeRoleSuccessResponse = unknown;
 type changeRoleResponse = AxiosResponse<changeRoleSuccessResponse, ExceptionResponse>;
 
 const changeRole = async (memberId: string, newRole: 'owner' | 'admin' | 'member'): Promise<changeRoleResponse['data']> => {

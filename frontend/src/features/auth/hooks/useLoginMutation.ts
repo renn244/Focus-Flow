@@ -12,7 +12,7 @@ import { mfaTicket, type MfaChallenge } from "../mfa";
 type loginSuccessResponse = { access_token: string; refresh_token: string; };
 type loginResponse = AxiosResponse<loginSuccessResponse | MfaChallenge, ExceptionResponse>;
 
-const login = async (credentials: any): Promise<loginResponse['data']> => {
+const login = async (credentials: unknown): Promise<loginResponse['data']> => {
     const response = await axiosInstance.post('/auth/local/login', credentials);
 
     if(response.status === 400) {
@@ -46,7 +46,7 @@ export const useLoginMutation = <T extends FieldValues>(setError: UseFormSetErro
             await checkAuth();
             await navigate({ to: '/projects' });
         },
-        onError: (error: any | ValidationError) => {
+        onError: (error: unknown) => {
             if(error instanceof ValidationError) {
                 handleNestError<T>(error.response, setError);
             } else {

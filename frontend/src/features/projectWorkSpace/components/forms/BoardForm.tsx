@@ -21,7 +21,7 @@ export const BoardFormSchema = z.object({
 })
 
 type BoardFormProps = {
-    onsubmit: (data: BoardSchema) => Promise<void>;
+    onsubmit: (data: BoardSchema) => Promise<unknown>;
     isLoading: boolean;
     className?: string;
     projectId?: string;
@@ -47,11 +47,11 @@ const BoardForm = ({
     const onSubmit = async (data: BoardSchema) => {
         try {
             await onsubmit(data);
-        } catch (error: any | ValidationError) {
+        } catch (error: unknown) {
             if(error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
             } else {
-                toast.error(error.message || "An error occured while createing the board");
+                toast.error((error instanceof Error && error.message) || "An error occured while createing the board");
             }
         }
     }

@@ -6,7 +6,7 @@ import useTaskDialogStore from "../../store/useTaskDialog";
 import type { Task, TaskSchema } from "../../type";
 
 type createTaskSuccessResponse = Task;
-type createTaskResponse = AxiosResponse<createTaskSuccessResponse, any>;
+type createTaskResponse = AxiosResponse<createTaskSuccessResponse, unknown>;
 
 const createTask = async (data: TaskSchema): Promise<createTaskResponse['data']> => {
     const response = await axiosInstance.post('/task', data);

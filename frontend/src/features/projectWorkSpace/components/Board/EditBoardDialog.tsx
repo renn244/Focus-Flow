@@ -27,7 +27,7 @@ const EditBoardDialog = ({
                 </DialogHeader>
 
                 <BoardForm 
-                isLoading={isPending} onsubmit={mutateAsync as any} 
+                isLoading={isPending} onsubmit={mutateAsync} 
                 initialData={{
                     name: board.name,
                     description: board.description,

@@ -1,5 +1,5 @@
 
-const transformReorderColumn = (reorderColumnData: any[]) => {
+const transformReorderColumn = (reorderColumnData: { _id: string }[]) => {
     return  reorderColumnData.reduce((acc, column, index) => {
         acc.push({ _id: column._id, order: index });
         return acc;

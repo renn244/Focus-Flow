@@ -10,7 +10,7 @@ import useSelectBoardStore from "../../store/useSelectBoard";
 type editColumnSuccessResponse = Column;
 type editColumnResponse = AxiosResponse<editColumnSuccessResponse, ExceptionResponse>;
 
-const editColumn = async (id: string, data: any, boardId: string | null | undefined): Promise<editColumnResponse['data']> => {
+const editColumn = async (id: string, data: Record<string, unknown>, boardId: string | null | undefined): Promise<editColumnResponse['data']> => {
     const response = await axiosInstance.patch(`/column/${id}`, { ...data, boardId: boardId });
 
     if(response.status === 400) {
@@ -30,7 +30,7 @@ export const useEditColumnMutation = (columnId: string) => {
     const setEditOpen = useColumnDialogStore((state) => state.setEditOpen);
 
     return useMutation({
-        mutationFn: (data) => editColumn(columnId, data, selectedBoardId),
+        mutationFn: (data: Record<string, unknown>) => editColumn(columnId, data, selectedBoardId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['columns'] });
             queryClient.invalidateQueries({ queryKey: ['column', columnId] });

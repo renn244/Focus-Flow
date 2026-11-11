@@ -38,9 +38,9 @@ const SortableColumnView = ({
         items={columns || []} dataKey="_id" 
         onChange={async (fnType, data) => {
             if(fnType === "movedTask") {
-                await moveTask(data);
+                await moveTask(data as Parameters<typeof moveTask>[0]);
             } else if(fnType === "reorderedColumns") {
-                await reorderColumn(transformReorderColumn(data));
+                await reorderColumn(transformReorderColumn(data as { _id: string }[]));
             }
         }}
         onDragEnd={(event, { onChange, setCurrentData, expectedData }) => {
@@ -119,11 +119,11 @@ const SortableColumnView = ({
 
             if(active.data.current?.type === 'column') {
                 const column = currentData.find((item) => item._id === active.id);
-                setActiveItem(column);
+                setActiveItem(column ?? null);
             }
         }}
         strategy={horizontalListSortingStrategy}    
-        renderItem={(item, _, isOverlay) => <ColumnCard key={item._id} column={item as any} isOverlay={isOverlay} /> }
+        renderItem={(item, _, isOverlay) => <ColumnCard key={item._id} column={item} isOverlay={isOverlay} /> }
         />
     )
 }

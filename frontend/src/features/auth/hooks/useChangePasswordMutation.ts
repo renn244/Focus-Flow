@@ -10,7 +10,7 @@ import { toast } from "sonner";
 type changePasswordSuccessResponse = { message: string; };
 type changePasswordResponse = AxiosResponse<changePasswordSuccessResponse, ExceptionResponse>;
 
-const changePassword = async (data: any): Promise<changePasswordResponse['data']> => {
+const changePassword = async (data: unknown): Promise<changePasswordResponse['data']> => {
     const response = await axiosInstance.post('/forget-password-token/change-password', data);
 
     if(response.status === 400) {
@@ -33,11 +33,11 @@ export const useChangePasswordMutation = <T extends FieldValues>(setError: UseFo
             toast.success(data.message || 'Password changed successfully');
             navigate({ to: '/login', replace: true });
         },
-        onError: (error: any | ValidationError) => {
+        onError: (error: unknown) => {
             if(error instanceof ValidationError) {
                 handleNestError<T>(error.response, setError);
             } else {
-                toast.error(error.message || 'An error occurred while changing the password');
+                toast.error((error instanceof Error && error.message) || 'An error occurred while changing the password');
             }
         }
     })

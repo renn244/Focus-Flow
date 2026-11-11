@@ -29,7 +29,7 @@ export const ProjectFormSchema = z.object({
 })
 
 type ProjectFormProps = {
-    onsubmit: (data: ProjectSchema) => Promise<void>;
+    onsubmit: (data: ProjectSchema) => Promise<unknown>;
     isLoading: boolean;
     className?: string;
     initialData?: ProjectSchema;
@@ -55,11 +55,11 @@ const ProjectForm = ({
     const onSubmit = async (data: ProjectSchema) => {
         try {
             await onsubmit(data);
-        } catch (error: any | ValidationError) {
+        } catch (error: unknown) {
             if(error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
             } else {
-                toast.error(error.message || "An error occurred while creating the project");
+                toast.error((error instanceof Error && error.message) || "An error occurred while creating the project");
             }
         }
     }

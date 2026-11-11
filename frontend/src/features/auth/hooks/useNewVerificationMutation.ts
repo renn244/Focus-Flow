@@ -27,15 +27,15 @@ export const useNewVerificationMutation = ({ setStatus }: useNewVerificationMuta
                 throw new Error("No user exist found for this email");
             }
 
-            response.data;
+            return response.data;
         },
         onSuccess: () => {
             setNewVerificationSuccess(true);
             toast.success("New verification email sent successfully", { position: "top-center" });
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             setNewVerificationSuccess(false);
-            toast.error(error.message || "Failed to send new verification email", { position: "top-center" });
+            toast.error((error instanceof Error && error.message) || "Failed to send new verification email", { position: "top-center" });
         }
     })
 

@@ -10,7 +10,7 @@ import type { ProjectWithOwner } from "../type";
 type editProjectSuccessResponse = ProjectWithOwner;
 type editProjectResponse = AxiosResponse<editProjectSuccessResponse, ExceptionResponse>;
 
-const editProject = async (id: string, data: any): Promise<editProjectResponse['data']> => {
+const editProject = async (id: string, data: unknown): Promise<editProjectResponse['data']> => {
     const response = await axiosInstance.patch(`/projects/${id}`, data);
 
     if (response.status === 400) {
@@ -29,7 +29,7 @@ export const useEditProjectMutation = (projectId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data) => editProject(projectId, data),
+        mutationFn: (data: unknown) => editProject(projectId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['allProjects'] });
             setEditOpen(false);

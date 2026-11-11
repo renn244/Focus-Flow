@@ -20,7 +20,7 @@ export const columnFormSchema = z.object({
 })
 
 type ColumnFormProps = {
-    onsubmit: (data: ColumnSchema) => Promise<void>;
+    onsubmit: (data: ColumnSchema) => Promise<unknown>;
     isLoading: boolean;
     className?: string;
     boardId?: string;
@@ -53,11 +53,11 @@ const ColumnForm = ({
             }
 
             await onsubmit(data);
-        } catch (error: any | ValidationError) {
+        } catch (error: unknown) {
             if (error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
             } else {
-                toast.error(error.message || "An error occurred while creating the column");
+                toast.error((error instanceof Error && error.message) || "An error occurred while creating the column");
             }
         }
     }

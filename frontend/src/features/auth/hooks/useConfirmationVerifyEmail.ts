@@ -31,7 +31,7 @@ export const useConfirmationVerifyEmail = ({ token }: ConfirmationVerifyEmailPar
             }
 
             setStatus("success");
-            response.data;
+            return response.data;
         },
         refetchOnWindowFocus: false,
         retry: false,

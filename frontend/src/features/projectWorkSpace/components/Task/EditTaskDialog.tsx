@@ -59,7 +59,7 @@ const EditTaskDialog = () => {
                         tags: data.tags,
                         assignee: data.assignee,
                     }}
-                    onsubmit={mutateAsync as any}
+                    onsubmit={mutateAsync}
                     isLoading={isPending}
                     />
                 )}
