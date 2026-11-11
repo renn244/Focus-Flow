@@ -75,8 +75,6 @@ frontend/  React app: landing and sign-in pages, app shell, project
            workspace, My work dashboard, settings
 ```
 
-Design notes live in [`DESIGN.md`](DESIGN.md) and product scope in [`PRODUCT.md`](PRODUCT.md).
-
 ## Known limitations
 
 - Two-step sign-in applies to password accounts. GitHub accounts rely on GitHub's own security.
