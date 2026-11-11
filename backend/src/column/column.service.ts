@@ -148,7 +148,7 @@ export class ColumnService {
         }
 
         const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-        this.teamGateway.io.to(projectId).emit('columnUpdated', 
+        if (projectId) this.teamGateway.io.to(projectId).emit('columnUpdated', 
             plainToInstance(ColumnWithBoardIdDto, {...updatedColumn, boardId: body.boardId}, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,
@@ -188,7 +188,7 @@ export class ColumnService {
 
             // SHOULD GIVE THE COLUMNS??
             const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-            this.teamGateway.io.to(projectId).emit('columnsReordered', { boardId, columns: body.columns });
+            if (projectId) this.teamGateway.io.to(projectId).emit('columnsReordered', { boardId, columns: body.columns });
 
             return { message: "Columns reordered successfully", updatedCount: updatedColumns.modifiedCount };
         } catch (error) {
@@ -210,7 +210,7 @@ export class ColumnService {
         }
 
         const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-        this.teamGateway.io.to(projectId).emit('columnDeleted', 
+        if (projectId) this.teamGateway.io.to(projectId).emit('columnDeleted', 
             plainToInstance(ColumnDto, column, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,

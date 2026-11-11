@@ -1,10 +1,16 @@
 import { Logger } from '@nestjs/common';
-import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { TeamService } from './team.service';
 import { Types } from 'mongoose';
 import { TeamSharedService } from './team.shared.service';
 
+type Connection = { userId: string; projectId: string };
+
+/**
+ * Live project presence. A person can have several sockets open (tabs, quick
+ * reloads), so everything is tracked per socket and a user only "leaves" a
+ * project when their last socket for it closes.
+ */
 @WebSocketGateway()
 export class TeamGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private logger = new Logger(TeamGateway.name);
@@ -15,85 +21,90 @@ export class TeamGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() io: Server
 
-    private userIdToSocketId: Record<string, string> = {};
-    private socketIdToUserId: Record<string, string> = {};
-    private projectIdToUserId: Record<string, string> = {};
-    private userIdWithinProjectId: Record<string, string[]> = {};
+    /** socket id -> who it belongs to and which project it is watching */
+    private connections = new Map<string, Connection>();
+    /** project id -> user id -> number of open sockets */
+    private presence = new Map<string, Map<string, number>>();
 
     getUserIdBySocketId(socketId: string) {
-        return this.socketIdToUserId[socketId];
+        return this.connections.get(socketId)?.userId;
     }
 
+    /** The user's most recently opened socket. */
     getSocketIdByUserId(userId: string) {
-        return this.userIdToSocketId[userId];
+        let latest: string | undefined;
+        for (const [socketId, connection] of this.connections) {
+            if (connection.userId === userId) latest = socketId;
+        }
+        return latest;
     }
 
+    /** The project the user most recently opened, used to address live updates. */
     getProjectIdByUserId(userId: string) {
-        return this.projectIdToUserId[userId];
+        const socketId = this.getSocketIdByUserId(userId);
+        return socketId ? this.connections.get(socketId)?.projectId : undefined;
     }
 
     getUserIdsInProject(projectId: string) {
-        return this.userIdWithinProjectId[projectId] || [];
+        return [...(this.presence.get(projectId)?.keys() ?? [])];
     }
 
-    async handleConnection(client: any, ...args: any[]) {
-        const userId: string = client.handshake?.query?.userId;
-        const projectId: string = client.handshake?.query?.projectId;
+    async handleConnection(client: Socket) {
+        const userId = String(client.handshake?.query?.userId ?? '');
+        const projectId = String(client.handshake?.query?.projectId ?? '');
 
-        const projectMembers = await this.teamSharedService.getMembers(new Types.ObjectId(projectId));
-        const projectMemberIds = projectMembers.map(member => member.user._id.toString());
-
-        if(!projectMemberIds.includes(userId)) {
-            this.logger.warn(`User ${userId} attempted to connect to project ${projectId} without being a member`);
+        if (!userId || !Types.ObjectId.isValid(projectId)) {
+            this.logger.warn(`Rejected socket ${client.id}: missing user or invalid project id`);
+            client.disconnect(true);
             return;
         }
 
-        this.userIdToSocketId[userId] = client.id;
-        this.projectIdToUserId[userId] = projectId;
-        this.socketIdToUserId[client.id] = userId;
-        
-        this.handleUserJoinProject(userId, projectId);
+        try {
+            const projectMembers = await this.teamSharedService.getMembers(new Types.ObjectId(projectId));
+            const member = projectMembers.find((entry) => entry.user._id.toString() === userId)?.user;
 
-        // Kindly check if the userId is a member of the project before joining in 
-        client.join(projectId);
+            if (!member) {
+                this.logger.warn(`User ${userId} attempted to connect to project ${projectId} without being a member`);
+                client.disconnect(true);
+                return;
+            }
+            // The tab may have closed while membership was being checked.
+            if (client.disconnected) return;
 
-        this.logger.log(`User ${userId} connected with socket ${client.id}`);
-    }
+            this.connections.set(client.id, { userId, projectId });
+            await client.join(projectId);
 
-    handleDisconnect(client: Socket) {
-        const socketId = client.id;
-        const userId = this.getUserIdBySocketId(socketId);
-        const projectId = this.getProjectIdByUserId(userId);
+            const users = this.presence.get(projectId) ?? new Map<string, number>();
+            const openSockets = (users.get(userId) ?? 0) + 1;
+            users.set(userId, openSockets);
+            this.presence.set(projectId, users);
 
-        if(userId) {
-            delete this.userIdToSocketId[userId];
-            delete this.projectIdToUserId[userId];
-            delete this.socketIdToUserId[socketId];
-            
-            this.handleUserLeaveProject(userId, projectId);
-
-            // Leave the project room no need for permission
-            client.leave(this.getProjectIdByUserId(userId));
-
-            this.logger.log(`User ${userId} disconnected from socket ${socketId}`);
-        } else {
-            this.logger.warn('Attempted to disconnect a socket that is not connected');
+            if (openSockets === 1) this.io.to(projectId).emit('userJoined', member);
+            this.logger.log(`User ${userId} connected with socket ${client.id}`);
+        } catch (error) {
+            this.logger.error(`Socket ${client.id} could not join project ${projectId}: ${(error as Error).message}`);
+            this.connections.delete(client.id);
+            client.disconnect(true);
         }
     }
 
-    async handleUserJoinProject(userId: string, projectId: string) {
-        this.userIdWithinProjectId[projectId] = [...(this.userIdWithinProjectId[projectId] || []), userId];
+    handleDisconnect(client: Socket) {
+        const connection = this.connections.get(client.id);
+        if (!connection) return;
 
-        const members = await this.teamSharedService.getMembers(new Types.ObjectId(projectId));
-        const member = members.find(m => m.user._id.toString() === userId)?.user;
+        this.connections.delete(client.id);
+        const { userId, projectId } = connection;
 
-        // should be the details of the member
-        this.io.to(projectId).emit('userJoined', member);
-    }
+        const users = this.presence.get(projectId);
+        const remaining = (users?.get(userId) ?? 1) - 1;
+        if (users && remaining > 0) {
+            users.set(userId, remaining);
+        } else {
+            users?.delete(userId);
+            if (users?.size === 0) this.presence.delete(projectId);
+            this.io.to(projectId).emit('userLeft', { userId });
+        }
 
-    handleUserLeaveProject(userId: string, projectId: string) {
-        this.userIdWithinProjectId[projectId] = this.userIdWithinProjectId[projectId].filter(id => id !== userId);
-
-        this.io.to(projectId).emit('userLeft', { userId });
+        this.logger.log(`User ${userId} disconnected from socket ${client.id}`);
     }
 }

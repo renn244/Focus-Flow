@@ -84,7 +84,7 @@ export class TaskService {
             ]);
 
             const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-            this.teamGateway.io.to(projectId).emit('taskCreated', 
+            if (projectId) this.teamGateway.io.to(projectId).emit('taskCreated', 
                 plainToInstance(TaskWithBoardAndColumnDto, populatedData, {
                     excludeExtraneousValues: true,
                     enableImplicitConversion: true,
@@ -376,7 +376,7 @@ export class TaskService {
         ]);
 
         const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-        this.teamGateway.io.to(projectId).emit('taskUpdated', 
+        if (projectId) this.teamGateway.io.to(projectId).emit('taskUpdated', 
             plainToInstance(TaskWithBoardAndColumnDto, populatedData, {
                 excludeExtraneousValues: true,
                 enableImplicitConversion: true,
@@ -420,7 +420,7 @@ export class TaskService {
             await session.commitTransaction();
 
             const projectId = this.teamGateway.getProjectIdByUserId(user.id);
-            this.teamGateway.io.to(projectId).emit('taskDeleted', { taskId: id, colId: deletedTask.columnId.toString() });
+            if (projectId) this.teamGateway.io.to(projectId).emit('taskDeleted', { taskId: id, colId: deletedTask.columnId.toString() });
 
             return { message: "Task deleted successfully" };
         } catch (error) {
