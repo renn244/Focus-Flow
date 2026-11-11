@@ -8,6 +8,7 @@ import {
   Leaf,
   ListChecks,
 } from "lucide-react"
+import NightBackdrop from "@/components/common/NightBackdrop"
 import FeatureSections from "@/features/landing/FeatureSections"
 import ProductPreview from "@/features/landing/ProductPreview"
 import { ease, rise, sequence } from "@/features/landing/motion"
@@ -75,21 +76,7 @@ export default function LandingPage() {
         FIRST VIEWPORT: Minimal header, centred statement, primary action, and the real app (board + My work) rendered with sample data.
         FORM: Full-width agenda evidence composition, candidate 7; seed 6c3007eb. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
       */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[42rem] overflow-hidden">
-        <div className="absolute -left-48 -top-44 size-[36rem] rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute right-[-14rem] top-20 size-[32rem] rounded-full bg-violet-500/[0.09] blur-3xl" />
-        <svg className="absolute inset-x-0 top-20 h-80 w-full opacity-40" viewBox="0 0 1440 320" fill="none" preserveAspectRatio="none">
-          <path d="M-80 212C171 116 334 288 588 195C807 115 993 58 1241 142C1343 177 1410 148 1520 78" stroke="url(#landing-path)" strokeWidth="1.2" />
-          <defs>
-            <linearGradient id="landing-path" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#22d3ee" stopOpacity="0" />
-              <stop offset="0.42" stopColor="#60a5fa" stopOpacity="0.55" />
-              <stop offset="0.75" stopColor="#a78bfa" stopOpacity="0.45" />
-              <stop offset="1" stopColor="#22d3ee" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
+      <NightBackdrop />
 
       <header className="relative mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
         <Link to="/" aria-label="FocusFlow home"><Brand /></Link>

@@ -8,11 +8,11 @@ import PasswordInput from '@/components/ui/passwordInput';
 import { Button } from '@/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { useSignUpMutation } from '../hooks/useSignUpMutation';
-import { toast } from 'sonner';
 import LoadingSpinner from '@/components/ui/loadingSpinner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, Github } from 'lucide-react';
+import FormAlert from './FormAlert';
 
 export const signUpFormSchema = zod.object({
     username: zod.string()
@@ -23,7 +23,7 @@ export const signUpFormSchema = zod.object({
     password: zod.string()
         .min(8, { message: 'Password must be at least 8 characters long' }),
     confirmPassword: zod.string()
-        .min(8, { message: 'Confirm Password must be at least 8 characters long' })
+        .min(1, { message: 'Type your password again' })
 }).superRefine(({ password, confirmPassword }, ctx) => {
     if(password !== confirmPassword) {
         ctx.addIssue({
@@ -41,19 +41,13 @@ const SignUpForm = () => {
     })
     const { mutate, isPending } = useSignUpMutation<signUpSchema>(form.setError);
 
-    const onSubmit = async (data: signUpSchema) => {
-        try {
-            mutate(data)
-        } catch (error) {
-            toast.error("An error occurred during sign up");
-        }
-    }
+    const onSubmit = (data: signUpSchema) => mutate(data);
     
     return (
         <Card className="w-full max-w-md bg-card py-8 gap-2">
             <CardHeader className="space-y-1 px-6 pb-6 gap-0 sm:px-8">
                 <CardTitle className="text-2xl font-semibold text-left text-foreground">Create your account</CardTitle>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">Enter your details to get started</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">It takes a minute. We'll email you a link to confirm your address.</p>
             </CardHeader>
             <CardContent className="px-6 sm:px-8">
                 <Form {...form}>
@@ -102,7 +96,7 @@ const SignUpForm = () => {
                         name='confirmPassword'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
+                                <FormLabel>Confirm password</FormLabel>
                                 <FormControl>
                                     <PasswordInput {...field} autoComplete="new-password" />
                                 </FormControl>
@@ -111,9 +105,14 @@ const SignUpForm = () => {
                         )}
                         />
 
+                        <FormAlert message={form.formState.errors.root?.server?.message} />
+
                         <Button className='w-full bg-blue-600 hover:bg-blue-700' variant="default" type="submit" disabled={isPending}>
                             {isPending ? (
-                                <LoadingSpinner /> 
+                                <>
+                                    <LoadingSpinner className="size-4" />
+                                    Creating account…
+                                </>
                             ): (
                                 <div className="flex items-center gap-2">
                                     Create account
@@ -141,8 +140,8 @@ const SignUpForm = () => {
 
                         <div className="text-center text-sm text-muted-foreground">
                             Already have an account?{" "}
-                            <Link to='/login' className="text-blue-700 hover:text-blue-600 p-0 h-auto font-medium">
-                                Login
+                            <Link to='/login' className="font-medium text-blue-700 underline underline-offset-2 hover:text-blue-600">
+                                Log in
                             </Link>
                         </div>
                     </form>

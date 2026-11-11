@@ -9,10 +9,10 @@ import PasswordInput from '@/components/ui/passwordInput';
 import { Link } from "@tanstack/react-router";
 import LoadingSpinner from '@/components/ui/loadingSpinner';
 import { useLoginMutation } from '../hooks/useLoginMutation';
-import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, Github } from 'lucide-react';
+import FormAlert from './FormAlert';
 
 export const loginFormSchema = zod.object({
   username: zod.string().min(3, { message: 'Username is required' }),
@@ -27,19 +27,13 @@ const LoginForm = () => {
   })
   const { mutate, isPending } = useLoginMutation<loginSchema>(form.setError);
 
-  const onSubmit = async (data: loginSchema) => {
-    try {
-      mutate(data);
-    } catch (error) {
-      toast.error("An error occurred during login");
-    }
-  }
+  const onSubmit = (data: loginSchema) => mutate(data);
 
   return (
     <Card className="w-full max-w-md bg-card py-8 gap-2">
       <CardHeader className="space-y-1 px-6 pb-6 gap-0 sm:px-8">
-        <CardTitle className='text-2xl font-semibold text-left text-foreground'>Welcome Back</CardTitle>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">Enter your credentials to access your account</p>
+        <CardTitle className='text-2xl font-semibold text-left text-foreground'>Welcome back</CardTitle>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">Sign in with your username and password.</p>
       </CardHeader>
       <CardContent className="px-6 sm:px-8">
         <Form {...form}>
@@ -74,9 +68,14 @@ const LoginForm = () => {
             )}
             />
 
+            <FormAlert message={form.formState.errors.root?.server?.message} />
+
             <Button className="w-full bg-blue-600 hover:bg-blue-700" variant="default" type="submit" disabled={isPending}>
-              {isPending ?(
-                 <LoadingSpinner />
+              {isPending ? (
+                <>
+                  <LoadingSpinner className="size-4" />
+                  Signing in…
+                </>
                 ) : (
                   <>
                     Sign in
@@ -105,7 +104,7 @@ const LoginForm = () => {
             <div className="pt-4">
               <p className='text-sm text-center'>
                 Don't have an account? {" "}
-                <Link className='underline underline-offset-2 text-blue-700 hover:text-blue-600' to="/sign-up">Sign Up</Link>
+                <Link className='underline underline-offset-2 text-blue-700 hover:text-blue-600' to="/sign-up">Sign up</Link>
               </p>
             </div>
           </form>

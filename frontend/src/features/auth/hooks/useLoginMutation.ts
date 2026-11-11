@@ -5,8 +5,8 @@ import type { ExceptionResponse } from "@/types/ExceptionResponse";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 import { handleNestError, ValidationError } from "@/lib/handleNestError";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
 import { useAuthContext } from "@/context/authContext";
+import { authErrorMessage } from "../authErrorMessage";
 
 type loginSuccessResponse = { access_token: string; refresh_token: string; };
 type loginResponse = AxiosResponse<loginSuccessResponse, ExceptionResponse>;
@@ -31,21 +31,19 @@ export const useLoginMutation = <T extends FieldValues>(setError: UseFormSetErro
     
     return useMutation({
         mutationFn: login,
-        onSuccess: (data) => {
-            // save to localStorage to acccess_token as well as refresh_token
+        // The button keeps its "Signing in…" state until the session is loaded,
+        // so the landing page never flashes before the dashboard.
+        onSuccess: async (data) => {
             localStorage.setItem('access_token', data.access_token);
             localStorage.setItem('refresh_token', data.refresh_token);
-
-            // redirect to home page or dashboard or next
-            checkAuth();
-            navigate({ to: '/' });
-        }, 
+            await checkAuth();
+            await navigate({ to: '/projects' });
+        },
         onError: (error: any | ValidationError) => {
-            // handle error, e.g., show a toast notification
             if(error instanceof ValidationError) {
                 handleNestError<T>(error.response, setError);
             } else {
-                toast.error(error.message || "An error occurred during login");
+                setError('root.server', { message: authErrorMessage(error, "Signing in didn't work. Try again in a moment.") });
             }
         }
     })

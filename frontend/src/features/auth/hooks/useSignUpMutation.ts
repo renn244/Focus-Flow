@@ -4,8 +4,8 @@ import { handleNestError, ValidationError } from "@/lib/handleNestError";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 import type { AxiosResponse } from "axios";
 import type { ExceptionResponse } from "@/types/ExceptionResponse";
-import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { authErrorMessage } from "../authErrorMessage";
 
 type signUpSuccessResponse = { message: string, email: string, displayName: string }
 type signUpResponse = AxiosResponse<signUpSuccessResponse, ExceptionResponse>;
@@ -36,7 +36,7 @@ export const useSignUpMutation = <T extends FieldValues>(setError: UseFormSetErr
             if(error instanceof ValidationError) {
                 handleNestError<T>(error.response, setError)
             } else {
-                toast.error(error.message || "An error occurred during sign up");
+                setError('root.server', { message: authErrorMessage(error, "Your account couldn't be created. Try again in a moment.") });
             }
         }
     })

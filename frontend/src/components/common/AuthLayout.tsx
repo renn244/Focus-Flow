@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { Link } from "@tanstack/react-router";
 import Brand from "./Brand";
+import NightBackdrop from "./NightBackdrop";
 import AuthIntro, { type AuthIntroVariant } from "./AuthIntro";
 import { cn } from "@/lib/utils";
 import { MotionConfig, motion } from "framer-motion";
@@ -10,7 +11,8 @@ type AuthLayoutProps = PropsWithChildren<{ variant?: AuthIntroVariant }>;
 
 const AuthLayout = ({ children, variant }: AuthLayoutProps) => (
   <MotionConfig reducedMotion="user">
-  <div className={cn("auth-layout flex min-h-svh flex-col bg-[#08142d]", variant && "auth-layout-split")}>
+  <div className={cn("auth-layout relative isolate flex min-h-svh flex-col overflow-hidden bg-[#08142d]", variant && "auth-layout-split")}>
+    <NightBackdrop className="-z-10 h-full" />
     <header className="mx-auto w-full max-w-7xl px-5 py-6 sm:px-8 lg:px-10">
       <Link to="/" aria-label="FocusFlow home" className="inline-flex rounded-lg text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">
         <Brand />

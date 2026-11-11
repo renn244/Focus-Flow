@@ -60,10 +60,10 @@ const ChangePasswordForm = ({
                     onClick={() => navigate({ to: '/login' })}
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back to Login
+                        Back to login
                     </Button>
                 </div>
-                <CardTitle className="text-2xl font-bold text-gray-900">Change Password</CardTitle>
+                <CardTitle className="text-2xl font-bold text-gray-900">Change your password</CardTitle>
                 <p className="text-gray-600">Update your password to keep your account secure</p>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -74,7 +74,7 @@ const ChangePasswordForm = ({
                         name="newPassword"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>New Password</FormLabel>
+                                <FormLabel>New password</FormLabel>
                                 <FormControl>
                                     <PasswordInput {...field} />
                                 </FormControl>
@@ -87,7 +87,7 @@ const ChangePasswordForm = ({
                         name="confirmPassword"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
+                                <FormLabel>Confirm password</FormLabel>
                                 <FormControl>
                                     <PasswordInput {...field} />
                                 </FormControl>
@@ -125,7 +125,7 @@ const ChangePasswordForm = ({
                                 <LoadingSpinner />
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    Change Password
+                                    Change password
                                     <ArrowRight className="w-4 h-4" />
                                 </div>
                             )}

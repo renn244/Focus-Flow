@@ -20,7 +20,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
         if(!user) {
             // this error is just extra but it is being handled already by validateLocalUser
-            throw new UnauthorizedException('Invalid credetials')
+            throw new UnauthorizedException('Invalid credentials')
         }
 
         return user;

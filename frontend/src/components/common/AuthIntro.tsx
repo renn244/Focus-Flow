@@ -1,53 +1,64 @@
 import { motion } from "framer-motion";
-import { CalendarDays, FolderKanban, UsersRound } from "lucide-react";
-import { rise, sequence } from "@/features/landing/motion";
+import { DndContext } from "@dnd-kit/core";
+import AgendaPanel from "@/components/layout/AgendaPanel";
+import ColumnCard from "@/features/projectWorkSpace/components/Column/ColumnCard";
+import DemoProviders from "@/features/landing/DemoProviders";
+import { demoColumns } from "@/features/landing/demoData";
+import { ease, rise, sequence } from "@/features/landing/motion";
 
 export type AuthIntroVariant = "login" | "signup";
 
-const highlights = [
-  {
-    icon: FolderKanban,
-    title: "A clear next step",
-    description: "Projects, boards, and assignments in one shared workspace.",
-    accent: "text-blue-300 bg-blue-400/10",
+const copy = {
+  login: {
+    title: <>Focus on the work<br className="hidden lg:block" /> that matters.</>,
+    body: "Pick up where you left off. Your agenda for today is waiting, across every project you're in.",
+    caption: "Your agenda in FocusFlow, shown with sample data.",
   },
-  {
-    icon: UsersRound,
-    title: "Your team, on the same page",
-    description: "Conversations and supporting files stay with the work.",
-    accent: "text-violet-300 bg-violet-400/10",
+  signup: {
+    title: <>A shared workspace.<br className="hidden lg:block" /> A clearer next step.</>,
+    body: "Bring your project and your people together. Every task has an owner, a date and a checklist, so the next step is easy to find.",
+    caption: "A board column in FocusFlow, shown with sample data.",
   },
-  {
-    icon: CalendarDays,
-    title: "Room to focus on today",
-    description: "Due dates and your assigned tasks, without the extra noise.",
-    accent: "text-cyan-300 bg-cyan-400/10",
-  },
-];
+};
+
+/** Login shows the personal agenda; sign-up shows a board column. Both are the real components. */
+const Glimpse = ({ variant }: { variant: AuthIntroVariant }) => (
+  <motion.figure
+    initial={{ opacity: 0, y: 18 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.7, delay: 0.35, ease }}
+    className="mt-10 hidden max-w-md lg:block"
+  >
+    <div className="rounded-2xl border border-blue-300/15 bg-[#0b1630] p-1.5 shadow-[0_24px_64px_rgba(0,0,0,0.38)]">
+      <DemoProviders>
+        <div inert className="select-none overflow-hidden rounded-[10px] text-left text-foreground">
+          {variant === "login" ? (
+            <div className="h-[18.5rem] bg-shell-raised [&_.shell-scroll]:overflow-hidden">
+              <AgendaPanel />
+            </div>
+          ) : (
+            <div className="bg-[#f4f6fb] p-3">
+              <DndContext>
+                <ColumnCard column={demoColumns[1]} />
+              </DndContext>
+            </div>
+          )}
+        </div>
+      </DemoProviders>
+    </div>
+    <figcaption className="mt-3 text-xs text-blue-200/55">{copy[variant].caption}</figcaption>
+  </motion.figure>
+);
 
 const AuthIntro = ({ variant }: { variant: AuthIntroVariant }) => (
   <motion.section variants={sequence} initial="hidden" animate="shown" className="mx-auto w-full max-w-lg text-center lg:mx-0 lg:text-left" aria-label="About FocusFlow">
-    <motion.h1 variants={rise} className="text-balance text-2xl font-semibold leading-tight text-white sm:text-3xl lg:text-5xl lg:leading-[1.15]">
-      {variant === "login" ? <>Focus on the work<br className="hidden lg:block" /> that matters.</> : <>A shared workspace.<br className="hidden lg:block" /> A clearer next step.</>}
+    <motion.h1 variants={rise} className="text-balance text-2xl font-semibold leading-tight tracking-[-0.03em] text-white sm:text-3xl lg:text-5xl lg:leading-[1.1]">
+      {copy[variant].title}
     </motion.h1>
     <motion.p variants={rise} className="mx-auto mt-4 max-w-md text-sm leading-6 text-blue-100/80 sm:text-base sm:leading-7 lg:mx-0 lg:mt-5">
-      {variant === "login"
-        ? "Pick up where you left off. Your projects, your people, and the work ahead are all here."
-        : "Bring your project and your people together. Make the next task easier to find, and keep the whole team moving."}
+      {copy[variant].body}
     </motion.p>
-    <motion.ul variants={sequence} className="mt-10 hidden space-y-7 lg:block">
-      {highlights.map(({ icon: Icon, title, description, accent }) => (
-        <motion.li variants={rise} key={title} className="flex items-start gap-4">
-          <span className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${accent}`}>
-            <Icon className="size-5" aria-hidden="true" />
-          </span>
-          <div>
-            <h2 className="text-sm font-semibold text-blue-50">{title}</h2>
-            <p className="mt-1 max-w-xs text-sm leading-6 text-blue-100/75">{description}</p>
-          </div>
-        </motion.li>
-      ))}
-    </motion.ul>
+    <Glimpse variant={variant} />
   </motion.section>
 );
 

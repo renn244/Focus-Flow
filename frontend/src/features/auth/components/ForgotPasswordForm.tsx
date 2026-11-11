@@ -67,7 +67,7 @@ const ForgotPasswordForm = () => {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email Address</FormLabel>
+                                    <FormLabel>Email address</FormLabel>
                                     <FormControl>
                                         <div className="relative">
                                             <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -80,7 +80,7 @@ const ForgotPasswordForm = () => {
                             />
 
                             <Button className="block w-full" disabled={isPending} type="submit">
-                                {isPending ? <LoadingSpinner /> : "Send reset link"}
+                                {isPending ? <><LoadingSpinner className="size-4" /> Sending…</> : "Send reset link"}
                             </Button>
                         </form>
                     </Form>
