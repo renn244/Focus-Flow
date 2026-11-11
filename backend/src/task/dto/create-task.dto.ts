@@ -9,9 +9,9 @@ export class CreateTaskDto {
     @IsString()
     title: string;
 
-    @ApiProperty({ description: 'Description of the task', example: 'Write detailed documentation for the project.' })
+    @ApiPropertyOptional({ description: 'Description of the task', example: 'Write detailed documentation for the project.' })
+    @IsOptional()
     @IsString()
-    @MinLength(10, { message: 'Description must be at least 10 characters long.' })
     @MaxLength(300, { message: 'Description cannot exceed 300 characters.' })
     description?: string;
 
@@ -36,11 +36,13 @@ export class CreateTaskDto {
     @IsObjectId({ message: 'Invalid assignee Id.' })
     assignee?: string;
 
-    @ApiProperty({ description: 'Date where the task is due', example: '2025-08-15' })
+    @ApiPropertyOptional({ description: 'Date the task is due. Send null to clear it.', example: '2025-08-15', nullable: true })
+    @IsOptional()
     @IsDateString()
-    dueDate?: string;
+    dueDate?: string | null;
 
-    @ApiProperty({ description: 'tags related to the task to better distinguish it.', example: ['documentation', 'writing'] })
+    @ApiPropertyOptional({ description: 'tags related to the task to better distinguish it.', example: ['documentation', 'writing'] })
+    @IsOptional()
     @IsArray()
     @IsString({ each: true, message: 'Tags must be an array of strings.' })
     tags?: string[];

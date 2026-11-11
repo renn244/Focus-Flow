@@ -28,7 +28,6 @@ import ChecklistDraft from "../Task/ChecklistDraft";
 export const TaskFormSchema = z.object({
     title: z.string().min(1, "Task title is required"),
     description: z.string()
-        .min(10, "Description must be at least 10 characters long")
         .max(300, "Description must be at most 300 characters long")
         .optional(),
     dueDate: z.date().optional(),
@@ -92,7 +91,8 @@ const TaskForm = ({
                 })
             }
             
-            await onsubmit(data);
+            // When editing, an emptied due date is sent as null so the server clears it.
+            await onsubmit(isUpdate && !data.dueDate ? { ...data, dueDate: null as unknown as undefined } : data);
         } catch(error: any | ValidationError) {
             if(error instanceof ValidationError) {
                 handleNestError(error.response, form.setError);
@@ -111,7 +111,7 @@ const TaskForm = ({
                 name="title"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel className="text-sm font-medium">Task Title</FormLabel>
+                        <FormLabel className="text-sm font-medium">Task title</FormLabel>
                         <FormControl>
                             <Input placeholder="Enter task title..." {...field} className="text-sm" />
                         </FormControl>
@@ -125,7 +125,7 @@ const TaskForm = ({
                 name="description"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel className="text-sm font-medium">Description</FormLabel>
+                        <FormLabel className="text-sm font-medium">Description <span className="font-normal text-muted-foreground">(optional)</span></FormLabel>
                         <FormControl>
                             <Textarea
                             placeholder="Describe the task in detail..."
@@ -185,7 +185,7 @@ const TaskForm = ({
                         name="dueDate"
                         render={() => (
                         <FormItem>
-                            <FormLabel className="text-sm font-medium">Due Date</FormLabel>
+                            <FormLabel className="text-sm font-medium">Due date <span className="font-normal text-muted-foreground">(optional)</span></FormLabel>
                             <FormControl>
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -206,11 +206,16 @@ const TaskForm = ({
                                         disabled={(date) => date < new Date()}
                                         selected={form.watch("dueDate") ? new Date(form.watch("dueDate")!) : undefined}
                                         onSelect={(date) => {
-                                            form.setValue("dueDate", date || new Date());
+                                            form.setValue("dueDate", date ?? undefined);
                                             form.clearErrors("dueDate");
                                         }}
                                         mode="single"
                                         />
+                                        {form.watch("dueDate") && (
+                                            <Button type="button" variant="ghost" size="sm" className="mt-1 w-full" onClick={() => form.setValue("dueDate", undefined)}>
+                                                Remove due date
+                                            </Button>
+                                        )}
                                     </PopoverContent>
                                 </Popover>
                             </FormControl>

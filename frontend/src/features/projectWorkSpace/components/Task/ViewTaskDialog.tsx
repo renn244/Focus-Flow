@@ -1,13 +1,12 @@
 import NotFoundDialog from "@/components/common/Dialog/NotFound-Dialog";
 import SomethingWentWrongDialog from "@/components/common/Dialog/SomethingWentWrong-Dialog";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import ListLoading from "@/components/common/ListLoading";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Settings } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { priorityBadgeVariant } from "../../constant/priorityColors";
 import { useGetMembers } from "@/features/teamMember/hooks/useGetMembers";
@@ -143,12 +142,7 @@ const ViewTask = ({ task }: ViewTaskProps) => {
 
             <div className="order-2 w-full border-b bg-muted/20 md:order-none md:w-80 md:shrink-0 md:overflow-auto md:border-b-0 md:border-l">
                 <div className="p-4 py-5 sm:px-6 md:px-4 md:py-6">
-                    <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">Details</h3>
-                        <Button variant="ghost" size="sm">
-                            <Settings className="h-4 w-4" />
-                        </Button>
-                    </div>
+                    <h3 className="mb-3 font-medium">Details</h3>
 
                     <div className="space-y-2">
 
@@ -195,7 +189,7 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                         </div>
 
                         <div>
-                            <Label className="text-sm font-medium text-muted-foreground">Due Date</Label>
+                            <Label className="text-sm font-medium text-muted-foreground">Due date</Label>
                             <div className="flex items-center gap-2 mt-1">
                                 <Calendar className="h-4 w-4 text-muted-foreground" />
                                 <span className="text-sm">
@@ -206,11 +200,6 @@ const ViewTask = ({ task }: ViewTaskProps) => {
 
                         <div className="border-t pt-3">
                             <TaskChecklist task={task} />
-                        </div>
-
-                        <div>
-                            <Label className="text-sm font-medium text-muted-foreground">Order</Label>
-                            <p className="text-sm mt-1">#{task.order}</p>
                         </div>
 
                         <Suspense fallback={null}>
@@ -225,7 +214,7 @@ const ViewTask = ({ task }: ViewTaskProps) => {
                                 {new Date(task.createdAt).toLocaleTimeString()}
                             </div>
                             <div>
-                                <span className="font-medium">Last Updated:</span> {new Date(task.updatedAt).toLocaleDateString()} at{" "}
+                                <span className="font-medium">Last updated:</span> {new Date(task.updatedAt).toLocaleDateString()} at{" "}
                                 {new Date(task.updatedAt).toLocaleTimeString()}
                             </div>
                         </div>
