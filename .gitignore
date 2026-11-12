@@ -27,3 +27,7 @@ MEMORY.md
 **/.impeccable/live/deferred-svelte-component-accepts.json
 **/.impeccable/live/*.png
 # impeccable-ignore-end
+
+# Remotion agent skills: reinstall with `npx skills add remotion-dev/skills`
+.claude/skills/remotion-*/
+skills-lock.json
