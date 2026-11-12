@@ -31,3 +31,6 @@ MEMORY.md
 # Remotion agent skills: reinstall with `npx skills add remotion-dev/skills`
 .claude/skills/remotion-*/
 skills-lock.json
+
+# Promo video source (Remotion project), kept locally only. The rendered video is in docs/video.
+/video/

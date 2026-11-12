@@ -9,6 +9,10 @@ and a personal agenda that tells each person what's overdue, due today and comin
 
 ![FocusFlow landing page with a live preview of the app](docs/screenshots/landing.png)
 
+### ▶ Watch the 47-second tour
+
+[![Play the FocusFlow promo video](docs/video/poster.jpg)](docs/video/focusflow-promo.mp4)
+
 </div>
 
 ---
@@ -156,7 +160,9 @@ FocusFlow/
 │   │   └── lib/                 HTTP client, helpers
 │   └── .env.example
 │
-└── docs/screenshots/            images used in this README
+└── docs/
+    ├── screenshots/             images used in this README
+    └── video/                   the promo video and its thumbnail
 ```
 
 ## Tech stack
