@@ -33,7 +33,7 @@ export const CUTS: ('zoom' | 'leak')[] = ['zoom', 'leak', 'zoom', 'leak', 'zoom'
 export const scenes = SCRIPT.map((s, i) => ({
   ...s,
   // A zoom overlaps the next scene, so give the scene those frames back.
-  frames: Math.round((voice[s.id] ? Math.max(voice[s.id]! + PAD, s.seconds * 0.85) : s.seconds) * FPS) + (CUTS[i] === 'zoom' ? TRANSITION : 0),
+  frames: Math.round((voice[s.id] ? Math.max(voice[s.id]! + PAD, s.seconds) : s.seconds) * FPS) + (CUTS[i] === 'zoom' ? TRANSITION : 0),
 }))
 
 export const totalFrames = scenes.reduce((sum, s) => sum + s.frames, 0) - TRANSITION * CUTS.filter((c) => c === 'zoom').length
