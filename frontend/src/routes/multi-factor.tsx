@@ -1,7 +1,7 @@
 import MultiFactor from "@/pages/MultiFactor"
-import { redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/multi-factor')({
   component: RouteComponent,
   beforeLoad: async ({ context: { authContext } }) => {
     const isAuthenticated = authContext?.isAuthenticated || false;

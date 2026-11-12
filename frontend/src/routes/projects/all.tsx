@@ -1,7 +1,7 @@
 import AllProjects from "@/pages/projects/AllProjects"
-import { redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/projects/all')({
   component: RouteComponent,
   beforeLoad: async ({ context: { authContext } }) => {
     const isAuthenticated = authContext?.isAuthenticated || false;

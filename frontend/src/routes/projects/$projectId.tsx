@@ -1,10 +1,10 @@
 import { useProjectIdStore } from "@/features/projectWorkSpace/store/useProjectId";
 import ProjectWorkspace from "@/pages/projects/ProjectWorkSpace/ProjectWorkspace";
 import { useEffect } from "react";
-import { redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ProjectSocketProvider } from "@/context/ProjectSocketContext";
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/projects/$projectId')({
   component: RouteComponent,
   beforeLoad: async ({ context: { authContext } }) => {
     const isAuthenticated = authContext?.isAuthenticated || false;

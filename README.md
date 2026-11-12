@@ -69,6 +69,7 @@ Use a username and password or GitHub. You can turn on **two-step sign-in** with
 | **Collaboration** | Comments, attachments (PDF, images, Word, text up to 5 MB), owner, admin and member roles, activity log |
 | **Live updates** | Board changes and who's online appear without refreshing |
 | **Search** | `Ctrl K` jumps to any project or task |
+| **Install as an app** | Installable PWA on desktop and phone (its own window and home-screen icon), with a refresh prompt when a new version is out |
 | **Accounts** | Email confirmation, password reset, profile and avatar, GitHub sign-in, two-step sign-in |
 | **Discord** | Optional bot that posts new tasks, finished work, new notes and a daily 8am summary to a channel |
 

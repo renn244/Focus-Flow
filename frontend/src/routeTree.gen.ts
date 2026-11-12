@@ -8,62 +8,25 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VerifyEmailRouteImport } from './routes/verify-email'
-import { Route as SignUpRouteImport } from './routes/sign-up'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as RedirectTokenRouteImport } from './routes/redirect-token'
-import { Route as MultiFactorRouteImport } from './routes/multi-factor'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
-import { Route as ConfirmationVerifyEmailRouteImport } from './routes/confirmation-verify-email'
-import { Route as ChangePasswordRouteImport } from './routes/change-password'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChangePasswordRouteImport } from './routes/change-password'
+import { Route as ConfirmationVerifyEmailRouteImport } from './routes/confirmation-verify-email'
+import { Route as ForgotpasswordRouteImport } from './routes/forgotpassword'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MultiFactorRouteImport } from './routes/multi-factor'
+import { Route as RedirectTokenRouteImport } from './routes/redirect-token'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignUpRouteImport } from './routes/sign-up'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
-import { Route as ProjectsAllRouteImport } from './routes/projects/all'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
+import { Route as ProjectsAllRouteImport } from './routes/projects/all'
 import { Route as ProjectsViewProjectIdRouteImport } from './routes/projects/view.$projectId'
 
-const VerifyEmailRoute = VerifyEmailRouteImport.update({
-  id: '/verify-email',
-  path: '/verify-email',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignUpRoute = SignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RedirectTokenRoute = RedirectTokenRouteImport.update({
-  id: '/redirect-token',
-  path: '/redirect-token',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MultiFactorRoute = MultiFactorRouteImport.update({
-  id: '/multi-factor',
-  path: '/multi-factor',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
-  id: '/forgotpassword',
-  path: '/forgotpassword',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ConfirmationVerifyEmailRoute = ConfirmationVerifyEmailRouteImport.update({
-  id: '/confirmation-verify-email',
-  path: '/confirmation-verify-email',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChangePasswordRoute = ChangePasswordRouteImport.update({
@@ -71,9 +34,44 @@ const ChangePasswordRoute = ChangePasswordRouteImport.update({
   path: '/change-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ConfirmationVerifyEmailRoute = ConfirmationVerifyEmailRouteImport.update({
+  id: '/confirmation-verify-email',
+  path: '/confirmation-verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotpasswordRoute = ForgotpasswordRouteImport.update({
+  id: '/forgotpassword',
+  path: '/forgotpassword',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MultiFactorRoute = MultiFactorRouteImport.update({
+  id: '/multi-factor',
+  path: '/multi-factor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedirectTokenRoute = RedirectTokenRouteImport.update({
+  id: '/redirect-token',
+  path: '/redirect-token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignUpRoute = SignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
@@ -81,14 +79,14 @@ const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
   path: '/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsAllRoute = ProjectsAllRouteImport.update({
-  id: '/projects/all',
-  path: '/projects/all',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   id: '/projects/$projectId',
   path: '/projects/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsAllRoute = ProjectsAllRouteImport.update({
+  id: '/projects/all',
+  path: '/projects/all',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsViewProjectIdRoute = ProjectsViewProjectIdRouteImport.update({
@@ -110,7 +108,7 @@ export interface FileRoutesByFullPath {
   '/verify-email': typeof VerifyEmailRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects/all': typeof ProjectsAllRoute
-  '/projects': typeof ProjectsIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/projects/view/$projectId': typeof ProjectsViewProjectIdRoute
 }
 export interface FileRoutesByTo {
@@ -161,7 +159,7 @@ export interface FileRouteTypes {
     | '/verify-email'
     | '/projects/$projectId'
     | '/projects/all'
-    | '/projects'
+    | '/projects/'
     | '/projects/view/$projectId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -286,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$projectId': {
       id: '/projects/$projectId'
       path: '/projects/$projectId'
@@ -300,13 +305,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsAllRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/': {
-      id: '/projects/'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/projects/view/$projectId': {
       id: '/projects/view/$projectId'
       path: '/projects/view/$projectId'
@@ -315,133 +313,6 @@ declare module '@tanstack/react-router' {
       parentRoute: typeof rootRouteImport
     }
   }
-}
-
-declare module './routes/index' {
-  const createFileRoute: CreateFileRoute<
-    '/',
-    FileRoutesByPath['/']['parentRoute'],
-    FileRoutesByPath['/']['id'],
-    FileRoutesByPath['/']['path'],
-    FileRoutesByPath['/']['fullPath']
-  >
-}
-declare module './routes/change-password' {
-  const createFileRoute: CreateFileRoute<
-    '/change-password',
-    FileRoutesByPath['/change-password']['parentRoute'],
-    FileRoutesByPath['/change-password']['id'],
-    FileRoutesByPath['/change-password']['path'],
-    FileRoutesByPath['/change-password']['fullPath']
-  >
-}
-declare module './routes/confirmation-verify-email' {
-  const createFileRoute: CreateFileRoute<
-    '/confirmation-verify-email',
-    FileRoutesByPath['/confirmation-verify-email']['parentRoute'],
-    FileRoutesByPath['/confirmation-verify-email']['id'],
-    FileRoutesByPath['/confirmation-verify-email']['path'],
-    FileRoutesByPath['/confirmation-verify-email']['fullPath']
-  >
-}
-declare module './routes/forgotpassword' {
-  const createFileRoute: CreateFileRoute<
-    '/forgotpassword',
-    FileRoutesByPath['/forgotpassword']['parentRoute'],
-    FileRoutesByPath['/forgotpassword']['id'],
-    FileRoutesByPath['/forgotpassword']['path'],
-    FileRoutesByPath['/forgotpassword']['fullPath']
-  >
-}
-declare module './routes/login' {
-  const createFileRoute: CreateFileRoute<
-    '/login',
-    FileRoutesByPath['/login']['parentRoute'],
-    FileRoutesByPath['/login']['id'],
-    FileRoutesByPath['/login']['path'],
-    FileRoutesByPath['/login']['fullPath']
-  >
-}
-declare module './routes/multi-factor' {
-  const createFileRoute: CreateFileRoute<
-    '/multi-factor',
-    FileRoutesByPath['/multi-factor']['parentRoute'],
-    FileRoutesByPath['/multi-factor']['id'],
-    FileRoutesByPath['/multi-factor']['path'],
-    FileRoutesByPath['/multi-factor']['fullPath']
-  >
-}
-declare module './routes/redirect-token' {
-  const createFileRoute: CreateFileRoute<
-    '/redirect-token',
-    FileRoutesByPath['/redirect-token']['parentRoute'],
-    FileRoutesByPath['/redirect-token']['id'],
-    FileRoutesByPath['/redirect-token']['path'],
-    FileRoutesByPath['/redirect-token']['fullPath']
-  >
-}
-declare module './routes/settings' {
-  const createFileRoute: CreateFileRoute<
-    '/settings',
-    FileRoutesByPath['/settings']['parentRoute'],
-    FileRoutesByPath['/settings']['id'],
-    FileRoutesByPath['/settings']['path'],
-    FileRoutesByPath['/settings']['fullPath']
-  >
-}
-declare module './routes/sign-up' {
-  const createFileRoute: CreateFileRoute<
-    '/sign-up',
-    FileRoutesByPath['/sign-up']['parentRoute'],
-    FileRoutesByPath['/sign-up']['id'],
-    FileRoutesByPath['/sign-up']['path'],
-    FileRoutesByPath['/sign-up']['fullPath']
-  >
-}
-declare module './routes/verify-email' {
-  const createFileRoute: CreateFileRoute<
-    '/verify-email',
-    FileRoutesByPath['/verify-email']['parentRoute'],
-    FileRoutesByPath['/verify-email']['id'],
-    FileRoutesByPath['/verify-email']['path'],
-    FileRoutesByPath['/verify-email']['fullPath']
-  >
-}
-declare module './routes/projects/$projectId' {
-  const createFileRoute: CreateFileRoute<
-    '/projects/$projectId',
-    FileRoutesByPath['/projects/$projectId']['parentRoute'],
-    FileRoutesByPath['/projects/$projectId']['id'],
-    FileRoutesByPath['/projects/$projectId']['path'],
-    FileRoutesByPath['/projects/$projectId']['fullPath']
-  >
-}
-declare module './routes/projects/all' {
-  const createFileRoute: CreateFileRoute<
-    '/projects/all',
-    FileRoutesByPath['/projects/all']['parentRoute'],
-    FileRoutesByPath['/projects/all']['id'],
-    FileRoutesByPath['/projects/all']['path'],
-    FileRoutesByPath['/projects/all']['fullPath']
-  >
-}
-declare module './routes/projects/index' {
-  const createFileRoute: CreateFileRoute<
-    '/projects/',
-    FileRoutesByPath['/projects/']['parentRoute'],
-    FileRoutesByPath['/projects/']['id'],
-    FileRoutesByPath['/projects/']['path'],
-    FileRoutesByPath['/projects/']['fullPath']
-  >
-}
-declare module './routes/projects/view.$projectId' {
-  const createFileRoute: CreateFileRoute<
-    '/projects/view/$projectId',
-    FileRoutesByPath['/projects/view/$projectId']['parentRoute'],
-    FileRoutesByPath['/projects/view/$projectId']['id'],
-    FileRoutesByPath['/projects/view/$projectId']['path'],
-    FileRoutesByPath['/projects/view/$projectId']['fullPath']
-  >
 }
 
 const rootRouteChildren: RootRouteChildren = {

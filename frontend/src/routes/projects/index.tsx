@@ -1,7 +1,7 @@
 import ProjectsDashboard from "@/pages/projects/ProjectsDashboard"
-import { redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/projects/')({
   component: RouteComponent,
   beforeLoad: async ({ context: { authContext } }) => {
     const isAuthenticated = authContext?.isAuthenticated || false;
