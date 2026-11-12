@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
-import { AbsoluteFill, Sequence, staticFile } from 'remotion'
+import { AbsoluteFill, Sequence, interpolate, staticFile } from 'remotion'
 import { Audio } from '@remotion/media'
 import { TransitionSeries, linearTiming } from '@remotion/transitions'
-import { CUTS, TRANSITION, hasVoice, scenes, type SceneId } from './narration'
+import { CUTS, TRANSITION, hasVoice, scenes, totalFrames, voiceWindows, type SceneId } from './narration'
 import { C } from './theme'
 import { LightLeak, zoomThrough } from './transitions'
 import { Intro } from './scenes/Intro'
@@ -15,8 +15,25 @@ import { Outro } from './scenes/Outro'
 
 const VIEWS: Record<SceneId, () => ReactNode> = { intro: Intro, mywork: MyWork, board: Board, task: Task, notes: Notes, mobile: Mobile, outro: Outro }
 
+const MUSIC_FULL = 0.34 // music level between lines
+const MUSIC_UNDER = 0.11 // music level under the narration
+const DUCK = 8 // frames to dip / recover
+
+/** Music level at a frame: fades in and out, and dips while someone is talking. */
+const musicVolume = (f: number) => {
+  const duck = Math.max(
+    0,
+    ...voiceWindows.map(([a, b]) => interpolate(f, [a - DUCK, a, b, b + DUCK * 2], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })),
+  )
+  const fade = interpolate(f, [0, 20, totalFrames - 45, totalFrames - 1], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  return (MUSIC_FULL - (MUSIC_FULL - MUSIC_UNDER) * duck) * fade
+}
+
+export const HAS_MUSIC = true
+
 export const Promo = () => (
   <AbsoluteFill style={{ background: C.bgDeep }}>
+    {HAS_MUSIC && <Audio src={staticFile('music/bed.mp3')} volume={musicVolume} />}
     <TransitionSeries>
       {scenes.flatMap((s, i) => {
         const View = VIEWS[s.id]

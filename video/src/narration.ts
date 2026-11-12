@@ -37,3 +37,16 @@ export const scenes = SCRIPT.map((s, i) => ({
 }))
 
 export const totalFrames = scenes.reduce((sum, s) => sum + s.frames, 0) - TRANSITION * CUTS.filter((c) => c === 'zoom').length
+
+/** Where each scene starts on the full timeline (zoom cuts overlap by TRANSITION frames). */
+export const sceneStarts = scenes.map((_, i) =>
+  scenes.slice(0, i).reduce((sum, s, k) => sum + s.frames - (CUTS[k] === 'zoom' ? TRANSITION : 0), 0),
+)
+
+/** Frames where narration is playing, so the music can dip under it. */
+export const voiceWindows = scenes.flatMap((s, i) => {
+  const secs = voice[s.id]
+  if (!secs) return []
+  const from = sceneStarts[i] + (i === 0 ? 8 : TRANSITION)
+  return [[from, from + Math.round(secs * FPS)] as const]
+})
