@@ -1,0 +1,27 @@
+{
+  "name": "focusflow-video",
+  "private": true,
+  "version": "1.0.0",
+  "description": "FocusFlow promo video, made with Remotion",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render Promo out/focusflow-promo.mp4",
+    "voice": "node scripts/voice.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.543",
+    "@remotion/google-fonts": "^4.0.543",
+    "@remotion/media-utils": "^4.0.543",
+    "@remotion/transitions": "^4.0.543",
+    "lucide-react": "^1.72.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.543"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "music-metadata": "^11.16.1",
+    "typescript": "^7.0.2"
+  }
+}
