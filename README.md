@@ -10,8 +10,7 @@ and a personal agenda that tells each person what's overdue, due today and comin
 ![FocusFlow landing page with a live preview of the app](docs/screenshots/landing.png)
 
 ### ▶ Watch the 47-second tour
-
-[![Play the FocusFlow promo video](docs/video/poster.jpg)](docs/video/focusflow-promo.mp4)
+https://github.com/user-attachments/assets/cf290172-ef17-4c92-b5d5-a3be1e87e565
 
 </div>
 
